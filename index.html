@@ -644,10 +644,17 @@ function setPeriod(p, btn) {
 function getDateRange() {
   var today = new Date();
   if (currentPeriod === 'week') {
-    var start = new Date(today); start.setDate(today.getDate() - 6);
-    return [start, today];
+    // 今週の月曜〜日曜
+    var dow = today.getDay(); // 0=日, 1=月, ..., 6=土
+    var diffToMon = (dow === 0) ? -6 : 1 - dow; // 月曜までの差分
+    var mon = new Date(today); mon.setDate(today.getDate() + diffToMon);
+    var sun = new Date(mon); sun.setDate(mon.getDate() + 6);
+    return [mon, sun];
   } else if (currentPeriod === 'month') {
-    return [new Date(today.getFullYear(), today.getMonth(), 1), today];
+    // 今月1日〜末日
+    var firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
+    var lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+    return [firstDay, lastDay];
   } else {
     var s = document.getElementById('range-start').value;
     var e = document.getElementById('range-end').value;
