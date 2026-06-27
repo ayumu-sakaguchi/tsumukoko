@@ -170,24 +170,37 @@
   .toast.show{opacity:1;}
 
   #print-frame{display:none;}
+  #print-frame{display:none;}
   @media print{
-    @page{size:A4 portrait;margin:12mm;}
-    body > *:not(#print-frame){display:none!important;}
-    #print-frame{display:block!important;font-family:Hiragino Sans,sans-serif;color:#2D2A26;font-size:10px;}
-    .pf-title{font-size:14px;font-weight:700;margin-bottom:8px;}
-    .pf-card{border:1px solid #ccc;border-radius:6px;padding:8px 10px;margin-bottom:8px;}
-    .pf-card-title{font-size:9px;font-weight:600;color:#7A746C;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px;}
-    .stats-row{display:grid!important;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:6px;}
-    .stat-box{background:#F0EDE8!important;border-radius:6px;padding:6px;text-align:center;}
-    .stat-val{font-size:16px;font-weight:700;color:#7B9E87;}
-    .stat-lbl{font-size:9px;color:#7A746C;margin-top:1px;}
-    .habit-stat-list{display:flex!important;flex-direction:column;gap:4px;}
-    .habit-stat-row{display:flex!important;align-items:center;gap:8px;}
-    .habit-stat-label{font-size:10px;width:100px;flex-shrink:0;}
-    .habit-stat-bar-wrap{flex:1;background:#F0EDE8;border-radius:3px;height:7px;overflow:hidden;}
-    .habit-stat-bar{height:100%;background:#7B9E87;border-radius:3px;}
+    @page{size:A4 portrait;margin:0;}
+    html,body{width:210mm;height:297mm;margin:0;padding:0;background:white!important;}
+    body > *{display:none!important;}
+    #print-frame{
+      display:block!important;
+      position:fixed;top:0;left:0;
+      width:210mm;height:297mm;
+      padding:12mm;
+      box-sizing:border-box;
+      font-family:Hiragino Sans,sans-serif;
+      color:#2D2A26;
+      background:white;
+      overflow:hidden;
+    }
+    .pf-title{font-size:13px;font-weight:700;margin-bottom:6px;color:#2D2A26;}
+    .pf-card{border:1px solid #ccc;border-radius:5px;padding:7px 10px;margin-bottom:6px;background:white;}
+    .pf-card-title{font-size:8px;font-weight:600;color:#7A746C;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:5px;}
+    .stats-row{display:grid!important;grid-template-columns:1fr 1fr 1fr;gap:5px;margin-top:5px;}
+    .stat-box{background:#F0EDE8!important;border-radius:5px;padding:5px;text-align:center;}
+    .stat-val{font-size:14px;font-weight:700;color:#7B9E87;}
+    .stat-lbl{font-size:8px;color:#7A746C;margin-top:1px;}
+    .habit-stat-list{display:flex!important;flex-direction:column;gap:3px;}
+    .habit-stat-row{display:flex!important;align-items:center;gap:6px;}
+    .habit-stat-label{font-size:9px;width:90px;flex-shrink:0;color:#2D2A26;}
+    .habit-stat-bar-wrap{flex:1;background:#F0EDE8;border-radius:2px;height:6px;overflow:hidden;}
+    .habit-stat-bar{height:100%;background:#7B9E87;border-radius:2px;}
     .habit-stat-bar.assist{background:#D4A840;}
-    .habit-stat-pct{font-size:10px;font-weight:700;color:#4E7258;width:32px;text-align:right;flex-shrink:0;}
+    .habit-stat-pct{font-size:9px;font-weight:700;color:#4E7258;width:28px;text-align:right;flex-shrink:0;}
+    img{max-width:100%;display:block;}
   }
 </style>
 </head>
@@ -367,8 +380,8 @@
     <div style="font-size:15px;font-weight:600;margin-bottom:8px;">印刷の確認</div>
     <div style="font-size:13px;color:var(--text-sub);margin-bottom:20px;line-height:1.6;">印刷ダイアログを開きます。<br>このままの画面を印刷するか、PDFとして保存してください。</div>
     <div style="display:flex;gap:10px;justify-content:flex-end;">
-      <button id="print-cancel-btn" style="padding:10px 20px;border-radius:20px;border:1.5px solid var(--border);background:var(--surface2);color:var(--text);font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;">キャンセル</button>
-      <button id="print-execute-btn" style="padding:10px 20px;border-radius:20px;border:none;background:var(--accent);color:white;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;">印刷する</button>
+      <button onclick="closePrintOverlay()" style="padding:10px 20px;border-radius:20px;border:1.5px solid var(--border);background:var(--surface2);color:var(--text);font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;">キャンセル</button>
+      <button onclick="executePrint()" style="padding:10px 20px;border-radius:20px;border:none;background:var(--accent);color:white;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;">印刷する</button>
     </div>
   </div>
 </div>
@@ -850,6 +863,21 @@ function showConfirm(msg, onOk) {
   };
 }
 
+function closePrintOverlay() {
+  document.getElementById('print-overlay').style.display = 'none';
+  var el = document.getElementById('print-frame');
+  if (el) el.parentNode.removeChild(el);
+}
+
+function executePrint() {
+  document.getElementById('print-overlay').style.display = 'none';
+  window.print();
+  setTimeout(function() {
+    var el = document.getElementById('print-frame');
+    if (el) el.parentNode.removeChild(el);
+  }, 1000);
+}
+
 function printReport() {
   var canvas = document.getElementById('score-chart');
   var imgData = canvas.toDataURL('image/png');
@@ -869,23 +897,7 @@ function printReport() {
     '<div class="pf-card"><div class="pf-card-title">生活習慣の達成率</div>' + habitHtml + '</div>';
   document.body.appendChild(div);
 
-  // GitHubなど自動print禁止環境向け: ユーザー操作で印刷ダイアログを起動
-  var printBtn = document.getElementById('print-execute-btn');
-  var overlay = document.getElementById('print-overlay');
-  overlay.style.display = 'flex';
-  printBtn.onclick = function() {
-    overlay.style.display = 'none';
-    window.print();
-    setTimeout(function() {
-      var el = document.getElementById('print-frame');
-      if (el) el.parentNode.removeChild(el);
-    }, 1000);
-  };
-  document.getElementById('print-cancel-btn').onclick = function() {
-    overlay.style.display = 'none';
-    var el = document.getElementById('print-frame');
-    if (el) el.parentNode.removeChild(el);
-  };
+  document.getElementById('print-overlay').style.display = 'flex';
 }
 
 function showToast(msg) {
