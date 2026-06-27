@@ -774,6 +774,8 @@ function renderGraph() {
     var selfPct = Math.round((selfCount / total) * 100);
     var assistPct = Math.round((assistCount / total) * 100);
 
+    var btn1 = h.btn1 || '自分で';
+    var btn2 = h.btn2 || '介助あり';
     if (h.type === 'simple') {
       html += '<div class="habit-stat-row">' +
         '<span class="habit-stat-label">' + h.label + '</span>' +
@@ -782,13 +784,11 @@ function renderGraph() {
     } else {
       html += '<div class="habit-stat-row">' +
         '<span class="habit-stat-label">' + h.label + '</span>' +
-        '<div class="habit-stat-bar-wrap" style="position:relative">' +
-          '<div class="habit-stat-bar" style="width:' + selfPct + '%"></div>' +
-        '</div>' +
+        '<div class="habit-stat-bar-wrap"><div class="habit-stat-bar" style="width:' + selfPct + '%"></div></div>' +
         '<span class="habit-stat-pct" style="color:var(--accent)">' + selfPct + '%</span></div>';
       if (assistCount > 0) {
         html += '<div class="habit-stat-row">' +
-          '<span class="habit-stat-label" style="font-size:11px;color:var(--assist-text)">　└介助あり</span>' +
+          '<span class="habit-stat-label" style="font-size:11px;color:var(--assist-text)">　└' + btn2 + '</span>' +
           '<div class="habit-stat-bar-wrap"><div class="habit-stat-bar assist" style="width:' + assistPct + '%"></div></div>' +
           '<span class="habit-stat-pct" style="color:var(--assist-text)">' + assistPct + '%</span></div>';
       }
