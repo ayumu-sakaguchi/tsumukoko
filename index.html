@@ -318,9 +318,9 @@
         <div class="setting-row-label">次の通院日</div>
         <div class="setting-row-sub" id="clinic-date-label">設定されていません</div>
       </div>
-      <div style="position:relative;">
-        <div style="display:flex;align-items:center;justify-content:center;padding:7px 16px;border-radius:20px;border:1.5px solid var(--border);background:var(--surface2);font-size:13px;font-weight:600;pointer-events:none;">設定する</div>
-        <input type="date" id="clinic-date-input" onchange="saveClinicDate()" style="position:absolute;inset:0;opacity:0;width:100%;height:100%;cursor:pointer;">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <input type="date" id="clinic-date-input" style="padding:6px 8px;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:var(--surface2);color:var(--text);font-family:inherit;font-size:13px;outline:none;max-width:140px;">
+        <button onclick="saveClinicDate()" style="padding:7px 14px;border-radius:20px;border:none;background:var(--accent);color:white;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;white-space:nowrap;">設定</button>
       </div>
     </div>
     <div class="setting-row" id="clinic-remove-row" style="display:none">
@@ -1200,10 +1200,10 @@ function registerReminders() {
   if (!d) { showToast('通院日を設定してください'); return; }
 
   var checks = [
-    { id: 'rem-week', days: 7 },
-    { id: 'rem-3day', days: 3 },
-    { id: 'rem-day',  days: 1 },
-    { id: 'rem-same', days: 0 }
+    { id: 'rem-week', days: 7,  label: '1週間前' },
+    { id: 'rem-3day', days: 3,  label: '3日前' },
+    { id: 'rem-day',  days: 1,  label: '前日' },
+    { id: 'rem-same', days: 0,  label: '当日朝' }
   ];
 
   var selected = checks.filter(function(c) {
@@ -1216,43 +1216,98 @@ function registerReminders() {
     return;
   }
 
-  // 日付計算（ローカル時間）
   function addDays(dateStr, n) {
     var parts = dateStr.split('-');
     var dt = new Date(Number(parts[0]), Number(parts[1])-1, Number(parts[2]));
     dt.setDate(dt.getDate() - n);
-    return dt.getFullYear() + '-'
-      + String(dt.getMonth()+1).padStart(2,'0') + '-'
-      + String(dt.getDate()).padStart(2,'0');
+    return dt.getFullYear() + '年' + (dt.getMonth()+1) + '月' + dt.getDate() + '日';
   }
 
-  var titles = {7:'1週間前', 3:'3日前', 1:'前日', 0:'当日朝'};
-
-  // 1件ずつreminderx-apple-reminderxURLを開く
-  var items = selected.map(function(c) {
-    var remDate = addDays(d, c.days);
-    return {
-      title: '通院日' + (c.days > 0 ? '（' + titles[c.days] + '）' : '') + ' ' + fmtDate(d),
-      date: remDate + 'T09:00:00'
-    };
+  // リマインダー内容をテキストで生成してクリップボードにコピー
+  var lines = selected.map(function(c) {
+    return '・' + addDays(d, c.days) + ' 09:00　通院日' + (c.days > 0 ? '（' + c.label + '）' : '') + ' ' + fmtDate(d);
   });
+  var copyText = '【通院リマインダー】
+' + lines.join('
+') + '
 
-  // 順番に開く（少しずつ間隔をあけてURLスキームで起動）
-  function openNext(i) {
-    if (i >= items.length) {
-      showToast('リマインダーの登録画面を開きました');
-      return;
-    }
-    var item = items[i];
-    // x-apple-reminderx スキーム
-    var url = 'x-apple-reminderx://create?title='
-      + encodeURIComponent(item.title)
-      + '&dueDate=' + encodeURIComponent(item.date);
-    window.location.href = url;
-    setTimeout(function() { openNext(i + 1); }, 1500);
+↑リマインダーアプリに1件ずつ登録してください';
+
+  // クリップボードにコピー
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(copyText).then(function() {
+      showReminderGuide(copyText);
+    }).catch(function() {
+      showReminderGuide(copyText);
+    });
+  } else {
+    // fallback
+    var ta = document.createElement('textarea');
+    ta.value = copyText;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); } catch(e) {}
+    document.body.removeChild(ta);
+    showReminderGuide(copyText);
   }
-  openNext(0);
 }
+
+function showReminderGuide(text) {
+  var ov = document.createElement('div');
+  ov.id = 'reminder-guide-overlay';
+  ov.style.cssText = 'position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,0.55);display:flex;align-items:flex-end;';
+
+  var inner = document.createElement('div');
+  inner.style.cssText = 'background:var(--surface);border-radius:20px 20px 0 0;padding:24px 20px 40px;width:100%;max-width:480px;margin:0 auto;';
+
+  var title = document.createElement('div');
+  title.style.cssText = 'font-size:16px;font-weight:700;margin-bottom:10px;';
+  title.textContent = 'リマインダーに登録する';
+
+  var desc = document.createElement('div');
+  desc.style.cssText = 'font-size:13px;color:var(--text-sub);line-height:1.7;margin-bottom:12px;';
+  desc.textContent = '以下の内容をコピーしました。リマインダーアプリを開いて1件ずつ登録してください。';
+
+  var pre = document.createElement('div');
+  pre.style.cssText = 'background:var(--surface2);border-radius:8px;padding:12px;font-size:12px;line-height:1.8;white-space:pre-wrap;word-break:break-all;margin-bottom:16px;border:1px solid var(--border);';
+  pre.textContent = text;
+
+  var btnOpen = document.createElement('button');
+  btnOpen.style.cssText = 'width:100%;padding:13px;background:var(--accent);color:white;border:none;border-radius:var(--radius);font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;margin-bottom:10px;display:block;';
+  btnOpen.textContent = 'リマインダーアプリを開く';
+  btnOpen.onclick = function() {
+    // aタグ経由でURLスキームを開く（Artifactサンドボックス回避）
+    var a = document.createElement('a');
+    a.href = 'x-apple-reminderx://';
+    a.style.display = 'none';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(function() {
+      var el = document.getElementById('reminder-guide-overlay');
+      if (el) el.parentNode.removeChild(el);
+    }, 1500);
+  };
+
+  var btnClose = document.createElement('button');
+  btnClose.style.cssText = 'width:100%;padding:13px;background:var(--surface2);color:var(--text-sub);border:1.5px solid var(--border);border-radius:var(--radius);font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;display:block;';
+  btnClose.textContent = '閉じる';
+  btnClose.onclick = function() {
+    var el = document.getElementById('reminder-guide-overlay');
+    if (el) el.parentNode.removeChild(el);
+  };
+
+  inner.appendChild(title);
+  inner.appendChild(desc);
+  inner.appendChild(pre);
+  inner.appendChild(btnOpen);
+  inner.appendChild(btnClose);
+  ov.appendChild(inner);
+  document.body.appendChild(ov);
+}
+
 
 function updateClinicIconOnRecord() {
   var d = getClinicDate();
