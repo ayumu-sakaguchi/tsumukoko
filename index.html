@@ -329,6 +329,30 @@
       </div>
       <button class="text-btn danger" onclick="removeClinicDate()">削除する</button>
     </div>
+    <div id="reminder-row" style="display:none;padding-top:12px;">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px;color:var(--text);">リマインダーに追加</div>
+      <div style="font-size:12px;color:var(--text-sub);margin-bottom:10px;">通知したいタイミングを選んでください（複数選択可）</div>
+      <div style="display:flex;flex-direction:column;gap:8px;" id="reminder-options">
+        <label style="display:flex;align-items:center;gap:10px;cursor:pointer;">
+          <input type="checkbox" id="rem-week" style="width:18px;height:18px;accent-color:var(--accent);">
+          <span style="font-size:14px;">1週間前（朝9時）</span>
+        </label>
+        <label style="display:flex;align-items:center;gap:10px;cursor:pointer;">
+          <input type="checkbox" id="rem-3day" style="width:18px;height:18px;accent-color:var(--accent);">
+          <span style="font-size:14px;">3日前（朝9時）</span>
+        </label>
+        <label style="display:flex;align-items:center;gap:10px;cursor:pointer;">
+          <input type="checkbox" id="rem-day" style="width:18px;height:18px;accent-color:var(--accent);">
+          <span style="font-size:14px;">前日（朝9時）</span>
+        </label>
+        <label style="display:flex;align-items:center;gap:10px;cursor:pointer;">
+          <input type="checkbox" id="rem-same" style="width:18px;height:18px;accent-color:var(--accent);">
+          <span style="font-size:14px;">当日朝（朝9時）</span>
+        </label>
+      </div>
+      <button onclick="registerReminders()" style="width:100%;margin-top:14px;padding:12px;background:var(--accent);color:white;border:none;border-radius:var(--radius);font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;">リマインダーに登録する</button>
+      <div style="font-size:11px;color:var(--text-sub);margin-top:8px;line-height:1.6;text-align:center;">タップするとiPhoneのリマインダーアプリが開きます。<br>1件ずつ「追加」をタップして登録してください。</div>
+    </div>
   </div>
   <div class="card">
     <div class="setting-label">セキュリティ</div>
@@ -1113,15 +1137,18 @@ function updateClinicSettingsUI() {
   var d = getClinicDate();
   var label = document.getElementById('clinic-date-label');
   var removeRow = document.getElementById('clinic-remove-row');
+  var reminderRow = document.getElementById('reminder-row');
   var input = document.getElementById('clinic-date-input');
   if (d) {
     label.textContent = fmtDate(d);
     removeRow.style.display = '';
     input.value = d;
+    if (reminderRow) reminderRow.style.display = 'block';
   } else {
     label.textContent = '設定されていません';
     removeRow.style.display = 'none';
     input.value = '';
+    if (reminderRow) reminderRow.style.display = 'none';
   }
 }
 function checkClinicBanner() {
@@ -1168,6 +1195,65 @@ function dismissClinicBanner() {
     p.style.paddingTop = '';
   });
 }
+function registerReminders() {
+  var d = getClinicDate();
+  if (!d) { showToast('通院日を設定してください'); return; }
+
+  var checks = [
+    { id: 'rem-week', days: 7 },
+    { id: 'rem-3day', days: 3 },
+    { id: 'rem-day',  days: 1 },
+    { id: 'rem-same', days: 0 }
+  ];
+
+  var selected = checks.filter(function(c) {
+    var el = document.getElementById(c.id);
+    return el && el.checked;
+  });
+
+  if (selected.length === 0) {
+    showToast('タイミングを1つ以上選んでください');
+    return;
+  }
+
+  // 日付計算（ローカル時間）
+  function addDays(dateStr, n) {
+    var parts = dateStr.split('-');
+    var dt = new Date(Number(parts[0]), Number(parts[1])-1, Number(parts[2]));
+    dt.setDate(dt.getDate() - n);
+    return dt.getFullYear() + '-'
+      + String(dt.getMonth()+1).padStart(2,'0') + '-'
+      + String(dt.getDate()).padStart(2,'0');
+  }
+
+  var titles = {7:'1週間前', 3:'3日前', 1:'前日', 0:'当日朝'};
+
+  // 1件ずつreminderx-apple-reminderxURLを開く
+  var items = selected.map(function(c) {
+    var remDate = addDays(d, c.days);
+    return {
+      title: '通院日' + (c.days > 0 ? '（' + titles[c.days] + '）' : '') + ' ' + fmtDate(d),
+      date: remDate + 'T09:00:00'
+    };
+  });
+
+  // 順番に開く（少しずつ間隔をあけてURLスキームで起動）
+  function openNext(i) {
+    if (i >= items.length) {
+      showToast('リマインダーの登録画面を開きました');
+      return;
+    }
+    var item = items[i];
+    // x-apple-reminderx スキーム
+    var url = 'x-apple-reminderx://create?title='
+      + encodeURIComponent(item.title)
+      + '&dueDate=' + encodeURIComponent(item.date);
+    window.location.href = url;
+    setTimeout(function() { openNext(i + 1); }, 1500);
+  }
+  openNext(0);
+}
+
 function updateClinicIconOnRecord() {
   var d = getClinicDate();
   var existing = document.getElementById('clinic-icon');
