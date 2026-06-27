@@ -349,7 +349,7 @@
 <div id="print-overlay" style="display:none;position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,0.45);align-items:center;justify-content:center;">
   <div style="background:var(--surface);border-radius:var(--radius);padding:24px;margin:24px;width:calc(100% - 48px);max-width:320px;box-shadow:var(--shadow);">
     <div style="font-size:15px;font-weight:600;margin-bottom:8px;">印刷の確認</div>
-    <div style="font-size:13px;color:var(--text-sub);margin-bottom:20px;line-height:1.6;">印刷用ページを開きます。<br>ページ内の「印刷 / PDFで保存」ボタンをタップして印刷してください。</div>
+    <div style="font-size:13px;color:var(--text-sub);margin-bottom:20px;line-height:1.6;">振り返りの印刷ページを開きます。</div>
     <div style="display:flex;gap:10px;justify-content:flex-end;">
       <button onclick="closePrintOverlay()" style="padding:10px 20px;border-radius:20px;border:1.5px solid var(--border);background:var(--surface2);color:var(--text);font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;">キャンセル</button>
       <button onclick="executePrint()" style="padding:10px 20px;border-radius:20px;border:none;background:var(--accent);color:white;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;">印刷する</button>
@@ -846,11 +846,44 @@ function executePrint() {
   var statsHtml = document.getElementById('stats-row').outerHTML;
   var habitHtml = document.getElementById('habit-stat-list').outerHTML;
 
-  var html = '<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8">'
+  // 印刷用HTMLを生成してlocalStorageに保存
+  var printBody = '<h2>振り返り</h2>'
+    + '<div class="card"><div class="card-title">気分スコア</div>'
+    + '<img src="' + imgData + '"></div>'
+    + '<div class="card">' + statsHtml + '</div>'
+    + '<div class="card"><div class="card-title">生活習慣の達成率</div>' + habitHtml + '</div>';
+
+  localStorage.setItem('ashiato_print_body', printBody);
+
+  // スタンドアロンモード判定
+  var isStandalone = window.navigator.standalone === true
+    || window.matchMedia('(display-mode: standalone)').matches;
+
+  if (isStandalone) {
+    // ホーム画面アプリ: Safariで印刷ページを開く（window.print()制限を回避）
+    // ?printモードとしてSafariで同URLを開く
+    var printUrl = location.href.split('?')[0] + '?print=1';
+    location.href = 'x-web-search://?q=' + encodeURIComponent(''); // ダミー（使わない）
+    // iOSではsafari-extensionやschemeが使えないため、
+    // ユーザーにSafariで開くよう案内する
+    showPrintGuide();
+  } else {
+    // ブラウザ: 別タブで印刷ページを開く
+    var html = buildPrintHTML(printBody);
+    var blob = new Blob([html], {type: 'text/html'});
+    var url = URL.createObjectURL(blob);
+    var win = window.open(url, '_blank');
+    if (!win) { location.href = url; }
+    setTimeout(function(){ URL.revokeObjectURL(url); }, 15000);
+  }
+}
+
+function buildPrintHTML(body) {
+  return '<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8">'
     + '<style>'
     + '@page{size:A4 portrait;margin:12mm;}'
     + '*{box-sizing:border-box;margin:0;padding:0;}'
-    + 'body{font-family:Hiragino Sans,sans-serif;color:#2D2A26;background:white;}'
+    + 'body{font-family:Hiragino Sans,sans-serif;color:#2D2A26;background:white;padding:0;}'
     + 'h2{font-size:14px;font-weight:700;margin-bottom:8px;}'
     + '.card{border:1px solid #ccc;border-radius:6px;padding:8px 10px;margin-bottom:8px;}'
     + '.card-title{font-size:8px;font-weight:600;color:#7A746C;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px;}'
@@ -866,38 +899,49 @@ function executePrint() {
     + '.habit-stat-bar.assist{background:#D4A840;}'
     + '.habit-stat-pct{font-size:9px;font-weight:700;color:#4E7258;width:30px;text-align:right;flex-shrink:0;}'
     + 'img{width:100%;display:block;border-radius:4px;}'
-    + '<\/style><\/head><body>'
-    + '<h2>振り返り<\/h2>'
-    + '<div class="card"><div class="card-title">気分スコア<\/div>'
-    + '<img src="' + imgData + '">'
-    + '<\/div>'
-    + '<div class="card">' + statsHtml + '<\/div>'
-    + '<div class="card"><div class="card-title">生活習慣の達成率<\/div>' + habitHtml + '<\/div>'
-    + '<div style="margin-top:16px;text-align:center;">'
-    + '<button onclick="window.print()" style="padding:12px 32px;background:#7B9E87;color:white;border:none;border-radius:20px;font-size:15px;font-weight:700;cursor:pointer;">印刷 / PDFで保存<\/button>'
-    + '<\/div>'
-    + '<\/body><\/html>';
+    + '.print-btn-wrap{margin-top:16px;text-align:center;}'
+    + '.print-btn{padding:12px 32px;background:#7B9E87;color:white;border:none;border-radius:20px;font-size:15px;font-weight:700;cursor:pointer;}'
+    + '@media print{.print-btn-wrap{display:none;}}'
+    + '</style></head><body>'
+    + body
+    + '<div class="print-btn-wrap"><button class="print-btn" onclick="window.print()">印刷 / PDFで保存</button></div>'
+    + '</body></html>';
+}
 
-  // localStorage経由で印刷ページにデータを渡し、同一タブで遷移
-  localStorage.setItem('print_html', html);
-  localStorage.setItem('print_return_url', location.href);
-  
+function showPrintGuide() {
+  // スタンドアロンモード用: Safariで開く手順を案内するオーバーレイ
+  var ov = document.createElement('div');
+  ov.id = 'print-guide-overlay';
+  ov.style.cssText = 'position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,0.55);display:flex;align-items:flex-end;';
+  ov.innerHTML = '<div style="background:var(--surface);border-radius:20px 20px 0 0;padding:28px 24px 40px;width:100%;max-width:480px;margin:0 auto;">'
+    + '<div style="font-size:16px;font-weight:700;margin-bottom:12px;">Safariで印刷する</div>'
+    + '<div style="font-size:14px;color:var(--text-sub);line-height:1.8;margin-bottom:20px;">'
+    + 'ホーム画面アプリからは直接印刷できません。<br>'
+    + '以下の手順でSafariから印刷してください。<br><br>'
+    + '① 下の「Safariで開く」をタップ<br>'
+    + '② 開いたページの「印刷 / PDFで保存」をタップ'
+    + '</div>'
+    + '<button onclick="openInSafari()" style="width:100%;padding:14px;background:var(--accent);color:white;border:none;border-radius:var(--radius);font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;margin-bottom:10px;">Safariで開く</button>'
+    + '<button onclick="document.getElementById('print-guide-overlay').remove()" style="width:100%;padding:14px;background:var(--surface2);color:var(--text-sub);border:1.5px solid var(--border);border-radius:var(--radius);font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;">キャンセル</button>'
+    + '</div>';
+  document.body.appendChild(ov);
+}
+
+function openInSafari() {
+  var body = localStorage.getItem('ashiato_print_body') || '';
+  var html = buildPrintHTML(body);
   var blob = new Blob([html], {type: 'text/html'});
   var url = URL.createObjectURL(blob);
-  
-  // スタンドアロンモード判定
-  var isStandalone = window.navigator.standalone === true
-    || window.matchMedia('(display-mode: standalone)').matches;
-
-  if (isStandalone) {
-    // ホーム画面アプリ: 同一タブで遷移
-    location.href = url;
-  } else {
-    // ブラウザ: 別タブで開く
-    var win = window.open(url, '_blank');
-    if (!win) { location.href = url; }
-    setTimeout(function(){ URL.revokeObjectURL(url); }, 10000);
-  }
+  // スタンドアロンからSafariへ: target="_blank"リンクをクリック
+  var a = document.createElement('a');
+  a.href = url;
+  a.target = '_blank';
+  a.rel = 'noopener';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  document.getElementById('print-guide-overlay').remove();
+  setTimeout(function(){ URL.revokeObjectURL(url); }, 15000);
 }
 
 function printReport() {
