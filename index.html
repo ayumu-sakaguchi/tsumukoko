@@ -1127,8 +1127,10 @@ function updateClinicSettingsUI() {
 function checkClinicBanner() {
   var d = getClinicDate();
   if (!d) return;
-  var today = new Date(); today.setHours(0,0,0,0);
-  var clinic = new Date(d); clinic.setHours(0,0,0,0);
+  var now = new Date();
+  var todayStr2 = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + '-' + String(now.getDate()).padStart(2,'0');
+  var today = new Date(todayStr2 + 'T00:00:00');
+  var clinic = new Date(d + 'T00:00:00');
   var diff = Math.round((clinic - today) / (1000 * 60 * 60 * 24));
   var banner = document.getElementById('clinic-banner');
   var bannerText = document.getElementById('clinic-banner-text');
@@ -1177,12 +1179,27 @@ function updateClinicIconOnRecord() {
     span.id = 'clinic-icon';
     span.className = 'clinic-badge';
     span.textContent = '🏥 通院日';
+    // 日付の2行目（月日行）の右横に追加
     var label = document.getElementById('today-label');
-    label.appendChild(span);
+    // 2行目のdivを探して横並びにする
+    var dayDiv = label.querySelector('div:last-child');
+    if (dayDiv) {
+      dayDiv.style.display = 'flex';
+      dayDiv.style.alignItems = 'center';
+      dayDiv.style.gap = '6px';
+      dayDiv.appendChild(span);
+    } else {
+      label.appendChild(span);
+    }
   }
 }
 
 init();
+// PINなし起動時に通院バナー・アイコンを表示
+if (!getPin()) {
+  checkClinicBanner();
+  updateClinicIconOnRecord();
+}
 </script>
 </body>
 </html>
