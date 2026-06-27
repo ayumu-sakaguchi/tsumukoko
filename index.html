@@ -665,7 +665,14 @@ function getDateRange() {
 
 function datesBetween(start, end) {
   var dates = []; var d = new Date(start);
-  while (d <= end) { dates.push(d.toISOString().slice(0,10)); d.setDate(d.getDate()+1); }
+  // toISOStringはUTC基準でずれるため、ローカル時間で文字列化
+  function toLocalStr(dt) {
+    return dt.getFullYear() + '-' + String(dt.getMonth()+1).padStart(2,'0') + '-' + String(dt.getDate()).padStart(2,'0');
+  }
+  while (toLocalStr(d) <= toLocalStr(end)) {
+    dates.push(toLocalStr(d));
+    d.setDate(d.getDate()+1);
+  }
   return dates;
 }
 
@@ -716,7 +723,17 @@ function renderGraph() {
       ctx.roundRect(x, padT+cH-barH, barW, barH, 4);
       ctx.fill();
     }
-    if (n<=14 || i % Math.ceil(n/10) === 0) {
+    // ラベル表示判定
+    var showLabel = false;
+    if (currentPeriod === 'month') {
+      // 今月モード: 左端(1日)・右端(末日)・中間の日曜日のみ
+      var dayNum = new Date(dates[i]).getDate();
+      if (i === 0 || i === n-1 || dayNum === 5 || dayNum === 10 || dayNum === 15 || dayNum === 20 || dayNum === 25) showLabel = true;
+    } else {
+      // 今週・期間指定: 14日以下は全表示、それ以上は間引き
+      if (n <= 14 || i % Math.ceil(n/10) === 0) showLabel = true;
+    }
+    if (showLabel) {
       ctx.fillStyle = isDark ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.4)';
       ctx.font = '10px sans-serif';
       ctx.textAlign = 'center';
