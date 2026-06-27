@@ -165,12 +165,12 @@
   .empty-state{text-align:center;padding:40px 20px;color:var(--text-sub);}
   .empty-state .icon{font-size:48px;margin-bottom:12px;}
   .empty-state p{font-size:14px;}
-  .badge{font-size:12px;background:var(--accent-light);color:var(--accent-dark);padding:4px 10px;border-radius:10px;font-weight:600;white-space:nowrap;}
+  .badge{font-size:12px;background:var(--accent-light);color:var(--accent-dark);padding:4px 10px;border-radius:10px;font-weight:600;white-space:nowrap;line-height:1;height:28px;box-sizing:border-box;display:inline-flex;align-items:center;}
   .toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:var(--text);color:var(--bg);padding:10px 20px;border-radius:20px;font-size:14px;font-weight:600;opacity:0;transition:opacity 0.3s;pointer-events:none;white-space:nowrap;z-index:300;}
   .toast.show{opacity:1;}
 
   #print-frame{display:none;}
-  .clinic-badge{display:inline-flex;align-items:center;gap:3px;font-size:12px;font-weight:600;color:var(--accent-dark);background:var(--accent-light);border:1.5px solid var(--accent);border-radius:10px;padding:4px 10px;}
+  .clinic-badge{display:inline-flex;align-items:center;gap:3px;font-size:12px;font-weight:600;color:var(--accent-dark);background:var(--accent-light);border:1.5px solid var(--accent);border-radius:10px;padding:4px 10px;line-height:1;height:28px;box-sizing:border-box;}
   @media print{
     body > *{ display:none!important; }
   }
@@ -318,13 +318,12 @@
         <div class="setting-row-label">次の通院日</div>
         <div class="setting-row-sub" id="clinic-date-label">設定されていません</div>
       </div>
-      <button class="text-btn" onclick="openClinicDatePicker()">設定する</button>
+
     </div>
-    <div id="clinic-picker-row" style="display:none;padding:12px 0 4px;">
-      <input type="date" id="clinic-date-input" style="width:100%;padding:10px;border:1.5px solid var(--accent);border-radius:var(--radius-sm);background:var(--surface2);color:var(--text);font-family:inherit;font-size:15px;outline:none;margin-bottom:10px;display:block;">
-      <div style="display:flex;gap:8px;">
-        <button onclick="confirmClinicDate()" style="flex:1;padding:10px;background:var(--accent);color:white;border:none;border-radius:var(--radius-sm);font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;">決定</button>
-        <button onclick="cancelClinicDatePicker()" style="flex:1;padding:10px;background:var(--surface2);color:var(--text-sub);border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;">キャンセル</button>
+    <div id="clinic-picker-row" style="padding:8px 0 4px;">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+        <input type="date" id="clinic-date-input" style="flex:1;min-width:0;padding:8px 10px;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:var(--surface2);color:var(--text);font-family:inherit;font-size:14px;outline:none;">
+        <button onclick="confirmClinicDate()" style="padding:8px 16px;background:var(--accent);color:white;border:none;border-radius:var(--radius-sm);font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;white-space:nowrap;flex-shrink:0;">決定</button>
       </div>
     </div>
     <div class="setting-row" id="clinic-remove-row" style="display:none">
@@ -1102,15 +1101,7 @@ function updatePinSettingsUI() {
 
 // ===== 通院日 =====
 function getClinicDate() { return localStorage.getItem('ashiato_clinic_date') || ''; }
-function openClinicDatePicker() {
-  var pickerRow = document.getElementById('clinic-picker-row');
-  var d = getClinicDate();
-  if (d) document.getElementById('clinic-date-input').value = d;
-  pickerRow.style.display = 'block';
-}
-function cancelClinicDatePicker() {
-  document.getElementById('clinic-picker-row').style.display = 'none';
-}
+
 function confirmClinicDate() {
   var d = document.getElementById('clinic-date-input').value;
   if (!d) { showToast('日付を選択してください'); return; }
@@ -1140,7 +1131,6 @@ function updateClinicSettingsUI() {
   } else {
     label.textContent = '設定されていません';
     removeRow.style.display = 'none';
-    if (input) input.value = '';
   }
 }
 function checkClinicBanner() {
