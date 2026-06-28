@@ -8,206 +8,174 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="あしあと">
 <style>
-:root{
-  --bg:#F7F5F2;--surface:#FFFFFF;--surface2:#F0EDE8;
-  --text:#2D2A26;--text-sub:#7A746C;
-  --accent:#7B9E87;--accent-light:#C8DDD0;--accent-dark:#4E7258;--border:#E0DAD2;
-  --score-1:#E8A598;--score-2:#E8C49A;--score-3:#E8E0A0;--score-4:#A8D4B0;--score-5:#7BB8C0;
-  --assist:#F0D8A8;--assist-border:#D4A840;--assist-text:#8C6A10;
-  --radius:16px;--radius-sm:8px;--shadow:0 2px 12px rgba(0,0,0,0.07);
-  --bg-image:none;
-}
-/* --- THEMES --- */
-.theme-sakura{--bg:#FFF5F7;--surface:#FFFFFF;--surface2:#FFE8EE;--accent:#D4789A;--accent-light:#FFD6E4;--accent-dark:#A0456A;--border:#FFD0DC;}
-.theme-sky{--bg:#F3F8FF;--surface:#FFFFFF;--surface2:#E4F0FF;--accent:#5B9BD5;--accent-light:#C4DEFF;--accent-dark:#2A6FAF;--border:#C8DFFF;}
-.theme-forest{--bg:#F2F7F2;--surface:#FFFFFF;--surface2:#E0EDDF;--accent:#4A8C5C;--accent-light:#B8DBBF;--accent-dark:#2A5C38;--border:#C0DCC4;}
-.theme-night{--bg:#1A1C22;--surface:#252830;--surface2:#2F3240;--text:#E8E4DC;--text-sub:#9A95A0;--accent:#8B9EC8;--accent-light:#3A4560;--accent-dark:#B8C8F0;--border:#3A3E50;--shadow:0 2px 12px rgba(0,0,0,0.3);--assist:#3A3010;--assist-border:#8C6A10;--assist-text:#E0B840;}
-.theme-lavender{--bg:#F5F0FF;--surface:#FFFFFF;--surface2:#EDE5FF;--accent:#9B7EC8;--accent-light:#DDD0FF;--accent-dark:#6A4E9A;--border:#D5C8FF;}
-/* gradient themes */
-.theme-grad-sunrise{--bg:#FFF3E8;--surface:#FFFFFF;--surface2:#FFE8D0;--accent:#E88040;--accent-light:#FFD0A8;--accent-dark:#B05010;--border:#FFD0A8;}
-.theme-grad-ocean{--bg:#E8F4FF;--surface:#FFFFFF;--surface2:#D0E8FF;--accent:#3080C0;--accent-light:#A8D0FF;--accent-dark:#105090;--border:#A8D0FF;}
-.theme-grad-matcha{--bg:#F0F8F0;--surface:#FFFFFF;--surface2:#D8EED8;--accent:#508050;--accent-light:#B0D8B0;--accent-dark:#206020;--border:#B0D8B0;}
-/* pattern themes */
-.theme-dots{--bg:#F7F5F2;--surface:#FFFFFF;--surface2:#F0EDE8;--accent:#7B9E87;--accent-light:#C8DDD0;--accent-dark:#4E7258;--border:#E0DAD2;}
-.theme-stripe{--bg:#F5F5FF;--surface:#FFFFFF;--surface2:#EBEBFF;--accent:#7878C8;--accent-light:#C8C8FF;--accent-dark:#4848A0;--border:#C8C8FF;}
-.theme-check{--bg:#FFF8F0;--surface:#FFFFFF;--surface2:#FFE8D0;--accent:#C07840;--accent-light:#FFD0A0;--accent-dark:#905020;--border:#FFD0A0;}
+  :root {
+    --bg:#F7F5F2;--surface:#FFFFFF;--surface2:#F0EDE8;
+    --text:#2D2A26;--text-sub:#7A746C;
+    --accent:#7B9E87;--accent-light:#C8DDD0;--accent-dark:#4E7258;--border:#E0DAD2;
+    --score-1:#E8A598;--score-2:#E8C49A;--score-3:#E8E0A0;--score-4:#A8D4B0;--score-5:#7BB8C0;
+    --assist:#F0D8A8;--assist-border:#D4A840;--assist-text:#8C6A10;
+    --radius:16px;--radius-sm:8px;--shadow:0 2px 12px rgba(0,0,0,0.07);
+  }
+  .theme-sakura{--bg:#FFF5F7;--surface:#FFFFFF;--surface2:#FFE8EE;--accent:#D4789A;--accent-light:#FFD6E4;--accent-dark:#A0456A;--border:#FFD0DC;}
+  .theme-sky{--bg:#F3F8FF;--surface:#FFFFFF;--surface2:#E4F0FF;--accent:#5B9BD5;--accent-light:#C4DEFF;--accent-dark:#2A6FAF;--border:#C8DFFF;}
+  .theme-forest{--bg:#F2F7F2;--surface:#FFFFFF;--surface2:#E0EDDF;--accent:#4A8C5C;--accent-light:#B8DBBF;--accent-dark:#2A5C38;--border:#C0DCC4;}
+  .theme-night{--bg:#1A1C22;--surface:#252830;--surface2:#2F3240;--text:#E8E4DC;--text-sub:#9A95A0;--accent:#8B9EC8;--accent-light:#3A4560;--accent-dark:#B8C8F0;--border:#3A3E50;--shadow:0 2px 12px rgba(0,0,0,0.3);--assist:#3A3010;--assist-border:#8C6A10;--assist-text:#E0B840;}
+  *{box-sizing:border-box;margin:0;padding:0;}  html,body{overflow-x:hidden;max-width:100%;}
+  body{font-family:'Hiragino Sans','Hiragino Kaku Gothic ProN','Noto Sans JP',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:15px;line-height:1.6;}
 
-/* pattern backgrounds */
-.theme-dots body,.theme-dots .page{background-image:radial-gradient(var(--accent-light) 1.5px,transparent 1.5px);background-size:18px 18px;}
-.theme-stripe body,.theme-stripe .page{background-image:repeating-linear-gradient(135deg,var(--accent-light) 0,var(--accent-light) 1px,transparent 0,transparent 50%);background-size:14px 14px;}
-.theme-check body,.theme-check .page{background-image:repeating-conic-gradient(var(--accent-light) 0% 25%,transparent 0% 50%);background-size:16px 16px;}
-/* user bg image */
-body.theme-userbg{background-size:cover;background-position:center;background-attachment:fixed;}
-body.theme-userbg .card{background:rgba(255,255,255,0.85);}
-body.theme-userbg .nav{background:rgba(255,255,255,0.92);}
+  /* LOCK */
+  #lock-screen{position:fixed;inset:0;z-index:1000;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:40px 24px 24px;overflow-y:auto;}
+  #lock-screen.hidden{display:none;}
+  .lock-icon{font-size:48px;margin-bottom:12px;}
+  .lock-title{font-size:22px;font-weight:700;margin-bottom:6px;}
+  .lock-sub{font-size:14px;color:var(--text-sub);margin-bottom:20px;text-align:center;}
+  .pin-dots{display:flex;gap:16px;margin-bottom:16px;}
+  .pin-dot{width:16px;height:16px;border-radius:50%;border:2px solid var(--accent);background:transparent;transition:background 0.15s;}
+  .pin-dot.filled{background:var(--accent);}
+  .pin-pad{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;width:100%;max-width:280px;}
+  .pin-key{aspect-ratio:1;border-radius:50%;border:none;background:var(--surface);color:var(--text);font-size:22px;font-weight:600;font-family:inherit;cursor:pointer;box-shadow:var(--shadow);display:flex;align-items:center;justify-content:center;transition:background 0.15s,transform 0.1s;}
+  .pin-key:active{background:var(--accent-light);transform:scale(0.94);}
+  .pin-key.del{font-size:18px;background:transparent;box-shadow:none;color:var(--text-sub);}
+  .pin-key.empty{background:transparent;box-shadow:none;cursor:default;}
+  .lock-error{font-size:13px;color:#C04040;margin-bottom:12px;min-height:18px;text-align:center;}
+  .lock-note{font-size:12px;color:#8B2035;margin-top:16px;text-align:center;line-height:1.6;}
 
-*{box-sizing:border-box;margin:0;padding:0;}
-html,body{overflow-x:hidden;max-width:100%;}
-body{font-family:'Hiragino Sans','Hiragino Kaku Gothic ProN','Noto Sans JP',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:15px;line-height:1.6;}
+  /* NAV */
+  .nav{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--border);display:flex;z-index:100;padding-bottom:env(safe-area-inset-bottom);box-shadow:0 -2px 12px rgba(0,0,0,0.06);}
+  .nav-btn{flex:1;padding:10px 4px 6px;background:none;border:none;color:var(--text-sub);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;font-family:inherit;transition:color 0.2s;}
+  .nav-btn.active{color:var(--accent);}
+  .nav-btn svg{width:22px;height:22px;}
 
-/* LOCK */
-#lock-screen{position:fixed;inset:0;z-index:1000;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:40px 24px 24px;overflow-y:auto;}
-#lock-screen.hidden{display:none;}
-.lock-icon{font-size:48px;margin-bottom:12px;}
-.lock-title{font-size:22px;font-weight:700;margin-bottom:6px;}
-.lock-sub{font-size:14px;color:var(--text-sub);margin-bottom:20px;text-align:center;}
-.pin-dots{display:flex;gap:16px;margin-bottom:16px;}
-.pin-dot{width:16px;height:16px;border-radius:50%;border:2px solid var(--accent);background:transparent;transition:background 0.15s;}
-.pin-dot.filled{background:var(--accent);}
-.pin-pad{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;width:100%;max-width:280px;}
-.pin-key{aspect-ratio:1;border-radius:50%;border:none;background:var(--surface);color:var(--text);font-size:22px;font-weight:600;font-family:inherit;cursor:pointer;box-shadow:var(--shadow);display:flex;align-items:center;justify-content:center;transition:background 0.15s,transform 0.1s;}
-.pin-key:active{background:var(--accent-light);transform:scale(0.94);}
-.pin-key.del{font-size:18px;background:transparent;box-shadow:none;color:var(--text-sub);}
-.pin-key.empty{background:transparent;box-shadow:none;cursor:default;}
-.lock-error{font-size:13px;color:#C04040;margin-bottom:12px;min-height:18px;text-align:center;}
-.lock-note{font-size:12px;color:#8B2035;margin-top:16px;text-align:center;line-height:1.6;}
+  /* PAGES */
+  .page{display:none;padding:16px 16px 90px;max-width:480px;margin:0 auto;}
+  .page.active{display:block;}
 
-/* NAV */
-.nav{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--border);display:flex;z-index:100;padding-bottom:env(safe-area-inset-bottom);box-shadow:0 -2px 12px rgba(0,0,0,0.06);}
-.nav-btn{flex:1;padding:10px 4px 6px;background:none;border:none;color:var(--text-sub);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;font-family:inherit;transition:color 0.2s;}
-.nav-btn.active{color:var(--accent);}
-.nav-btn svg{width:22px;height:22px;}
+  /* HEADER */
+  .page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;padding-top:8px;}
+  .page-title{font-size:20px;font-weight:700;letter-spacing:-0.3px;}
+  .today-label{font-size:13px;color:var(--text-sub);}
 
-/* PAGES */
-.page{display:none;padding:16px 16px 90px;max-width:480px;margin:0 auto;}
-.page.active{display:block;}
-.page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;padding-top:8px;}
-.page-title{font-size:20px;font-weight:700;letter-spacing:-0.3px;}
+  /* BACK BUTTON */
+  .back-btn{display:flex;align-items:center;gap:4px;background:none;border:none;color:var(--accent);font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;padding:0;margin-bottom:16px;}
+  .back-btn svg{width:18px;height:18px;}
 
-/* CARD */
-.card{background:var(--surface);border-radius:var(--radius);padding:18px;margin-bottom:14px;box-shadow:var(--shadow);}
-.card-title{font-size:12px;font-weight:600;color:var(--text-sub);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:14px;}
+  /* DATE PICKER ROW */
+  .date-picker-row{display:flex;align-items:center;gap:10px;margin-bottom:4px;}
+  .date-picker-row input[type="date"]{flex:1;padding:8px 10px;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:var(--surface2);color:var(--text);font-family:inherit;font-size:14px;outline:none;}
+  .date-picker-row input[type="date"]:focus{border-color:var(--accent);}
 
-/* SCORE */
-.score-row{display:flex;gap:6px;justify-content:center;}
-.score-btn{flex:1;aspect-ratio:1;border:2px solid var(--border);border-radius:12px;background:var(--surface2);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:20px;transition:all 0.15s;padding:4px;}
-.score-btn span{font-size:9px;color:var(--text-sub);font-weight:600;line-height:1.3;text-align:center;white-space:pre-line;}
-.score-btn.selected{border-color:transparent;transform:scale(1.06);box-shadow:0 4px 14px rgba(0,0,0,0.12);}
-.score-btn[data-score="1"].selected{background:var(--score-1);}
-.score-btn[data-score="2"].selected{background:var(--score-2);}
-.score-btn[data-score="3"].selected{background:var(--score-3);}
-.score-btn[data-score="4"].selected{background:var(--score-4);}
-.score-btn[data-score="5"].selected{background:var(--score-5);}
+  /* CARD */
+  .card{background:var(--surface);border-radius:var(--radius);padding:18px;margin-bottom:14px;box-shadow:var(--shadow);}
+  .card-title{font-size:12px;font-weight:600;color:var(--text-sub);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:14px;}
 
-/* COLLAPSIBLE */
-.collapsible-header{display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;padding:2px 0;}
-.collapsible-header svg{width:18px;height:18px;color:var(--text-sub);transition:transform 0.2s;flex-shrink:0;}
-.collapsible-header.open svg{transform:rotate(180deg);}
-.collapsible-body{display:none;margin-top:14px;}
-.collapsible-body.open{display:block;}
+  /* SCORE */
+  .score-row{display:flex;gap:6px;justify-content:center;}
+  .score-btn{flex:1;aspect-ratio:1;border:2px solid var(--border);border-radius:12px;background:var(--surface2);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:20px;transition:all 0.15s;padding:4px;}
+  .score-btn span{font-size:9px;color:var(--text-sub);font-weight:600;line-height:1.3;text-align:center;white-space:pre-line;}
+  .score-btn.selected{border-color:transparent;transform:scale(1.06);box-shadow:0 4px 14px rgba(0,0,0,0.12);}
+  .score-btn[data-score="1"].selected{background:var(--score-1);}
+  .score-btn[data-score="2"].selected{background:var(--score-2);}
+  .score-btn[data-score="3"].selected{background:var(--score-3);}
+  .score-btn[data-score="4"].selected{background:var(--score-4);}
+  .score-btn[data-score="5"].selected{background:var(--score-5);}
 
-textarea{width:100%;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:var(--surface2);color:var(--text);font-family:inherit;font-size:14px;padding:12px;resize:none;min-height:100px;outline:none;transition:border-color 0.2s;}
-textarea:focus{border-color:var(--accent);}
+  /* COLLAPSIBLE */
+  .collapsible-header{display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;padding:2px 0;}
+  .collapsible-header svg{width:18px;height:18px;color:var(--text-sub);transition:transform 0.2s;flex-shrink:0;}
+  .collapsible-header.open svg{transform:rotate(180deg);}
+  .collapsible-body{display:none;margin-top:14px;}
+  .collapsible-body.open{display:block;}
 
-/* HABITS */
-.habit-list{display:flex;flex-direction:column;gap:8px;}
-.habit-simple{display:flex;align-items:center;gap:10px;background:var(--surface2);border-radius:var(--radius-sm);padding:11px 14px;cursor:pointer;border:1.5px solid transparent;transition:all 0.15s;user-select:none;}
-.habit-simple.checked{background:var(--accent-light);border-color:var(--accent);}
-.habit-check{width:20px;height:20px;border-radius:5px;border:2px solid var(--border);background:var(--surface);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all 0.15s;}
-.habit-simple.checked .habit-check{background:var(--accent);border-color:var(--accent);}
-.habit-check svg{width:12px;height:12px;color:white;display:none;}
-.habit-simple.checked .habit-check svg{display:block;}
-.habit-name{font-size:14px;font-weight:500;flex:1;}
-.habit-dual{background:var(--surface2);border-radius:var(--radius-sm);padding:10px 14px;}
-.habit-dual-top{display:flex;align-items:center;}
-.habit-dual-name{font-size:14px;font-weight:500;flex:1;}
-.habit-dual-btns{display:flex;gap:6px;}
-.dual-btn{padding:5px 14px;border-radius:20px;border:1.5px solid var(--border);background:var(--surface);color:var(--text-sub);font-size:12px;font-weight:600;font-family:inherit;cursor:pointer;transition:all 0.15s;white-space:nowrap;}
-.dual-btn.sel-self{background:var(--accent-light);border-color:var(--accent);color:var(--accent-dark);}
-.dual-btn.sel-assist{background:var(--assist);border-color:var(--assist-border);color:var(--assist-text);}
+  /* TEXTAREA */
+  textarea{width:100%;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:var(--surface2);color:var(--text);font-family:inherit;font-size:14px;padding:12px;resize:none;min-height:100px;outline:none;transition:border-color 0.2s;}
+  textarea:focus{border-color:var(--accent);}
 
-/* TAGS */
-.tag-grid{display:flex;flex-wrap:wrap;gap:8px;}
-.tag-btn{padding:6px 14px;border-radius:20px;border:1.5px solid var(--border);background:var(--surface2);color:var(--text-sub);font-size:13px;font-family:inherit;cursor:pointer;transition:all 0.15s;}
-.tag-btn.selected{background:var(--accent-light);border-color:var(--accent);color:var(--accent-dark);font-weight:600;}
+  /* HABITS */
+  .habit-list{display:flex;flex-direction:column;gap:8px;}
+  .habit-simple{display:flex;align-items:center;gap:10px;background:var(--surface2);border-radius:var(--radius-sm);padding:11px 14px;cursor:pointer;border:1.5px solid transparent;transition:all 0.15s;user-select:none;}
+  .habit-simple.checked{background:var(--accent-light);border-color:var(--accent);}
+  .habit-check{width:20px;height:20px;border-radius:5px;border:2px solid var(--border);background:var(--surface);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all 0.15s;}
+  .habit-simple.checked .habit-check{background:var(--accent);border-color:var(--accent);}
+  .habit-check svg{width:12px;height:12px;color:white;display:none;}
+  .habit-simple.checked .habit-check svg{display:block;}
+  .habit-name{font-size:14px;font-weight:500;flex:1;}
+  .habit-dual{background:var(--surface2);border-radius:var(--radius-sm);padding:10px 14px;}
+  .habit-dual-top{display:flex;align-items:center;}
+  .habit-dual-name{font-size:14px;font-weight:500;flex:1;}
+  .habit-dual-btns{display:flex;gap:6px;}
+  .dual-btn{padding:5px 14px;border-radius:20px;border:1.5px solid var(--border);background:var(--surface);color:var(--text-sub);font-size:12px;font-weight:600;font-family:inherit;cursor:pointer;transition:all 0.15s;white-space:nowrap;}
+  .dual-btn.sel-self{background:var(--accent-light);border-color:var(--accent);color:var(--accent-dark);}
+  .dual-btn.sel-assist{background:var(--assist);border-color:var(--assist-border);color:var(--assist-text);}
 
-.save-btn{width:100%;padding:16px;background:var(--accent);color:white;border:none;border-radius:var(--radius);font-size:16px;font-weight:700;font-family:inherit;cursor:pointer;letter-spacing:0.3px;transition:background 0.2s,transform 0.1s;margin-top:4px;}
-.save-btn:active{transform:scale(0.98);}
-.save-btn:hover{background:var(--accent-dark);}
+  /* TAGS */
+  .tag-grid{display:flex;flex-wrap:wrap;gap:8px;}
+  .tag-btn{padding:6px 14px;border-radius:20px;border:1.5px solid var(--border);background:var(--surface2);color:var(--text-sub);font-size:13px;font-family:inherit;cursor:pointer;transition:all 0.15s;}
+  .tag-btn.selected{background:var(--accent-light);border-color:var(--accent);color:var(--accent-dark);font-weight:600;}
 
-/* HISTORY */
-.history-entry{background:var(--surface);border-radius:var(--radius);padding:16px;margin-bottom:10px;box-shadow:var(--shadow);cursor:pointer;transition:transform 0.1s;}
-.history-entry:active{transform:scale(0.99);}
-.history-entry-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
-.history-date{font-size:13px;color:var(--text-sub);font-weight:600;}
-.history-score{font-size:20px;}
-.history-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px;}
-.history-tag{font-size:11px;padding:2px 8px;border-radius:10px;background:var(--accent-light);color:var(--accent-dark);}
-.history-note{font-size:13px;color:var(--text-sub);margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  /* SAVE */
+  .save-btn{width:100%;padding:16px;background:var(--accent);color:white;border:none;border-radius:var(--radius);font-size:16px;font-weight:700;font-family:inherit;cursor:pointer;letter-spacing:0.3px;transition:background 0.2s,transform 0.1s;margin-top:4px;}
+  .save-btn:active{transform:scale(0.98);}
+  .save-btn:hover{background:var(--accent-dark);}
 
-/* GRAPH */
-.graph-controls{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;}
-.period-btn{padding:7px 14px;border-radius:20px;border:1.5px solid var(--border);background:var(--surface2);color:var(--text-sub);font-size:13px;font-family:inherit;cursor:pointer;transition:all 0.15s;}
-.period-btn.active{background:var(--accent);border-color:var(--accent);color:white;font-weight:600;}
-.date-range-row{display:flex;gap:8px;align-items:center;margin-bottom:16px;}
-.date-range-row input[type="date"]{flex:1;padding:8px 10px;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:var(--surface2);color:var(--text);font-family:inherit;font-size:13px;outline:none;}
-.date-range-row span{color:var(--text-sub);font-size:13px;}
-canvas{width:100%!important;border-radius:var(--radius-sm);}
-.stats-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:14px;}
-.stat-box{background:var(--surface2);border-radius:var(--radius-sm);padding:12px;text-align:center;}
-.stat-val{font-size:22px;font-weight:700;color:var(--accent);}
-.stat-lbl{font-size:11px;color:var(--text-sub);margin-top:2px;}
-.print-btn{width:100%;padding:13px;background:var(--surface2);color:var(--text);border:1.5px solid var(--border);border-radius:var(--radius);font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:14px;}
-.habit-stat-list{display:flex;flex-direction:column;gap:8px;}
-.habit-stat-row{display:flex;align-items:center;gap:10px;}
-.habit-stat-label{font-size:13px;width:100px;flex-shrink:0;}
-.habit-stat-bar-wrap{flex:1;background:var(--surface2);border-radius:4px;height:10px;overflow:hidden;}
-.habit-stat-bar{height:100%;background:var(--accent);border-radius:4px;}
-.habit-stat-bar.assist{background:var(--assist-border);}
-.habit-stat-pct{font-size:12px;font-weight:700;color:var(--accent);width:36px;text-align:right;flex-shrink:0;}
+  /* HISTORY */
+  .history-entry{background:var(--surface);border-radius:var(--radius);padding:16px;margin-bottom:10px;box-shadow:var(--shadow);cursor:pointer;transition:transform 0.1s;}
+  .history-entry:active{transform:scale(0.99);}
+  .history-entry-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+  .history-date{font-size:13px;color:var(--text-sub);font-weight:600;}
+  .history-score{font-size:20px;}
+  .history-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px;}
+  .history-tag{font-size:11px;padding:2px 8px;border-radius:10px;background:var(--accent-light);color:var(--accent-dark);}
+  .history-note{font-size:13px;color:var(--text-sub);margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 
-/* SETTINGS */
-.setting-section{margin-bottom:24px;}
-.setting-label{font-size:13px;font-weight:700;color:var(--text-sub);margin-bottom:10px;letter-spacing:0.5px;}
-.setting-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);}
-.setting-row:last-child{border-bottom:none;}
-.setting-row-label{font-size:14px;font-weight:500;}
-.setting-row-sub{font-size:12px;color:var(--text-sub);margin-top:2px;}
-.text-btn{padding:7px 16px;border-radius:20px;border:1.5px solid var(--border);background:var(--surface2);color:var(--text);font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;white-space:nowrap;transition:all 0.15s;}
-.text-btn.danger{border-color:#E8A598;color:#C04040;background:#FFF0F0;}
-.text-btn.accent{border-color:var(--accent);color:var(--accent-dark);background:var(--accent-light);}
+  /* GRAPH */
+  .graph-controls{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;}
+  .period-btn{padding:7px 14px;border-radius:20px;border:1.5px solid var(--border);background:var(--surface2);color:var(--text-sub);font-size:13px;font-family:inherit;cursor:pointer;transition:all 0.15s;}
+  .period-btn.active{background:var(--accent);border-color:var(--accent);color:white;font-weight:600;}
+  .date-range-row{display:flex;gap:8px;align-items:center;margin-bottom:16px;}
+  .date-range-row input[type="date"]{flex:1;padding:8px 10px;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:var(--surface2);color:var(--text);font-family:inherit;font-size:13px;outline:none;}
+  .date-range-row span{color:var(--text-sub);font-size:13px;}
+  canvas{width:100%!important;border-radius:var(--radius-sm);}
+  .stats-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:14px;}
+  .stat-box{background:var(--surface2);border-radius:var(--radius-sm);padding:12px;text-align:center;}
+  .stat-val{font-size:22px;font-weight:700;color:var(--accent);}
+  .stat-lbl{font-size:11px;color:var(--text-sub);margin-top:2px;}
+  .print-btn{width:100%;padding:13px;background:var(--surface2);color:var(--text);border:1.5px solid var(--border);border-radius:var(--radius);font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:14px;}
 
-/* THEME GRID */
-.theme-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
-.theme-option{border:2px solid var(--border);border-radius:var(--radius-sm);padding:10px 6px;cursor:pointer;text-align:center;font-size:11px;font-weight:600;transition:all 0.15s;background:var(--surface2);}
-.theme-option .swatch{width:32px;height:32px;border-radius:8px;margin:0 auto 5px;border:1px solid rgba(0,0,0,0.08);}
-.theme-option.active{border-color:var(--accent);background:var(--accent-light);}
-.premium-lock{opacity:0.5;pointer-events:none;position:relative;}
-.premium-badge{font-size:10px;background:#E8A030;color:white;padding:2px 6px;border-radius:6px;margin-left:4px;}
+  /* HABIT STATS */
+  .habit-stat-list{display:flex;flex-direction:column;gap:8px;}
+  .habit-stat-row{display:flex;align-items:center;gap:10px;}
+  .habit-stat-label{font-size:13px;width:100px;flex-shrink:0;}
+  .habit-stat-bar-wrap{flex:1;background:var(--surface2);border-radius:4px;height:10px;overflow:hidden;}
+  .habit-stat-bar{height:100%;background:var(--accent);border-radius:4px;transition:width 0.4s;}
+  .habit-stat-bar.assist{background:var(--assist-border);}
+  .habit-stat-pct{font-size:12px;font-weight:700;color:var(--accent);width:36px;text-align:right;flex-shrink:0;}
 
-/* ICON SET GRID */
-.iconset-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;}
-.iconset-option{border:2px solid var(--border);border-radius:var(--radius-sm);padding:10px;cursor:pointer;text-align:center;font-size:12px;font-weight:600;background:var(--surface2);transition:all 0.15s;}
-.iconset-option .icons-preview{font-size:18px;letter-spacing:2px;margin-bottom:4px;}
-.iconset-option.active{border-color:var(--accent);background:var(--accent-light);}
+  /* SETTINGS */
+  .setting-section{margin-bottom:24px;}
+  .setting-label{font-size:13px;font-weight:700;color:var(--text-sub);margin-bottom:10px;letter-spacing:0.5px;}
+  .theme-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+  .theme-option{border:2px solid var(--border);border-radius:var(--radius-sm);padding:12px 8px;cursor:pointer;text-align:center;font-size:12px;font-weight:600;transition:all 0.15s;background:var(--surface2);}
+  .theme-option .swatch{width:28px;height:28px;border-radius:50%;margin:0 auto 6px;}
+  .theme-option.active{border-color:var(--accent);background:var(--accent-light);}
+  .setting-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);}
+  .setting-row:last-child{border-bottom:none;}
+  .setting-row-label{font-size:14px;font-weight:500;}
+  .setting-row-sub{font-size:12px;color:var(--text-sub);margin-top:2px;}
+  .text-btn{padding:7px 16px;border-radius:20px;border:1.5px solid var(--border);background:var(--surface2);color:var(--text);font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;white-space:nowrap;transition:all 0.15s;}
+  .text-btn.danger{border-color:#E8A598;color:#C04040;background:#FFF0F0;}
 
-/* HABIT EDITOR */
-.habit-edit-item{display:flex;align-items:center;gap:8px;background:var(--surface2);border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:8px;}
-.habit-edit-name{flex:1;font-size:14px;font-weight:500;}
-.habit-edit-type{font-size:11px;color:var(--text-sub);background:var(--surface);border-radius:6px;padding:2px 7px;border:1px solid var(--border);}
-.habit-edit-del{background:none;border:none;color:#C04040;font-size:18px;cursor:pointer;padding:0 4px;line-height:1;}
+  /* MISC */
+  .empty-state{text-align:center;padding:40px 20px;color:var(--text-sub);}
+  .empty-state .icon{font-size:48px;margin-bottom:12px;}
+  .empty-state p{font-size:14px;}
+  .badge{font-size:12px;background:var(--accent-light);color:var(--accent-dark);padding:3px 8px;border-radius:10px;font-weight:600;white-space:nowrap;line-height:1.4;}
+  .toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:var(--text);color:var(--bg);padding:10px 20px;border-radius:20px;font-size:14px;font-weight:600;opacity:0;transition:opacity 0.3s;pointer-events:none;white-space:nowrap;z-index:300;}
+  .toast.show{opacity:1;}
 
-/* PREMIUM TOGGLE */
-.toggle-wrap{display:flex;align-items:center;gap:10px;}
-.toggle{position:relative;width:44px;height:24px;flex-shrink:0;}
-.toggle input{opacity:0;width:0;height:0;}
-.toggle-slider{position:absolute;inset:0;background:var(--border);border-radius:12px;cursor:pointer;transition:0.2s;}
-.toggle-slider:before{content:"";position:absolute;width:18px;height:18px;left:3px;top:3px;background:white;border-radius:50%;transition:0.2s;}
-input:checked + .toggle-slider{background:var(--accent);}
-input:checked + .toggle-slider:before{transform:translateX(20px);}
-
-/* MISC */
-.badge{font-size:12px;background:var(--accent-light);color:var(--accent-dark);padding:3px 8px;border-radius:10px;font-weight:600;white-space:nowrap;line-height:1.4;}
-.empty-state{text-align:center;padding:40px 20px;color:var(--text-sub);}
-.empty-state .icon{font-size:48px;margin-bottom:12px;}
-.empty-state p{font-size:14px;}
-.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:var(--text);color:var(--bg);padding:10px 20px;border-radius:20px;font-size:14px;font-weight:600;opacity:0;transition:opacity 0.3s;pointer-events:none;white-space:nowrap;z-index:300;}
-.toast.show{opacity:1;}
-#app-icon{background-image:url("data:image/png;base64,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");background-size:cover;background-position:center;}
-
-@media print{
-  body > *{display:none!important;}
-}
+  #print-frame{display:none;}
+  #app-icon{background-image:url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAABQCAYAAACOEfKtAAABWGlDQ1BJQ0MgUHJvZmlsZQAAeJx9kLFLw1AQxr9WpaB1EB0cHDKJQ5SSCro4tBVEcQhVweqUvqapkMZHkiIFN/+Bgv+BCs5uFoc6OjgIopPo5uSk4KLleS+JpCJ6j+N+fO+74zggOW5wbvcDqDu+W1zKK5ulLSX1jAS9IAzm8Zyur0r+rj/j/T703k7LWb///43Biukxqp+UGcZdH0ioxPqezyXvE4+5tBRxS7IV8onkcsjngWe9WCC+JlZYzagQvxCr5R7d6uG63WDRDnL7tOlsrMk5lBNYxA48cNgw0IQCHdk//LOBv4BdcjfhUp+FGnzqyZEiJ5jEy3DAMAOVWEOGUpN3ju53F91PjbWDJ2ChI4S4iLWVDnA2Rydrx9rUPDAyBFy1ueEagdRHmaxWgddTYLgEjN5Qz7ZXzWrh9uk8MPAoxNskkDoEui0hPo6E6B5T8wNw6XwBA6diE8HYWhMAABtoSURBVHjalVxZkxzHcf6yqntm9sRiF0sABEAcIimCJEiELZm2wiGLEXpy2I6wH/17/FfkFz0obPlFEZJMW5Z1yzrAE8RBAASwuwD2np2Z7qr0Q11Z3T2zqyU3MDtHT3d2VuaXX35Z9P2ffMA4wQ8zg4hw0h8GAPL/xmP4J8FIr1D2L7s3tb4vPE9EICIws3uOyH2SOTtq+CEmWHRfojwOkTsD6w4JgOJ3TrMHABRdL1owiAGmcBINIxKBwXD/+4sI73HP+D8IACHZQV6iym+O/2zTiN0nzu644RvZfVc4X/YGJTCsf4KRbki4Dmtt5811j483HgAUFu7kxenEa2dph3T4dJLg9O1EYIY7GkN4j7yT8nHDw9BtrGgqShcXPI7Cd3oPCoZFuAHITjy78OjB8vuIox2mGUz4b/JAZvdhZwRqWJ/yiyGKFs2PS5mR0xLkqSfS8jQSF8/JAO6UuOEt0y6SW0v+eGOkjwZPDecvb6y4nc5ezCgYJNZobpjk8sntvbNNNcZxJ5o/H7yKwSAQM7rvNU310JPE7m4jUx6vo88SOKxATt8uz9eKDxVp7ed3L9wFGXCPO+lOI/pYSs1l6b2T5Pf7hHDSm9GZ4DhmAZ9kIAIUxCpSfsmG0MzRy9y7FfKo7i+Cw0pTYOY8iXTfraaXJ4uEQ4Ul6z5n/eHD85Td5eTBPgsSy2s+sfG6lybFBAJGNAURYCxwaq6P4bhCZawPqcmsHP4mFqGURUbOIUW4ZhWWZ/AM656IQbcdeAmWGWzZ/Zve7l93f1u/IJi4I+ZBhAZkYeKknmc95LARvhAsA8zuYkP8DLDHGMalM6uYK0soUlDKvR6uAeEzTC3oxTw9sRQ2Btt8IWfBk4NniaUcg65tJZKWN6ON7RIcmfJDwkGayxWUQQ+aciQiBWMZVW0x19O4ur6E0fgIuxsVUBsopXJMKdBF+1xn4sC01AIcSXgIrUzaBXCPi0/Hvi96jAsREYsRiZgfHlCWibkDbDsvtVgclLi4egpXXzqNnmLceOUsVuYHeLR9iGf7R6iNyQzYda6zzl0x28YSlktRrDF/4hJDnSQLNk+IBdCVy9F9v/vPcgrdzvG9O7JKxuVGYmKOZ2iZXfVhgdowdg5HeLF/CKULVLXFznCCw3EFa233NYTA2Yj9LgxSdhOLacsurmu5pJBXJtNKvFSxCGzrjRCWn4V1j9kf0AdxDn8zZTAn92agMrVbQkpD+UBvvGVVhFuEUWXwxfM9PNo+wOrSAm492MSdrR2szPUwMQaaCDZmRIYlcimQAUs23SgRGznahrpLuSZUSl4UolkXXs+zoc0isYpWTwYXy5ApB8kxU9vW/bTM6GnCzcsvo9Aatx5uYDipwcxYnuvBMHA4mqDQOt70+V6BcW1xZ2MbO0cTlEphOK5dORdDFrWu2yUjD55JZHnxvmImnhPZNUsTxOBQkZBbgkq8I1a2VhQYdnZ9mcUwtJd9KEYsM9577RIurC4CIMz3C/zow/u4sr6C966dRW0Y//3pYzw/HKKuGYoApQsoRXi8c4ijcQ0mgrGcLatWbG88YG88goA3DA9jwvpu1L9MBCaCZfcb4AFDxbsTQIQVfzXLra6gPLMuFTGIPbkBAibGYH15HudXFjEeG0wmNdYW53B6foDrF85AK425QQ8X1xZQ1RbXL6zjlTOnMLEGRMDucITKWu9RNLWkZGZYtm1c3HHORaQSfDnVyUNJ6oBltcAd8ZIws9zsyHZN49lWdeRunAWwOOi5mEfuGJYZ/UJhoFzC6BFjUlV49/JLuHntPMxkguFogq2DEQrdgCwzsi1bBuj4aquI5Ra6a9zmh0IV0SrzxDGmwZ72suTWsRgqZ3oiLHHB/WhSR1ZHa41xZXAwMYBS6PUUrCUMa8LNS6sYD4/Q7/cw1+uhqg+gqYBtelUDRCZ+kGZCsHBNqmspzfq11nr0zwgQKMABtu4xpsAcBmAJYOVIThMrAZ6C6Tgay1iLQik82Rni8c4BBnN9KE249XALz/eP8PsHW3h+cIRf3X2Czd1D9DSh3+9hfziCIuAf/vw1vHftXE7BdUTl5jlLzrArDBXHEZgZjOFEtFp2bG9ew7oXA/YFw0GKECkplUUsYAERHJSQ/HQXWPdZ+KefPcL500vYPRxhc/cQS4MS97d2cX9rDwfjCgTG7afbOL++gv+7t4G3L5zBmaU5rMyV+OOjLewMJ9DK1/OcByn2kMY5ZyTn4iqTrCiB3BKOySO6ZQiDOTEZqC9iwdMRBSgcs3KqKnwCgI6nmAzDgtzvpu67qHdNhOG4wt2n27h+YQ1fu3oWc2UBUgqVMdjaG+LBs3386t5T1Hce49zKMtaX5wFrcThhbB9OoEiJUhQ+uopIb0UaIJVTfIEk8QRDYSHZkryuzC/MJgSOVqPDARmBFwPgBSkkPvT4Emlm6UfAuDZYWxzgW29exvJcD9ZYWB/w50uN1fkBXj+3iocv9vHb+5t4sX+IL3f2sTTXx89vP8Ha4gDDcY2RMVCkMgqfRRuCu3NIorb8X0VwReqg0bOL8LBFXpxjbCUI5VYmpixEkDDu8Ux1Rrt6j5zvFfjmG5ew1C8wGlfu3MVdr40BwHhldQlnTy3ixx/ew48/fIRCAe9cXMPb167h4/ub+N/Pn0CX3uGYMqwZD5b1UFJLItba1kJ1ddqaqT7gopMywl3GkbBHxrQM8wlSkyNl5fkeAiaVwfULa1iZ72Fc1VDKG49ylEBKYVwZFGB8+8Y1LPQ05vs9vH35LGBcxg40lrWiaODO3mJaTdI+/nOqmWWnGXEatdP1ubxJNIN0YE9eBAaYVGSEmUP14kC7NcCg18PF1SXUxkApT0MQdx5YKULNjFIRvn7tHIyxOBhVeLY7xO+/eAqtKJaKTWfJabw2bmRfOCAkkRNR9o3WYBNAtYzNvj2KxF63YQ37IpATuqBmi9G3IBmYKzTme7pxnEA8cOu8FBEmVY1LZ1bw0eNtfO9Xn0KRwqgy0IqS93Xgu5wnpKyLaAXtp4KlrbUR8zDnvah4sYEEmNnkaRKuoqZueS1FzBjwIFtqA3VRXrVoDCbBeuQ3mzkB9nOn5nE0saiNhfJwqCsXsjgI+3aq9WWtjXRfCkkFdxwo75B5Y5EIWoKZSQw1R65MdikRsJ/N4RKxynoLsqUpu3AhUREYk9qgthb9wsUwSlxT7n0kmUZ3Uafm+lDKvdNEKEaRP4RPVJQ1L8UaI4pxT7qW4uBRnOrN0AeIrzWaKixYF0c05P2N7GZYCA/zcY3zRhQR5QCa2jFWKYWjicGz/RF0sEQLaLCPiZw9ZrIolDOA9Z4ZSFfjiRRL3OoNyZXYju2QTSXR2bPpg5HK8saTS0u6smy8TEtKsUBvBOsmYJ4ehxmGGZ9t7EC0BFu9mM4syoTKtnsA2XlyasMGG1g0SlkRzsI5qna5RJhKiuFEOqSpmS0GaFlrBvq9GQsbLQBmRlkoPHi2j829I5RagTta413yCxBh72iCujMOowNCNdFIG8IEx1Iy65ykRzytepjleV16F0beTq0BRy741wxz/LVIPd7aWHzy+AUISgaoGTW8M8DW/tAhA8szoZiFuIkZicJZvR/aD2oW9mPbjgGprJtuUMoIy5bgzBuKO72Bg8EaMg9nVFeaPt09xLgyMSlM098wGJocfb+xc+h7JzydE/QESd79oqyNmioVzxuAu2q8lMMMt905xD93V9r8IJP0ShGwOWP5MljQjlxiWdnkAYoUJsZgXNdQUB18JWUQp9AaT3YPsT+aQCnKdD/5ivGJlH0PB6lMlZIatiTaHOzkbWAh+2DKJG6IaZ4yCZhF6AukZgtl9XED32YFO/7k8OAytdP0aVWi1ApWMDrdgiTnI/c2dwPBkivMGHmzC6kjyI3uUUbABwkICIVTZAZ6puHW/qAW6ET6tkNSJmEoLP6kn7yxkyQX8PIMIsLEGLy0NI+5foFJbdJNa1ZUYBRKYWc4wsMX+yi0l6SEuxpWg6UGS06NYoKT/tGLoYhSm1OFRrbNNDLcwHxtyN4VQ7LAa0/WeJ8qdozwimPccv0PjRsX1xwk4umCIwagtca9zT0Mx2Mo2YpgdMqKpYwlJQxf+8YWYx5yRC3crnvBbXwmpbFd3F2XMZqf7454EiZQFjLYwQVMKot3L53B2ZV5jKoKasZxCYTKMO5s7kCRhjVBSBpWLif9DUspHMBdYSezTSz0ukq5bjE5T/G8NhnRUFGxBbFK1H9QcQslGYKEI1QhhEhGhBLcWMZcqXHj0iqMNbOFPwB6hcKj54fY3B1CK+XalMKFUixuVz65VrENwYTQUPTDj2ms5LhotkyoBWkyasiXhdZlNGSipkQABFlvIDNrY3F5bQkrcz2n75uVgLyC6/ONHdReC8gBwljbkO5NY5/42F6R6wvPWIbUrEqoAXlaJCuJvoijkyLzwexUnSQVDNyuc7jRa45GZbx8eqGFmaUnBjiiFeFgVOHB8z0UhXZQTGoR0a2fnta/bghfs3ipWmWM9TiIlcB4SaXp6CZKGTLQ/dncBnltHnA0MahqBpFCbW1s4tTWJIkY3BLvWpbkjahAWOj3M7KlWUcH2XChCzx8foDdYcB+bYZ92nMt6ZxQ3srXkz4wCH8YQrbFjUUYSqyGpjl26uRStV43wxiUCl/76kW82B/hwy+fY3VxgG++cQGKgP/88EtsD8cgANWkBimg1IXoeuUjB9zAo7PkdJaBT59sx1ZsF1/ZFI5K6p49tMu/S1J1JPSBsCmuSUxEKcDKNM4izoPyg1ovXyuIMJrU+MZrL+PGlbP4m+sXsTrfw83LZ/Hy2jLOrS7h3csvYVTVWB4U+MvXX8Yb51ddtQGblA5iGVnL2Nw9bKtOGkuqVxS4/2wfD1/sOcKhEbudJ3WHPulZHKoRdu0GIpVR/MHQhfVZ0SVAzmk26u7TMnWAVyJYa/CtNy/h/Okl/OB3d7EyP0A9mkBrhXMrC1jqa5jKJYCeBlYXBvj7P7uG5YV5gIGqvo3bm3voF1ow2Z74VwqfPt3BzSvr0OSyqjwny0ChFCY14xe3n3idj6CgmERY5dS7FoVBs861Urk1JVUqbhimq9AmUQnEvoBQthKAqjZ4aXkRr587jZX5El//ynkcVQZFT4O0xrByMjNNDNUr8OX2IW5cOoPlxXkMj0ZgW+PV82eymjtwlMYyNDG2D47w8883UJYahVaAMMKgLMFQ+OGth9jaH7pSTxyEKKgoVJSqQZLJnM/sWZkAAs2GdmuiIAZI0dS6NARx7pDsBuxZs2tuVybIci3m+gP810f3MN9/BVu7R7i3uYP5foH1U+fxdPMF7mzu4W/fvQpbWQeISSW4JBURgu0vtcJv723g8GiE9147j+W5PhQBE8N4uLGLX97dwNPdIfpl4ckHQia15lwRkWsScyQg2wxtmUnSahey4uhO3w1aSSgRiJznXTmzhG+8eRk/uXUPHz16gXdePY/bT+/j3tYevvM/H4OIMCgL/PHBBu5u7mD/aOybNQxF1klqlcLdjR1Yi6yYT5I6x+iUWuHjJzv44vkBTs2X6JcF9ocVdoYjEBFKrR32a4S5ZhOMk3p0Kl3clhZzXqmBmwrVZiyYRbU79zOWcf3iOtZP9fDXb1zCv//mLn73YAvDUYWbl8/ilbVFrCz0USoFw4z9owqPtvfx8Zcv8LNPHuAf37uOXg/44xebuLOx67wnBHoftFw3LkHDQa9AbRhbe2MAYwBAWRQAMwxbZD7BQunfrOeFp8cmVTZdiikZPN2eIjcMtUhTIhL9Dv91HtWHztqz/SFeV2soNGE4qXFmeRF/d/MqVhcGkVVhZpBSOH+K8fr5Fdy8vI4PPnqEf/3Jx+j3NB7vHEBrHQM8d8jQKNbKziZapZ4yd3T0JKvUXWVR4xHlFQNoSr2eXiuavFe4A8yq0xvluIP1fYrff7GFXtnD3Y1nuPHKGt5/6xJsXWNcT8As2OmotWOszPXwT3/xGv7jN3fw0eMXWOiXYA+0uUsfQ9TyKmq2EI6ZX0lC+bxpKbUvCSjT1KZVnAhjdm3NKAwnylSq0/obTTxUW8aP/nAX/bLE+29ewGQ8QWVc3FChMoF/TK7Eq4xFXdX49o0reGlpAZPaJCr/hKLPylgYyy2jN0fKUptBudgNJYxFGRvdbM/mU0yChGh25UIF0tUYshJWdAZk4PTiAO9fvwhTW7EIGsNjLDV5hNoyBiXh6vqCVwxQy4ua8SgQqMYyXjo1h5WFQVu2G51UGEoMyMiVdNJtDJIUmrPEo2KW7awLZ2WxtOjHVY1Xz61gea5E5RXxscFN4hf5XDLIAgSsLc01ZoKlYJ1aRCkBMNbi3VfO4ur6cic7k0rS4yes+FjDJbckzkdKXBKROmCe0m2doikGETQBV88suzKsi74RLcZ8sCZ4h44bQ3RNR+ZMiGPQe4XGBx89gGWLfqFjncw8fXyhE6IISOPEU0l0GcG2kALHeRX/4YxQpXyYt/Vl1tqWy1tmzPVKnF7sw5i2B7SZYuXH5SnKbZ7vDzMVFGCnco6pOU+NcQiarU+MsjluJQQOeDBMR7FU1ohiL5vPcyYq0pYflPNxETzS1I6/W0rAfK/EXE+MELSkcEizcPFvp5KaTAzuP9tDoTWsb192j0gEhsQd6mhSodAahdaCUUlqLwK1iAcr4pfyaiu2Ysyf0WKh8okrEqUcBz6QYn2IRqBlRkOyK1732csyo19qJ95BGjLsan1I6GCZUZYlbj18js3dIUql44BgZ483KPvZTSy9//YVfOXsaYyrOrYpmd3ohBQLZYpXDtMAlPWjgxo2hrpM59PRABMhr8jlaNSBuvOtTayY4AnljfaDy3nYo06BNpFryA96JZ5uH+Gnnz1BoQNrzJ2BL9dkE0gVOBhVOKrS0I1FWoaSq4xlmOUMKic0SELiK3bq4HZ/KN9nhtMSTkRkB20j9Mxhpi6oNcmrC1SXx6UPiQjs7ny/LPHliyH+7defu96uIhi2cf8aFro/JTatCGMOmgi/uP0YhVLoaeX1M74UizBJpcrENuaVp0jVTiR4J8qY6SJ07OXWScrvdcCimM+HhEP2dFNLgc2ZqpBiAsgxLaUu8GTnCN/9+aeoagulCMYnJxYYNdDzRhwpAHALRr/nyngTYJhFAwNwY2snOnaMLStpg9iSZ6AKp5H2WmRKFKMR/cZYytkp00MgTCrTUm+2cr9H7cYyfvCHezicGAxKnfQ1MenYvK0QRqPIDVSvLg2glcLW3hFINVnk6d4Tlp8zpG3rgDhXErAY4CAff9O+OWmeT8VRVW6rTTsDaIMiJwCT2svJSSQYaqhEmVEWGve39vDoxQEGhYYxNm9YSw1OVDikNuW4Nnjr4hreubSOSVU7JRVj6rZOknqXhrS2LX5yO4yQIFsh2p8piweFROgWFtI7OVOGd8glWq1O9gY0MMYRs23aR9xYRdjYO8q9xsc7qRJtl1fuuP2iwE8/+RJMQFkWMFIUz9MElhRFSLBNIlVspkNd8MudkyVkeholFA6FBMldoLVrl44YT/zztXXStTJTuXfrplrPNqQqjMbJNmJXLfbkytsPUSgmcG2cGoyiorhSQ3tC7FAip5Xye9gQGgg+p+gy2HFblcg9qBgMY/yIhJ4isQ1fyMDKXM9NhlCi7OP2dwyxhIQiyr/P+vMyYFc1xWXZKFBJ+eVmo0Y6evqsBEL+vcRTxa+5bSg11rskYlIczoKOiVsE+Kdq9tk429ulOdHuvHz91Dz6pXY0FKexh3Z5T27zRAaKQuOfv/kW1pYGmBjjQTOlHZKIJFXTTd836otOFQJI7gY1w3G8wMBSkvhmqF0W2oxMnW7FqKf1qL2qGZUxqRwkbivlfQZeGmjM90rUljP9iSQCJHRg3/H74NYX2D2aRHVYGpOlLMBP3YewqbSP5OoMPTc66D1WsbRjtDYfE5uCyWVNslYMwT7FzNpaTIxQrNL0BlWpNXqFhjUWXOiMpOCoxnLY0DLQ0wqWgdtPt1Fq1RFaKNfSdMTzdEr5lpyxVywAdrb6bNiuxXrZr9dMUFBrsF/CXsBts43AkhKdhQATDSVryMJ7w3GbeRF95LCfgmVCHVmd7h60sRanFwa4vLYYFfP9UreSmvMM22bQG3DLTSO5DXakpjusoDBEFEWmlhLU8Soy4xNlnCHx8UdJw4XsxGK5hqWBjrHVcNOrmvF4ZwgoHSnyrh9FhINxhf2hX4qshLQ4LchJbXFpbQl/9dWLGFcmJoo05JMPx0i8x54wSH/7LVvkJi3MYP/dxk8rGUQWIo3aUiIZYluneU1ZjID8txE/kDadcHclIfhCET57soOqrv0Yakc8sQxdaNx5uoO90cTXxUHgrlAbYFy5ZDQoNW49fIbv/uyTqG+RbIwcQ3OpVYlRtbS3jQ2TAEisu2V3/s2mEuKcCLLZaHYbP0RilSmNFjBzW2CZNuTi1igUpMzNS/6tcc3uR8/38Os7W+gN+o7XE95hLKNXahyOavzs9gZK7ZQDwU1qa3H+9CLeurTqk0sKGxYEE6okeO8K1+C9xhLaWyATt7SDVmyq1hrjYrHikAsw0zRVMmoo/YoMxXslEoRC3VFB+WY4LBhshntda40f3nqEhV6Jd66sAUJPR1rh4KjC9355D8/3RygKt6+fci06TGqLteU5XF1fxq2H29Ca4sRSXuC35bbE7ToWHaxaVhdHmV4XoO+SLIsdJcSmGswA/ct3vi93zYzSWuKkWZbjWdSgCmXpQ0Soa4M3Xl7BO5fPYHVhHpWp8ej5IX59bwsvDkcotfLUVUpGyvOMNnCLzLAKnSr8WWNaqbeLY1iXJtZtjnBQRuISNRW7JCW+jTvd2ie0cVepXZfJg+tC49ajbXz0eAeFnwqvrEW/KFBoSvWr+KJAZ2nl9XyEbKIyNfuP4++SQl2MHydoxvkeCER5eRd3aOvc95rahg+7t0miFLJ3O7Vn2t5vQP4MPFfHDGgNFLpwUCkIvmPPtr0RRdeumc32Qlti0dQAEroIbu6aKaPpe2JnAz9ih2HJAxTNvVLzuAFx96cpOinb6TZQ9tJrGM3eSlOPwwL+cKvF0OVFyPQzgsT34aBzv66GAkRuITBNUMRCRpKNi/nrKuxULQkJYVCuWJKUFYlo3W4CTeuNpKtxn1Ht2rljFzjmfOwK3FVBN/oXYho+qf4509lwQ9DOzUaa2BbZOaOKQztFOicl+rHtllrnxUAO7x2z821DqAk0NuWB6M9mWbRR+VC+KZDs00K2BRqCIhLLiqWICqkNms3HtXUGaG6Ay5aTOqvJBksP464RpEgB+X1d2G0rjBnDL3yC8Zz2pBDnsl8GlBLUmzzf1qiCBaDTnv4tlb7c5zQA9YY6QWxZ2qXs/3/Va+bOhxaqrgAAAABJRU5ErkJggg==");}  @media print{
+    body > *{ display:none!important; }
+  }
 </style>
 </head>
 <body>
@@ -218,22 +186,32 @@ input:checked + .toggle-slider:before{transform:translateX(20px);}
   <div class="lock-title" id="lock-title">ロック解除</div>
   <div class="lock-sub" id="lock-sub">4桁のPINを入力してください</div>
   <div class="pin-dots">
-    <div class="pin-dot" id="dot0"></div><div class="pin-dot" id="dot1"></div>
-    <div class="pin-dot" id="dot2"></div><div class="pin-dot" id="dot3"></div>
+    <div class="pin-dot" id="dot0"></div>
+    <div class="pin-dot" id="dot1"></div>
+    <div class="pin-dot" id="dot2"></div>
+    <div class="pin-dot" id="dot3"></div>
   </div>
   <div class="lock-error" id="lock-error"></div>
   <div class="pin-pad">
-    <button class="pin-key" onclick="pinInput(1)">1</button><button class="pin-key" onclick="pinInput(2)">2</button><button class="pin-key" onclick="pinInput(3)">3</button>
-    <button class="pin-key" onclick="pinInput(4)">4</button><button class="pin-key" onclick="pinInput(5)">5</button><button class="pin-key" onclick="pinInput(6)">6</button>
-    <button class="pin-key" onclick="pinInput(7)">7</button><button class="pin-key" onclick="pinInput(8)">8</button><button class="pin-key" onclick="pinInput(9)">9</button>
-    <button class="pin-key empty"></button><button class="pin-key" onclick="pinInput(0)">0</button><button class="pin-key del" onclick="pinDelete()">&#x232B;</button>
+    <button class="pin-key" onclick="pinInput(1)">1</button>
+    <button class="pin-key" onclick="pinInput(2)">2</button>
+    <button class="pin-key" onclick="pinInput(3)">3</button>
+    <button class="pin-key" onclick="pinInput(4)">4</button>
+    <button class="pin-key" onclick="pinInput(5)">5</button>
+    <button class="pin-key" onclick="pinInput(6)">6</button>
+    <button class="pin-key" onclick="pinInput(7)">7</button>
+    <button class="pin-key" onclick="pinInput(8)">8</button>
+    <button class="pin-key" onclick="pinInput(9)">9</button>
+    <button class="pin-key empty"></button>
+    <button class="pin-key" onclick="pinInput(0)">0</button>
+    <button class="pin-key del" onclick="pinDelete()">&#x232B;</button>
   </div>
   <button id="lock-cancel-btn" onclick="cancelPinSetup()" style="display:none;margin-top:24px;padding:10px 32px;border-radius:20px;border:1.5px solid var(--border);background:var(--surface2);color:var(--text-sub);font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;">キャンセル</button>
   <div class="lock-note" id="lock-note"></div>
 </div>
 
 <!-- 通院日バナー -->
-<div id="clinic-banner" style="display:none;position:fixed;top:0;left:0;right:0;z-index:500;color:white;padding:12px 16px;text-align:center;font-size:14px;font-weight:600;line-height:1.5;">
+<div id="clinic-banner" style="display:none;position:fixed;top:0;left:0;right:0;z-index:500;background:var(--accent);color:white;padding:12px 16px;text-align:center;font-size:14px;font-weight:600;line-height:1.5;">
   <span id="clinic-banner-text"></span>
   <button onclick="dismissClinicBanner()" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:white;font-size:20px;cursor:pointer;line-height:1;">×</button>
 </div>
@@ -242,7 +220,7 @@ input:checked + .toggle-slider:before{transform:translateX(20px);}
 <div id="page-record" class="page active">
   <div class="page-header">
     <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0;overflow:hidden;">
-      <div id="app-icon" style="width:44px;height:44px;border-radius:10px;flex-shrink:0;"></div>
+      <div id="app-icon" style="width:44px;height:44px;border-radius:10px;flex-shrink:0;background-size:cover;background-position:center;"></div>
       <div id="today-label" style="min-width:0;overflow:hidden;"></div>
     </div>
     <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
@@ -257,12 +235,16 @@ input:checked + .toggle-slider:before{transform:translateX(20px);}
   </div>
   <div class="card">
     <div class="card-title">今日の気分</div>
-    <div class="score-row" id="score-row"></div>
+    <div class="score-row">
+      <button class="score-btn" data-score="1" onclick="selectScore(1)">&#x1F61E;<span>つらい</span></button>
+      <button class="score-btn" data-score="2" onclick="selectScore(2)">&#x1F615;<span>しんどい</span></button>
+      <button class="score-btn" data-score="3" onclick="selectScore(3)">&#x1F610;<span>ふつう</span></button>
+      <button class="score-btn" data-score="4" onclick="selectScore(4)">&#x1F642;<span>よい</span></button>
+      <button class="score-btn" data-score="5" onclick="selectScore(5)">&#x1F60A;<span>とても&#10;よい</span></button>
+    </div>
   </div>
   <div class="card">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
-      <div class="card-title" style="margin:0">生活習慣</div>
-    </div>
+    <div class="card-title">生活習慣</div>
     <div class="habit-list" id="habit-list"></div>
   </div>
   <div class="card">
@@ -270,16 +252,21 @@ input:checked + .toggle-slider:before{transform:translateX(20px);}
       <div class="card-title" style="margin:0">気持ちのタグ（任意）</div>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
     </div>
-    <div class="collapsible-body" id="tags-body"><div class="tag-grid" id="tag-grid"></div></div>
+    <div class="collapsible-body" id="tags-body">
+      <div class="tag-grid" id="tag-grid"></div>
+    </div>
   </div>
   <div class="card">
     <div class="collapsible-header" onclick="toggleCollapsible('memo-body',this)">
       <div class="card-title" style="margin:0">メモ（任意）</div>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
     </div>
-    <div class="collapsible-body" id="memo-body"><textarea id="memo-input" placeholder="今日の出来事や気持ちを自由に…"></textarea></div>
+    <div class="collapsible-body" id="memo-body">
+      <textarea id="memo-input" placeholder="今日の出来事や気持ちを自由に…"></textarea>
+    </div>
   </div>
   <button class="save-btn" onclick="saveEntry()">記録する</button>
+  <!-- 広告スペース -->
   <div id="ad-space" style="width:100%;min-height:60px;margin-top:14px;background:var(--surface2);border-radius:var(--radius);border:1.5px dashed var(--border);display:flex;align-items:center;justify-content:center;">
     <span style="font-size:11px;color:var(--text-sub);">広告スペース</span>
   </div>
@@ -300,7 +287,9 @@ input:checked + .toggle-slider:before{transform:translateX(20px);}
     <button class="period-btn" onclick="setPeriod('custom',this)">期間指定</button>
   </div>
   <div class="date-range-row" id="custom-range" style="display:none">
-    <input type="date" id="range-start"><span>〜</span><input type="date" id="range-end">
+    <input type="date" id="range-start">
+    <span>〜</span>
+    <input type="date" id="range-end">
     <button class="period-btn active" onclick="renderGraph()" style="white-space:nowrap">表示</button>
   </div>
   <div class="card"><canvas id="score-chart" height="180"></canvas></div>
@@ -318,73 +307,30 @@ input:checked + .toggle-slider:before{transform:translateX(20px);}
 <!-- SETTINGS PAGE -->
 <div id="page-settings" class="page">
   <div class="page-header"><div class="page-title">設定</div></div>
-
-  <!-- ホーム画面 -->
   <div class="card">
     <div class="setting-label">ホーム画面</div>
     <div class="setting-row" style="border:none;">
-      <div><div class="setting-row-label">アイコンをホーム画面に追加</div><div class="setting-row-sub">ショートカットとして追加できます</div></div>
+      <div>
+        <div class="setting-row-label">アイコンをホーム画面に追加</div>
+        <div class="setting-row-sub">ショートカットとして追加できます</div>
+      </div>
       <button class="text-btn" onclick="showAddToHomeGuide()">追加する</button>
     </div>
   </div>
-
-  <!-- プレミアム -->
   <div class="card">
-    <div class="setting-label">プレミアム <span style="font-size:10px;color:var(--text-sub);font-weight:400;">（開発用）</span></div>
-    <div class="setting-row" style="border:none;">
-      <div><div class="setting-row-label">プレミアム機能</div><div class="setting-row-sub" id="premium-status-label">有効</div></div>
-      <label class="toggle"><input type="checkbox" id="premium-toggle" onchange="togglePremium()" checked><span class="toggle-slider"></span></label>
+    <div class="setting-section">
+      <div class="setting-label">テーマ</div>
+      <div class="theme-grid" id="theme-grid"></div>
     </div>
   </div>
-
-  <!-- テーマ -->
-  <div class="card">
-    <div class="setting-label">テーマ</div>
-    <div style="font-size:12px;color:var(--text-sub);margin-bottom:10px;">無料</div>
-    <div class="theme-grid" id="theme-grid-free" style="margin-bottom:14px;"></div>
-    <div style="font-size:12px;color:var(--text-sub);margin-bottom:10px;">プレミアム <span class="premium-badge">PRO</span></div>
-    <div class="theme-grid" id="theme-grid-premium"></div>
-    <div style="margin-top:14px;">
-      <div style="font-size:12px;color:var(--text-sub);margin-bottom:8px;">背景画像をアップロード <span class="premium-badge">PRO</span></div>
-      <div id="bg-upload-wrap">
-        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
-          <input type="file" id="bg-image-input" accept="image/*" onchange="loadBgImage()" style="display:none;">
-          <button class="text-btn" onclick="document.getElementById('bg-image-input').click()">画像を選ぶ</button>
-          <span id="bg-image-name" style="font-size:12px;color:var(--text-sub);">未選択</span>
-        </label>
-        <button id="bg-image-clear" onclick="clearBgImage()" style="display:none;margin-top:8px;" class="text-btn danger">背景画像を削除</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- 気分アイコン -->
-  <div class="card">
-    <div class="setting-label">気分アイコン <span class="premium-badge">PRO</span></div>
-    <div class="iconset-grid" id="iconset-grid"></div>
-  </div>
-
-  <!-- 生活習慣 -->
-  <div class="card">
-    <div class="setting-label">生活習慣 <span class="premium-badge">PRO</span></div>
-    <div id="habit-editor-wrap">
-      <div id="habit-editor-list" style="margin-bottom:12px;"></div>
-      <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
-        <input type="text" id="new-habit-name" placeholder="項目名" style="flex:1;padding:8px 10px;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:var(--surface2);color:var(--text);font-family:inherit;font-size:14px;outline:none;">
-        <select id="new-habit-type" style="padding:8px 10px;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:var(--surface2);color:var(--text);font-family:inherit;font-size:13px;outline:none;">
-          <option value="simple">チェック</option>
-          <option value="dual">2択</option>
-        </select>
-        <button onclick="addHabitItem()" class="text-btn accent">追加</button>
-      </div>
-      <div style="font-size:11px;color:var(--text-sub);">2択は「自分で／介助あり」ボタン形式です</div>
-    </div>
-  </div>
-
-  <!-- 通院日 -->
   <div class="card">
     <div class="setting-label">通院日</div>
     <div class="setting-row">
-      <div><div class="setting-row-label">次の通院日</div><div class="setting-row-sub" id="clinic-date-label">設定されていません</div></div>
+      <div>
+        <div class="setting-row-label">次の通院日</div>
+        <div class="setting-row-sub" id="clinic-date-label">設定されていません</div>
+      </div>
+
     </div>
     <div id="clinic-picker-row" style="padding:8px 0 4px;">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
@@ -392,21 +338,28 @@ input:checked + .toggle-slider:before{transform:translateX(20px);}
         <button onclick="confirmClinicDate()" style="padding:8px 16px;background:var(--accent);color:white;border:none;border-radius:var(--radius-sm);font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;white-space:nowrap;flex-shrink:0;">決定</button>
       </div>
     </div>
-    <div class="setting-row" id="clinic-remove-row" style="display:none;border:none;">
-      <div><div class="setting-row-label">通院日を削除</div></div>
+    <div class="setting-row" id="clinic-remove-row" style="display:none">
+      <div>
+        <div class="setting-row-label">通院日を削除</div>
+      </div>
       <button class="text-btn danger" onclick="removeClinicDate()">削除する</button>
     </div>
-  </div>
 
-  <!-- セキュリティ -->
+  </div>
   <div class="card">
     <div class="setting-label">セキュリティ</div>
     <div class="setting-row">
-      <div><div class="setting-row-label">PINロック</div><div class="setting-row-sub" id="pin-status-label">設定されていません</div></div>
+      <div>
+        <div class="setting-row-label">PINロック</div>
+        <div class="setting-row-sub" id="pin-status-label">設定されていません</div>
+      </div>
       <button class="text-btn" id="pin-action-btn" onclick="openPinSetup()">設定する</button>
     </div>
-    <div class="setting-row" id="pin-remove-row" style="display:none;border:none;">
-      <div><div class="setting-row-label">PINを削除</div></div>
+    <div class="setting-row" id="pin-remove-row" style="display:none">
+      <div>
+        <div class="setting-row-label">PINを削除</div>
+        <div class="setting-row-sub">ロックを解除します</div>
+      </div>
       <button class="text-btn danger" onclick="removePin()">削除する</button>
     </div>
   </div>
@@ -415,33 +368,26 @@ input:checked + .toggle-slider:before{transform:translateX(20px);}
 <!-- NAV -->
 <nav class="nav">
   <button class="nav-btn active" onclick="showPage('record',this)">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>記録
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+    記録
   </button>
   <button class="nav-btn" onclick="showPage('history',this)">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>一覧
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+    一覧
   </button>
   <button class="nav-btn" onclick="showPage('graph',this)">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>振り返り
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+    振り返り
   </button>
   <button class="nav-btn" onclick="showPage('settings',this)">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>設定
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+    設定
   </button>
 </nav>
 
 <div class="toast" id="toast"></div>
 
-<!-- CONFIRM DIALOG -->
-<div id="confirm-overlay" style="display:none;position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,0.45);align-items:center;justify-content:center;">
-  <div style="background:var(--surface);border-radius:var(--radius);padding:24px;margin:24px;width:calc(100% - 48px);max-width:320px;box-shadow:var(--shadow);">
-    <div id="confirm-msg" style="font-size:15px;font-weight:500;margin-bottom:20px;line-height:1.6;"></div>
-    <div style="display:flex;gap:10px;justify-content:flex-end;">
-      <button onclick="closePrintOverlay()" id="confirm-cancel" style="padding:10px 20px;border-radius:20px;border:1.5px solid var(--border);background:var(--surface2);color:var(--text);font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;">キャンセル</button>
-      <button id="confirm-ok" style="padding:10px 20px;border-radius:20px;border:none;background:#C04040;color:white;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;">削除する</button>
-    </div>
-  </div>
-</div>
-
-<!-- 印刷確認 -->
+<!-- 印刷確認オーバーレイ -->
 <div id="print-overlay" style="display:none;position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,0.45);align-items:center;justify-content:center;">
   <div style="background:var(--surface);border-radius:var(--radius);padding:24px;margin:24px;width:calc(100% - 48px);max-width:320px;box-shadow:var(--shadow);">
     <div style="font-size:15px;font-weight:600;margin-bottom:8px;">印刷の確認</div>
@@ -453,141 +399,19 @@ input:checked + .toggle-slider:before{transform:translateX(20px);}
   </div>
 </div>
 
+<!-- CONFIRM DIALOG -->
+<div id="confirm-overlay" style="display:none;position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,0.45);align-items:center;justify-content:center;">
+  <div style="background:var(--surface);border-radius:var(--radius);padding:24px;margin:24px;width:calc(100% - 48px);max-width:320px;box-shadow:var(--shadow);">
+    <div id="confirm-msg" style="font-size:15px;font-weight:500;margin-bottom:20px;line-height:1.6;"></div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;">
+      <button id="confirm-cancel" style="padding:10px 20px;border-radius:20px;border:1.5px solid var(--border);background:var(--surface2);color:var(--text);font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;">キャンセル</button>
+      <button id="confirm-ok" style="padding:10px 20px;border-radius:20px;border:none;background:#C04040;color:white;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;">削除する</button>
+    </div>
+  </div>
+</div>
+
 <script>
-// ===== PREMIUM FLAG =====
-var isPremium = true; // デフォルトON（将来は決済システムで制御）
-
-function getPremium() {
-  var v = localStorage.getItem('ashiato_premium');
-  return v === null ? true : v === 'true';
-}
-function togglePremium() {
-  isPremium = document.getElementById('premium-toggle').checked;
-  localStorage.setItem('ashiato_premium', String(isPremium));
-  document.getElementById('premium-status-label').textContent = isPremium ? '有効' : '無効（フリープラン）';
-  applyPremiumLocks();
-  renderHabitEditor();
-  buildThemeGrids();
-  buildIconsetGrid();
-}
-function applyPremiumLocks() {
-  var premiumEls = document.querySelectorAll('.premium-only');
-  premiumEls.forEach(function(el) {
-    if (isPremium) { el.classList.remove('premium-lock'); }
-    else { el.classList.add('premium-lock'); }
-  });
-}
-
-// ===== ICON SETS =====
-var ICON_SETS = {
-  face:  { name: '顔文字',  icons: ['😞','😕','😐','🙂','😊'], labels: ['つらい','しんどい','ふつう','よい','とても
-よい'] },
-  cat:   { name: 'ねこ',    icons: ['🙀','😿','😺','😸','😻'], labels: ['つらい','しんどい','ふつう','よい','とても
-よい'] },
-  dog:   { name: 'いぬ',    icons: ['🐶','🐕','🐩','🦮','🐾'], labels: ['つらい','しんどい','ふつう','よい','とても
-よい'] },
-  flower:{ name: 'おはな',  icons: ['🥀','🌷','🌸','🌺','🌻'], labels: ['つらい','しんどい','ふつう','よい','とても
-よい'] }
-};
-function getCurrentIconSet() { return localStorage.getItem('ashiato_iconset') || 'face'; }
-function setIconSet(key) {
-  localStorage.setItem('ashiato_iconset', key);
-  buildIconsetGrid();
-  buildScoreRow();
-}
-
-// ===== THEMES =====
-var FREE_THEMES = [
-  { id: 'default',  name: 'ナチュラル', color: '#F7F5F2', accent: '#7B9E87' },
-  { id: 'sakura',   name: 'さくら',     color: '#FFF5F7', accent: '#D4789A' },
-  { id: 'sky',      name: 'そら',       color: '#F3F8FF', accent: '#5B9BD5' },
-  { id: 'forest',   name: 'もり',       color: '#F2F7F2', accent: '#4A8C5C' },
-  { id: 'night',    name: 'よる',       color: '#1A1C22', accent: '#8B9EC8' }
-];
-var PREMIUM_THEMES = [
-  { id: 'lavender',      name: 'ラベンダー', color: '#F5F0FF', accent: '#9B7EC8' },
-  { id: 'grad-sunrise',  name: 'サンライズ', color: '#FFF3E8', accent: '#E88040' },
-  { id: 'grad-ocean',    name: 'オーシャン', color: '#E8F4FF', accent: '#3080C0' },
-  { id: 'grad-matcha',   name: 'マッチャ',   color: '#F0F8F0', accent: '#508050' },
-  { id: 'dots',          name: 'ドット',     color: '#F7F5F2', accent: '#7B9E87', pattern: true },
-  { id: 'stripe',        name: 'ストライプ', color: '#F5F5FF', accent: '#7878C8', pattern: true },
-  { id: 'check',         name: 'チェック',   color: '#FFF8F0', accent: '#C07840', pattern: true }
-];
-
-function getTheme() { return localStorage.getItem('diary_theme') || 'default'; }
-function setTheme(id) {
-  localStorage.setItem('diary_theme', id);
-  applyTheme(id);
-  buildThemeGrids();
-}
-function applyTheme(id) {
-  var allIds = FREE_THEMES.map(function(t){return t.id;}).concat(PREMIUM_THEMES.map(function(t){return t.id;}));
-  var cls = allIds.map(function(i){ return i==='default'?'':'theme-'+i; }).filter(Boolean);
-  cls.push('theme-userbg');
-  var body = document.body;
-  cls.forEach(function(c){ body.classList.remove(c); });
-  if (id !== 'default') body.classList.add('theme-' + id);
-  // user bg
-  var userBg = localStorage.getItem('ashiato_bg_image');
-  if (id === 'userbg' && userBg) {
-    body.classList.add('theme-userbg');
-    body.style.backgroundImage = 'url(' + userBg + ')';
-  } else {
-    body.style.backgroundImage = '';
-  }
-}
-function loadBgImage() {
-  if (!isPremium) { showToast('プレミアム機能です'); return; }
-  var file = document.getElementById('bg-image-input').files[0];
-  if (!file) return;
-  var reader = new FileReader();
-  reader.onload = function(e) {
-    localStorage.setItem('ashiato_bg_image', e.target.result);
-    document.getElementById('bg-image-name').textContent = file.name;
-    document.getElementById('bg-image-clear').style.display = 'block';
-    setTheme('userbg');
-    showToast('背景画像を設定しました');
-  };
-  reader.readAsDataURL(file);
-}
-function clearBgImage() {
-  localStorage.removeItem('ashiato_bg_image');
-  document.getElementById('bg-image-name').textContent = '未選択';
-  document.getElementById('bg-image-clear').style.display = 'none';
-  setTheme('default');
-  showToast('背景画像を削除しました');
-}
-function buildThemeGrids() {
-  var current = getTheme();
-  function makeOption(t, isPrem) {
-    var el = document.createElement('div');
-    el.className = 'theme-option' + (current === t.id ? ' active' : '') + (isPrem ? ' premium-only' : '');
-    if (isPrem && !isPremium) el.classList.add('premium-lock');
-    var swatch = document.createElement('div');
-    swatch.className = 'swatch';
-    swatch.style.background = t.accent;
-    if (t.pattern) swatch.style.background = 'repeating-linear-gradient(45deg,' + t.accent + '20,'+t.accent+'20 3px,'+t.color+' 3px,'+t.color+' 9px)';
-    el.appendChild(swatch);
-    el.appendChild(document.createTextNode(t.name));
-    el.onclick = function() { if(isPrem && !isPremium) { showToast('プレミアム機能です'); return; } setTheme(t.id); };
-    return el;
-  }
-  var fg = document.getElementById('theme-grid-free');
-  var pg = document.getElementById('theme-grid-premium');
-  fg.innerHTML = ''; pg.innerHTML = '';
-  FREE_THEMES.forEach(function(t){ fg.appendChild(makeOption(t, false)); });
-  PREMIUM_THEMES.forEach(function(t){ pg.appendChild(makeOption(t, true)); });
-  // userbg option
-  var ubOpt = document.createElement('div');
-  ubOpt.className = 'theme-option premium-only' + (current === 'userbg' ? ' active' : '');
-  if (!isPremium) ubOpt.classList.add('premium-lock');
-  ubOpt.innerHTML = '<div class="swatch" style="background:linear-gradient(135deg,#ccc,#888);display:flex;align-items:center;justify-content:center;font-size:16px;">🖼️</div>マイ画像';
-  ubOpt.onclick = function() { if(!isPremium){showToast('プレミアム機能です');return;} var b=localStorage.getItem('ashiato_bg_image'); if(b){setTheme('userbg');}else{showToast('先に画像を選んでください');} };
-  pg.appendChild(ubOpt);
-}
-
-// ===== HABITS =====
-var DEFAULT_HABITS = [
+var HABITS = [
   { key: 'sleep',    label: '睡眠（6時間以上）', type: 'simple' },
   { key: 'meal_m',   label: '食事・朝',           type: 'dual' },
   { key: 'meal_l',   label: '食事・昼',           type: 'dual' },
@@ -601,181 +425,149 @@ var DEFAULT_HABITS = [
   { key: 'cleaning', label: '掃除',               type: 'dual' },
   { key: 'bowel',    label: 'お通じ',             type: 'dual', btn1: 'ふつう', btn2: 'ゆるい' }
 ];
-function getHabits() {
-  try {
-    var stored = localStorage.getItem('ashiato_habits');
-    return stored ? JSON.parse(stored) : DEFAULT_HABITS;
-  } catch(e) { return DEFAULT_HABITS; }
-}
-function saveHabits(arr) { localStorage.setItem('ashiato_habits', JSON.stringify(arr)); }
-function addHabitItem() {
-  if (!isPremium) { showToast('プレミアム機能です'); return; }
-  var name = document.getElementById('new-habit-name').value.trim();
-  if (!name) { showToast('項目名を入力してください'); return; }
-  var type = document.getElementById('new-habit-type').value;
-  var habits = getHabits();
-  var key = 'custom_' + Date.now();
-  habits.push({ key: key, label: name, type: type });
-  saveHabits(habits);
-  document.getElementById('new-habit-name').value = '';
-  renderHabitEditor();
-  buildHabitList();
-  showToast('追加しました');
-}
-function deleteHabitItem(key) {
-  showConfirm('この項目を削除しますか？', function() {
-    var habits = getHabits().filter(function(h){ return h.key !== key; });
-    saveHabits(habits);
-    renderHabitEditor();
-    buildHabitList();
-    showToast('削除しました');
-  });
-}
-function renderHabitEditor() {
-  var wrap = document.getElementById('habit-editor-list');
-  var habits = getHabits();
-  wrap.innerHTML = '';
-  habits.forEach(function(h) {
-    var row = document.createElement('div');
-    row.className = 'habit-edit-item';
-    var name = document.createElement('span');
-    name.className = 'habit-edit-name';
-    name.textContent = h.label;
-    var type = document.createElement('span');
-    type.className = 'habit-edit-type';
-    type.textContent = h.type === 'simple' ? 'チェック' : '2択';
-    var del = document.createElement('button');
-    del.className = 'habit-edit-del';
-    del.textContent = '×';
-    del.onclick = (function(k){ return function(){ deleteHabitItem(k); }; })(h.key);
-    row.appendChild(name);
-    row.appendChild(type);
-    row.appendChild(del);
-    wrap.appendChild(row);
-  });
-  // premium lock
-  var editorWrap = document.getElementById('habit-editor-wrap');
-  if (!isPremium) { editorWrap.style.opacity = '0.5'; editorWrap.style.pointerEvents = 'none'; }
-  else { editorWrap.style.opacity = '1'; editorWrap.style.pointerEvents = ''; }
-}
-function buildIconsetGrid() {
-  var grid = document.getElementById('iconset-grid');
-  var current = getCurrentIconSet();
-  grid.innerHTML = '';
-  Object.keys(ICON_SETS).forEach(function(key) {
-    var set = ICON_SETS[key];
-    var el = document.createElement('div');
-    el.className = 'iconset-option premium-only' + (current === key ? ' active' : '');
-    if (!isPremium) el.classList.add('premium-lock');
-    var preview = document.createElement('div');
-    preview.className = 'icons-preview';
-    preview.textContent = set.icons.join(' ');
-    var label = document.createElement('div');
-    label.textContent = set.name;
-    el.appendChild(preview);
-    el.appendChild(label);
-    el.onclick = (function(k){ return function(){
-      if (!isPremium) { showToast('プレミアム機能です'); return; }
-      setIconSet(k);
-      showToast(ICON_SETS[k].name + 'に変更しました');
-    }; })(key);
-    grid.appendChild(el);
-  });
-}
-function buildScoreRow() {
-  var row = document.getElementById('score-row');
-  var set = ICON_SETS[getCurrentIconSet()];
-  row.innerHTML = '';
-  for (var i = 0; i < 5; i++) {
-    var btn = document.createElement('button');
-    btn.className = 'score-btn';
-    btn.dataset.score = String(i + 1);
-    var score = i + 1;
-    btn.innerHTML = set.icons[i] + '<span>' + set.labels[i] + '</span>';
-    btn.onclick = (function(s){ return function(){ selectScore(s); }; })(score);
-    row.appendChild(btn);
-  }
-  // restore selection
-  if (state.score) selectScore(state.score);
-}
 
-// ===== DATA =====
 var TAGS = ['不安','憂うつ','疲れ','焦り','孤独','悲しみ','怒り','イライラ','混乱','恐怖','落ち着き','感謝','やる気','嬉しい','楽しい','安心','達成感'];
-var state = { score: null, habits: {}, tags: [], memo: '' };
-var editingDate = '';
-var currentPeriod = 'week';
 
-function getEntries() { try { return JSON.parse(localStorage.getItem('diary_entries')||'[]'); } catch(e){ return []; } }
+var THEMES = [
+  { id: 'default', name: 'ナチュラル', color: '#7B9E87' },
+  { id: 'sakura',  name: 'さくら',    color: '#D4789A' },
+  { id: 'sky',     name: 'そら',      color: '#5B9BD5' },
+  { id: 'forest',  name: 'もり',      color: '#4A8C5C' },
+  { id: 'night',   name: 'よる',      color: '#8B9EC8' }
+];
+
+var state = { score: null, habits: {}, tags: [], memo: '' };
+var currentPeriod = 'week';
+var editingDate = '';
+
+function getEntries() {
+  try { return JSON.parse(localStorage.getItem('diary_entries') || '[]'); } catch(e) { return []; }
+}
 function saveEntries(arr) { localStorage.setItem('diary_entries', JSON.stringify(arr)); }
+function getTheme() { return localStorage.getItem('diary_theme') || 'default'; }
 function getPin() { return localStorage.getItem('diary_pin') || ''; }
 function setStoredPin(p) { localStorage.setItem('diary_pin', p); }
 function clearStoredPin() { localStorage.removeItem('diary_pin'); }
-function getClinicDate() { return localStorage.getItem('ashiato_clinic_date') || ''; }
+
+function setTheme(id) {
+  localStorage.setItem('diary_theme', id);
+  document.body.className = id === 'default' ? '' : 'theme-' + id;
+  document.querySelectorAll('.theme-option').forEach(function(el) {
+    el.classList.toggle('active', el.dataset.theme === id);
+  });
+}
 
 function todayStr() {
   var d = new Date();
   return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
 }
+
 function fmtDate(str) {
   var p = str.split('-');
   var days = ['日','月','火','水','木','金','土'];
   var dow = days[new Date(str).getDay()];
   return p[0] + '年' + Number(p[1]) + '月' + Number(p[2]) + '日（' + dow + '）';
 }
+
 function fmtDateHTML(str) {
   var p = str.split('-');
   var days = ['日','月','火','水','木','金','土'];
   var dow = days[new Date(str).getDay()];
-  var sm = 'font-size:12px;font-weight:500;color:var(--text-sub);line-height:1.4;';
-  var lg = 'font-size:15px;font-weight:700;color:var(--text);line-height:1.3;';
-  return '<div style="' + sm + '">' + p[0] + '年</div><div style="' + lg + '">' + Number(p[1]) + '月' + Number(p[2]) + '日(' + dow + ')</div>';
+  var small = 'font-size:12px;font-weight:500;color:var(--text-sub);';
+  var large = 'font-size:15px;font-weight:700;color:var(--text);';
+  return '<div style="' + small + 'line-height:1.4;">' + p[0] + '年</div>' +
+         '<div style="' + large + 'line-height:1.3;">' +
+           Number(p[1]) + '月' + Number(p[2]) + '日' +
+           '(' + dow + ')' +
+         '</div>';
 }
 
 function init() {
-  isPremium = getPremium();
-  document.getElementById('premium-toggle').checked = isPremium;
-  document.getElementById('premium-status-label').textContent = isPremium ? '有効' : '無効（フリープラン）';
-  applyTheme(getTheme());
+  setTheme(getTheme());
   document.getElementById('today-label').innerHTML = fmtDateHTML(todayStr());
   document.getElementById('record-date').value = todayStr();
   editingDate = todayStr();
-  buildScoreRow();
   buildHabitList();
   buildTagGrid();
-  buildThemeGrids();
-  buildIconsetGrid();
-  renderHabitEditor();
-  checkTodayEntry();
+  buildThemeGrid();
+  loadEntryForDate(editingDate);
   renderHistory();
   renderGraph();
   updatePinSettingsUI();
   updateClinicSettingsUI();
-  if (!getPin()) {
-    checkClinicBanner();
-  }
+  if (getPin()) showLockScreen('unlock');
 }
 
+// ===== RECORD DATE =====
+function onRecordDateChange() {
+  var d = document.getElementById('record-date').value;
+  if (!d) return;
+  editingDate = d;
+  resetRecordForm();
+  loadEntryForDate(d);
+  var isToday = (d === todayStr());
+  document.getElementById('today-label').innerHTML = fmtDateHTML(d);
+  updateClinicIconOnRecord();
+}
+
+function resetRecordForm() {
+  state = { score: null, habits: {}, tags: [], memo: '' };
+  document.querySelectorAll('.score-btn').forEach(function(b) { b.classList.remove('selected'); });
+  document.querySelectorAll('.habit-simple').forEach(function(el) { el.classList.remove('checked'); });
+  document.querySelectorAll('.dual-btn').forEach(function(b) { b.classList.remove('sel-self','sel-assist'); });
+  document.querySelectorAll('.tag-btn').forEach(function(b) { b.classList.remove('selected'); });
+  document.getElementById('memo-input').value = '';
+  document.getElementById('already-saved-badge').style.display = 'none';
+}
+
+function loadEntryForDate(dateStr) {
+  var entry = getEntries().find(function(e) { return e.date === dateStr; });
+  if (!entry) return;
+  document.getElementById('already-saved-badge').style.display = 'block';
+  if (entry.score) selectScore(entry.score);
+  if (entry.habits) {
+    Object.keys(entry.habits).forEach(function(key) {
+      var val = entry.habits[key];
+      if (!val) return;
+      state.habits[key] = val;
+      var h = HABITS.find(function(x) { return x.key === key; });
+      if (!h) return;
+      if (h.type === 'simple') {
+        var el = document.querySelector('.habit-simple[data-key="' + key + '"]');
+        if (el) el.classList.add('checked');
+      } else {
+        var btn = document.querySelector('.dual-btn[data-key="' + key + '"][data-val="' + val + '"]');
+        if (btn) btn.classList.add(val === 'self' ? 'sel-self' : 'sel-assist');
+      }
+    });
+  }
+  if (entry.tags) {
+    entry.tags.forEach(function(t) {
+      var btn = Array.from(document.querySelectorAll('.tag-btn')).find(function(b) { return b.textContent === t; });
+      if (btn) { btn.classList.add('selected'); state.tags.push(t); }
+    });
+  }
+  document.getElementById('memo-input').value = entry.memo || '';
+}
+
+// ===== HABIT LIST =====
 function buildHabitList() {
   var list = document.getElementById('habit-list');
   list.innerHTML = '';
-  var habits = getHabits();
-  habits.forEach(function(h) {
+  HABITS.forEach(function(h) {
     if (h.type === 'simple') {
       var el = document.createElement('div');
       el.className = 'habit-simple';
       el.dataset.key = h.key;
       el.innerHTML = '<div class="habit-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="2 6 5 9 10 3"/></svg></div><span class="habit-name">' + h.label + '</span>';
-      el.onclick = (function(key, elem){ return function(){ toggleSimple(key, elem); }; })(h.key, el);
+      el.onclick = function() { toggleSimple(h.key, el); };
       list.appendChild(el);
     } else {
-      var b1 = h.btn1 || '自分で';
-      var b2 = h.btn2 || '介助あり';
       var el2 = document.createElement('div');
       el2.className = 'habit-dual';
-      el2.innerHTML = '<div class="habit-dual-top"><span class="habit-dual-name">' + h.label + '</span><div class="habit-dual-btns"><button class="dual-btn" data-key="' + h.key + '" data-val="self">' + b1 + '</button><button class="dual-btn" data-key="' + h.key + '" data-val="assist">' + b2 + '</button></div></div>';
-      var btns = el2.querySelectorAll('.dual-btn');
-      btns[0].onclick = (function(k,b){ return function(){ selectDual(k,'self',b); }; })(h.key, btns[0]);
-      btns[1].onclick = (function(k,b){ return function(){ selectDual(k,'assist',b); }; })(h.key, btns[1]);
+      var b1 = h.btn1 || '自分で';
+      var b2 = h.btn2 || '介助あり';
+      el2.innerHTML = '<div class="habit-dual-top"><span class="habit-dual-name">' + h.label + '</span><div class="habit-dual-btns"><button class="dual-btn" data-key="' + h.key + '" data-val="self" onclick="selectDual(\'' + h.key + '\',\'self\',this)">' + b1 + '</button><button class="dual-btn" data-key="' + h.key + '" data-val="assist" onclick="selectDual(\'' + h.key + '\',\'assist\',this)">' + b2 + '</button></div></div>';
       list.appendChild(el2);
     }
   });
@@ -792,107 +584,66 @@ function buildTagGrid() {
   });
 }
 
-function checkTodayEntry() {
-  var entry = getEntries().find(function(e){ return e.date === editingDate; });
-  if (!entry) return;
-  document.getElementById('already-saved-badge').style.display = 'block';
-  if (entry.score) selectScore(entry.score);
-  if (entry.habits) {
-    Object.keys(entry.habits).forEach(function(key) {
-      var val = entry.habits[key];
-      if (!val) return;
-      state.habits[key] = val;
-      var h = getHabits().find(function(x){ return x.key === key; });
-      if (!h) return;
-      if (h.type === 'simple') {
-        var el = document.querySelector('.habit-simple[data-key="' + key + '"]');
-        if (el) el.classList.add('checked');
-      } else {
-        var btn = document.querySelector('.dual-btn[data-key="' + key + '"][data-val="' + val + '"]');
-        if (btn) btn.classList.add(val === 'self' ? 'sel-self' : 'sel-assist');
-      }
-    });
-  }
-  if (entry.tags) {
-    entry.tags.forEach(function(t) {
-      var btn = Array.from(document.querySelectorAll('.tag-btn')).find(function(b){ return b.textContent === t; });
-      if (btn) { btn.classList.add('selected'); state.tags.push(t); }
-    });
-  }
-  document.getElementById('memo-input').value = entry.memo || '';
+function buildThemeGrid() {
+  var tg = document.getElementById('theme-grid');
+  THEMES.forEach(function(th) {
+    var el = document.createElement('div');
+    el.className = 'theme-option' + (th.id === getTheme() ? ' active' : '');
+    el.dataset.theme = th.id;
+    el.innerHTML = '<div class="swatch" style="background:' + th.color + '"></div>' + th.name;
+    el.onclick = function() { setTheme(th.id); };
+    tg.appendChild(el);
+  });
 }
 
-function onRecordDateChange() {
-  var d = document.getElementById('record-date').value;
-  if (!d) return;
-  editingDate = d;
-  resetRecordForm();
-  loadEntryForDate(d);
-  document.getElementById('today-label').innerHTML = fmtDateHTML(d);
-}
-function resetRecordForm() {
-  state = { score: null, habits: {}, tags: [], memo: '' };
-  buildScoreRow();
-  buildHabitList();
-  document.querySelectorAll('.tag-btn').forEach(function(b){ b.classList.remove('selected'); });
-  document.getElementById('memo-input').value = '';
-  document.getElementById('already-saved-badge').style.display = 'none';
-}
-function loadEntryForDate(dateStr) {
-  var entry = getEntries().find(function(e){ return e.date === dateStr; });
-  if (!entry) return;
-  document.getElementById('already-saved-badge').style.display = 'block';
-  if (entry.score) selectScore(entry.score);
-  if (entry.habits) {
-    Object.keys(entry.habits).forEach(function(key) {
-      var val = entry.habits[key];
-      if (!val) return;
-      state.habits[key] = val;
-      var h = getHabits().find(function(x){ return x.key === key; });
-      if (!h) return;
-      if (h.type === 'simple') {
-        var el = document.querySelector('.habit-simple[data-key="' + key + '"]');
-        if (el) el.classList.add('checked');
-      } else {
-        var btn = document.querySelector('.dual-btn[data-key="' + key + '"][data-val="' + val + '"]');
-        if (btn) btn.classList.add(val === 'self' ? 'sel-self' : 'sel-assist');
-      }
-    });
-  }
-  if (entry.tags) {
-    entry.tags.forEach(function(t) {
-      var btn = Array.from(document.querySelectorAll('.tag-btn')).find(function(b){ return b.textContent === t; });
-      if (btn) { btn.classList.add('selected'); if(state.tags.indexOf(t)<0) state.tags.push(t); }
-    });
-  }
-  document.getElementById('memo-input').value = entry.memo || '';
-}
-
+// ===== INTERACTIONS =====
 function selectScore(n) {
   state.score = n;
-  document.querySelectorAll('.score-btn').forEach(function(b){ b.classList.toggle('selected', Number(b.dataset.score) === n); });
+  document.querySelectorAll('.score-btn').forEach(function(b) {
+    b.classList.toggle('selected', Number(b.dataset.score) === n);
+  });
 }
+
 function toggleSimple(key, el) {
   var checked = el.classList.toggle('checked');
   state.habits[key] = checked ? 'self' : null;
 }
+
 function selectDual(key, val, btn) {
-  document.querySelectorAll('.dual-btn[data-key="' + key + '"]').forEach(function(b){ b.classList.remove('sel-self','sel-assist'); });
-  if (state.habits[key] === val) { state.habits[key] = null; }
-  else { state.habits[key] = val; btn.classList.add(val === 'self' ? 'sel-self' : 'sel-assist'); }
+  document.querySelectorAll('.dual-btn[data-key="' + key + '"]').forEach(function(b) {
+    b.classList.remove('sel-self','sel-assist');
+  });
+  if (state.habits[key] === val) {
+    state.habits[key] = null;
+  } else {
+    state.habits[key] = val;
+    btn.classList.add(val === 'self' ? 'sel-self' : 'sel-assist');
+  }
 }
+
 function toggleTag(t, btn) {
   btn.classList.toggle('selected');
-  if (btn.classList.contains('selected')) { if(state.tags.indexOf(t)<0) state.tags.push(t); }
-  else { state.tags = state.tags.filter(function(x){ return x !== t; }); }
+  if (btn.classList.contains('selected')) {
+    if (state.tags.indexOf(t) < 0) state.tags.push(t);
+  } else {
+    state.tags = state.tags.filter(function(x) { return x !== t; });
+  }
 }
+
 function toggleCollapsible(bodyId, header) {
   document.getElementById(bodyId).classList.toggle('open');
   header.classList.toggle('open');
 }
+
 function saveEntry() {
-  var entry = { date: editingDate, score: state.score, habits: Object.assign({}, state.habits), tags: state.tags.slice(), memo: document.getElementById('memo-input').value.trim() };
-  var entries = getEntries().filter(function(e){ return e.date !== editingDate; });
+  var entry = {
+    date: editingDate,
+    score: state.score,
+    habits: Object.assign({}, state.habits),
+    tags: state.tags.slice(),
+    memo: document.getElementById('memo-input').value.trim()
+  };
+  var entries = getEntries().filter(function(e) { return e.date !== editingDate; });
   entries.unshift(entry);
   entries.sort(function(a,b){ return b.date.localeCompare(a.date); });
   saveEntries(entries);
@@ -902,48 +653,62 @@ function saveEntry() {
   renderGraph();
 }
 
+// ===== HISTORY =====
 function renderHistory() {
   var list = document.getElementById('history-list');
   var entries = getEntries();
-  if (!entries.length) { list.innerHTML = '<div class="empty-state"><div class="icon">📖</div><p>まだ記録がありません</p></div>'; return; }
-  var set = ICON_SETS[getCurrentIconSet()];
+  if (!entries.length) {
+    list.innerHTML = '<div class="empty-state"><div class="icon">&#x1F4D6;</div><p>まだ記録がありません</p></div>';
+    return;
+  }
+  var scoreEmoji = ['','😞','😕','😐','🙂','😊'];
   list.innerHTML = entries.map(function(e) {
-    var tagsHtml = (e.tags&&e.tags.length) ? '<div class="history-tags">'+e.tags.map(function(t){return '<span class="history-tag">'+t+'</span>';}).join('')+'</div>' : '';
-    var memoHtml = e.memo ? '<div class="history-note">'+e.memo+'</div>' : '';
-    var scoreHtml = e.score ? set.icons[e.score-1] : '―';
-    return '<div class="history-entry" onclick="openEntryEdit(''+e.date+'')"><div class="history-entry-header"><span class="history-date">'+fmtDate(e.date)+'</span><span class="history-score">'+scoreHtml+'</span></div>'+tagsHtml+memoHtml+'</div>';
+    var tagsHtml = (e.tags && e.tags.length) ? '<div class="history-tags">' + e.tags.map(function(t){ return '<span class="history-tag">' + t + '</span>'; }).join('') + '</div>' : '';
+    var memoHtml = e.memo ? '<div class="history-note">' + e.memo + '</div>' : '';
+    var scoreHtml = e.score ? scoreEmoji[e.score] : '―';
+    return '<div class="history-entry" onclick="openEntryEdit(\'' + e.date + '\')">' +
+      '<div class="history-entry-header"><span class="history-date">' + fmtDate(e.date) + '</span><span class="history-score">' + scoreHtml + '</span></div>' +
+      tagsHtml + memoHtml + '</div>';
   }).join('');
 }
+
 function openEntryEdit(dateStr) {
+  // Switch to record page and load that date
   document.getElementById('record-date').value = dateStr;
   editingDate = dateStr;
   resetRecordForm();
   loadEntryForDate(dateStr);
   document.getElementById('today-label').innerHTML = fmtDateHTML(dateStr);
-  document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
+  var navBtns = document.querySelectorAll('.nav-btn');
+  document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
   document.getElementById('page-record').classList.add('active');
-  document.querySelectorAll('.nav-btn').forEach(function(b){ b.classList.remove('active'); });
-  document.querySelectorAll('.nav-btn')[0].classList.add('active');
+  navBtns.forEach(function(b) { b.classList.remove('active'); });
+  navBtns[0].classList.add('active');
 }
 
 // ===== GRAPH =====
 function setPeriod(p, btn) {
   currentPeriod = p;
-  document.querySelectorAll('.period-btn').forEach(function(b){ b.classList.remove('active'); });
+  document.querySelectorAll('.period-btn').forEach(function(b) { b.classList.remove('active'); });
   btn.classList.add('active');
   document.getElementById('custom-range').style.display = p === 'custom' ? 'flex' : 'none';
   if (p !== 'custom') renderGraph();
 }
+
 function getDateRange() {
   var today = new Date();
   if (currentPeriod === 'week') {
-    var dow = today.getDay();
-    var diffToMon = dow === 0 ? -6 : 1 - dow;
+    // 今週の月曜〜日曜
+    var dow = today.getDay(); // 0=日, 1=月, ..., 6=土
+    var diffToMon = (dow === 0) ? -6 : 1 - dow; // 月曜までの差分
     var mon = new Date(today); mon.setDate(today.getDate() + diffToMon);
     var sun = new Date(mon); sun.setDate(mon.getDate() + 6);
     return [mon, sun];
   } else if (currentPeriod === 'month') {
-    return [new Date(today.getFullYear(), today.getMonth(), 1), new Date(today.getFullYear(), today.getMonth()+1, 0)];
+    // 今月1日〜末日
+    var firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
+    var lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+    return [firstDay, lastDay];
   } else {
     var s = document.getElementById('range-start').value;
     var e = document.getElementById('range-end').value;
@@ -951,144 +716,147 @@ function getDateRange() {
     return [new Date(today.getFullYear(), today.getMonth(), 1), today];
   }
 }
+
 function datesBetween(start, end) {
-  var dates = [];
-  var d = new Date(start);
-  function toLS(dt) { return dt.getFullYear()+'-'+String(dt.getMonth()+1).padStart(2,'0')+'-'+String(dt.getDate()).padStart(2,'0'); }
-  while (toLS(d) <= toLS(end)) { dates.push(toLS(d)); d.setDate(d.getDate()+1); }
+  var dates = []; var d = new Date(start);
+  // toISOStringはUTC基準でずれるため、ローカル時間で文字列化
+  function toLocalStr(dt) {
+    return dt.getFullYear() + '-' + String(dt.getMonth()+1).padStart(2,'0') + '-' + String(dt.getDate()).padStart(2,'0');
+  }
+  while (toLocalStr(d) <= toLocalStr(end)) {
+    dates.push(toLocalStr(d));
+    d.setDate(d.getDate()+1);
+  }
   return dates;
 }
+
 function renderGraph() {
   var range = getDateRange();
   var dates = datesBetween(range[0], range[1]);
   var entries = getEntries();
   var entryMap = {};
-  entries.forEach(function(e){ entryMap[e.date]=e; });
-  var labels = dates.map(function(d){ var p=d.split('-'); return Number(p[1])+'/'+Number(p[2]); });
-  var scores = dates.map(function(d){ return entryMap[d]?entryMap[d].score:null; });
+  entries.forEach(function(e) { entryMap[e.date] = e; });
+
+  var labels = dates.map(function(d) { var p = d.split('-'); return Number(p[1]) + '/' + Number(p[2]); });
+  var scores = dates.map(function(d) { return entryMap[d] ? entryMap[d].score : null; });
   var scoreColors = ['','#E8A598','#E8C49A','#E8E0A0','#A8D4B0','#7BB8C0'];
+
   var canvas = document.getElementById('score-chart');
   var ctx = canvas.getContext('2d');
   var W = canvas.parentElement.offsetWidth - 36;
-  canvas.width = W * devicePixelRatio; canvas.height = 180 * devicePixelRatio;
-  canvas.style.width = W+'px'; canvas.style.height = '180px';
+  canvas.width = W * devicePixelRatio;
+  canvas.height = 180 * devicePixelRatio;
+  canvas.style.width = W + 'px';
+  canvas.style.height = '180px';
   ctx.scale(devicePixelRatio, devicePixelRatio);
-  var padL=28,padR=12,padT=16,padB=36,cW=W-padL-padR,cH=180-padT-padB;
-  var n = dates.length;
-  var barW = Math.max(4, Math.min(28, (cW/n)-4));
+
+  var padL=28,padR=12,padT=16,padB=36;
+  var cW=W-padL-padR, cH=180-padT-padB;
+  var n=dates.length;
+  var barW=Math.max(4,Math.min(28,(cW/n)-4));
   var isDark = document.body.classList.contains('theme-night');
-  ctx.strokeStyle = isDark?'rgba(255,255,255,0.08)':'rgba(0,0,0,0.06)';
+
+  ctx.strokeStyle = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)';
   ctx.lineWidth = 1;
   for (var i=1;i<=5;i++) {
-    var y = padT+cH-(i/5)*cH;
+    var y = padT + cH - (i/5)*cH;
     ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(padL+cW,y); ctx.stroke();
-    ctx.fillStyle = isDark?'rgba(255,255,255,0.3)':'rgba(0,0,0,0.3)';
-    ctx.font='10px sans-serif'; ctx.textAlign='left'; ctx.fillText(i,4,y+4);
+    ctx.fillStyle = isDark ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.3)';
+    ctx.font = '10px sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText(i, 4, y+4);
   }
+
   dates.forEach(function(d,i) {
-    var x = padL+(i/n)*cW+(cW/n-barW)/2;
+    var x = padL + (i/n)*cW + (cW/n - barW)/2;
     var s = scores[i];
-    if (s) { var barH=(s/5)*cH; ctx.fillStyle=scoreColors[s]; ctx.beginPath(); ctx.roundRect(x,padT+cH-barH,barW,barH,4); ctx.fill(); }
-    var dayNum = new Date(d).getDate();
+    if (s) {
+      var barH = (s/5)*cH;
+      ctx.fillStyle = scoreColors[s];
+      ctx.beginPath();
+      ctx.roundRect(x, padT+cH-barH, barW, barH, 4);
+      ctx.fill();
+    }
+    // ラベル表示判定
     var showLabel = false;
-    if (currentPeriod === 'month') { if(i===0||i===n-1||dayNum===5||dayNum===10||dayNum===15||dayNum===20||dayNum===25) showLabel=true; }
-    else { if(n<=14||i%Math.ceil(n/10)===0) showLabel=true; }
-    if (showLabel) { ctx.fillStyle=isDark?'rgba(255,255,255,0.5)':'rgba(0,0,0,0.4)'; ctx.font='10px sans-serif'; ctx.textAlign='center'; ctx.fillText(labels[i],x+barW/2,padT+cH+18); }
+    if (currentPeriod === 'month') {
+      // 今月モード: 左端(1日)・右端(末日)・中間の日曜日のみ
+      var dayNum = new Date(dates[i]).getDate();
+      if (i === 0 || i === n-1 || dayNum === 5 || dayNum === 10 || dayNum === 15 || dayNum === 20 || dayNum === 25) showLabel = true;
+    } else {
+      // 今週・期間指定: 14日以下は全表示、それ以上は間引き
+      if (n <= 14 || i % Math.ceil(n/10) === 0) showLabel = true;
+    }
+    if (showLabel) {
+      ctx.fillStyle = isDark ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.4)';
+      ctx.font = '10px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(labels[i], x+barW/2, padT+cH+18);
+    }
   });
+
   var recorded = scores.filter(Boolean);
   var avg = recorded.length ? (recorded.reduce(function(a,b){return a+b;},0)/recorded.length).toFixed(1) : '-';
   var rate = Math.round((recorded.length/dates.length)*100);
-  var set = ICON_SETS[getCurrentIconSet()];
+  var scoreEmoji = ['','😞','😕','😐','🙂','😊'];
   document.getElementById('stats-row').innerHTML =
-    '<div class="stat-box"><div class="stat-val">'+(avg==='-'?'-':set.icons[Math.round(avg)-1])+'</div><div class="stat-lbl">平均気分</div></div>'+
-    '<div class="stat-box"><div class="stat-val">'+avg+'</div><div class="stat-lbl">スコア平均</div></div>'+
-    '<div class="stat-box"><div class="stat-val">'+rate+'%</div><div class="stat-lbl">記録率</div></div>';
-  // habit stats
-  var recordedEntries = dates.map(function(d){ return entryMap[d]||null; }).filter(Boolean);
+    '<div class="stat-box"><div class="stat-val">' + (avg==='-' ? '-' : scoreEmoji[Math.round(avg)]) + '</div><div class="stat-lbl">平均気分</div></div>' +
+    '<div class="stat-box"><div class="stat-val">' + avg + '</div><div class="stat-lbl">スコア平均</div></div>' +
+    '<div class="stat-box"><div class="stat-val">' + rate + '%</div><div class="stat-lbl">記録率</div></div>';
+
+  // Habit stats
+  var recordedEntries = dates.map(function(d){ return entryMap[d] || null; }).filter(Boolean);
   var total = recordedEntries.length;
   var statList = document.getElementById('habit-stat-list');
-  if (!total) { statList.innerHTML='<div style="font-size:13px;color:var(--text-sub)">この期間の記録がありません</div>'; return; }
+  if (!total) {
+    statList.innerHTML = '<div style="font-size:13px;color:var(--text-sub)">この期間の記録がありません</div>';
+    return;
+  }
   var html = '';
-  getHabits().forEach(function(h) {
-    var selfCount=0, assistCount=0;
-    recordedEntries.forEach(function(e){ if(!e.habits) return; var v=e.habits[h.key]; if(v==='self') selfCount++; else if(v==='assist') assistCount++; });
-    var doneCount=selfCount+assistCount;
-    var pct=Math.round((doneCount/total)*100);
-    var selfPct=Math.round((selfCount/total)*100);
-    var assistPct=Math.round((assistCount/total)*100);
-    var b1=h.btn1||'自分で'; var b2=h.btn2||'介助あり';
-    if (h.type==='simple') {
-      html+='<div class="habit-stat-row"><span class="habit-stat-label">'+h.label+'</span><div class="habit-stat-bar-wrap"><div class="habit-stat-bar" style="width:'+pct+'%"></div></div><span class="habit-stat-pct">'+pct+'%</span></div>';
+  HABITS.forEach(function(h) {
+    var selfCount = 0, assistCount = 0;
+    recordedEntries.forEach(function(e) {
+      if (!e.habits) return;
+      var v = e.habits[h.key];
+      if (v === 'self') selfCount++;
+      else if (v === 'assist') assistCount++;
+    });
+    var doneCount = selfCount + assistCount;
+    var pct = Math.round((doneCount / total) * 100);
+    var selfPct = Math.round((selfCount / total) * 100);
+    var assistPct = Math.round((assistCount / total) * 100);
+
+    var btn1 = h.btn1 || '自分で';
+    var btn2 = h.btn2 || '介助あり';
+    if (h.type === 'simple') {
+      html += '<div class="habit-stat-row">' +
+        '<span class="habit-stat-label">' + h.label + '</span>' +
+        '<div class="habit-stat-bar-wrap"><div class="habit-stat-bar" style="width:' + pct + '%"></div></div>' +
+        '<span class="habit-stat-pct">' + pct + '%</span></div>';
     } else {
-      html+='<div class="habit-stat-row"><span class="habit-stat-label">'+h.label+'</span><div class="habit-stat-bar-wrap"><div class="habit-stat-bar" style="width:'+selfPct+'%"></div></div><span class="habit-stat-pct" style="color:var(--accent)">'+selfPct+'%</span></div>';
-      if(assistCount>0) html+='<div class="habit-stat-row"><span class="habit-stat-label" style="font-size:11px;color:var(--assist-text)">　└'+b2+'</span><div class="habit-stat-bar-wrap"><div class="habit-stat-bar assist" style="width:'+assistPct+'%"></div></div><span class="habit-stat-pct" style="color:var(--assist-text)">'+assistPct+'%</span></div>';
+      html += '<div class="habit-stat-row">' +
+        '<span class="habit-stat-label">' + h.label + '</span>' +
+        '<div class="habit-stat-bar-wrap"><div class="habit-stat-bar" style="width:' + selfPct + '%"></div></div>' +
+        '<span class="habit-stat-pct" style="color:var(--accent)">' + selfPct + '%</span></div>';
+      if (assistCount > 0) {
+        html += '<div class="habit-stat-row">' +
+          '<span class="habit-stat-label" style="font-size:11px;color:var(--assist-text)">　└' + btn2 + '</span>' +
+          '<div class="habit-stat-bar-wrap"><div class="habit-stat-bar assist" style="width:' + assistPct + '%"></div></div>' +
+          '<span class="habit-stat-pct" style="color:var(--assist-text)">' + assistPct + '%</span></div>';
+      }
     }
   });
   statList.innerHTML = html;
 }
 
-// ===== PRINT =====
-function closePrintOverlay() { document.getElementById('print-overlay').style.display='none'; }
-function printReport() { document.getElementById('print-overlay').style.display='flex'; }
-function buildPrintHTML(body) {
-  return '<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8"><style>@page{size:A4 portrait;margin:12mm;}*{box-sizing:border-box;margin:0;padding:0;}body{font-family:Hiragino Sans,sans-serif;color:#2D2A26;background:white;}h2{font-size:14px;font-weight:700;margin-bottom:8px;}.card{border:1px solid #ccc;border-radius:6px;padding:8px 10px;margin-bottom:8px;}.card-title{font-size:8px;font-weight:600;color:#7A746C;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px;}.stats-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:6px;}.stat-box{background:#F0EDE8;border-radius:5px;padding:6px;text-align:center;}.stat-val{font-size:15px;font-weight:700;color:#7B9E87;}.stat-lbl{font-size:8px;color:#7A746C;margin-top:1px;}.habit-stat-list{display:flex;flex-direction:column;gap:4px;}.habit-stat-row{display:flex;align-items:center;gap:8px;}.habit-stat-label{font-size:9px;width:95px;flex-shrink:0;}.habit-stat-bar-wrap{flex:1;background:#F0EDE8;border-radius:3px;height:7px;overflow:hidden;}.habit-stat-bar{height:100%;background:#7B9E87;border-radius:3px;}.habit-stat-bar.assist{background:#D4A840;}.habit-stat-pct{font-size:9px;font-weight:700;color:#4E7258;width:30px;text-align:right;flex-shrink:0;}img{width:100%;display:block;border-radius:4px;}.print-btn-wrap{margin-top:16px;text-align:center;}.print-btn{padding:12px 32px;background:#7B9E87;color:white;border:none;border-radius:20px;font-size:15px;font-weight:700;cursor:pointer;}@media print{.print-btn-wrap{display:none;}}</style></head><body>'+body+'<div class="print-btn-wrap"><button class="print-btn" onclick="window.print()">印刷 / PDFで保存</button></div></body></html>';
-}
-function executePrint() {
-  document.getElementById('print-overlay').style.display='none';
-  var canvas=document.getElementById('score-chart');
-  var imgData=canvas.toDataURL('image/png');
-  var statsHtml=document.getElementById('stats-row').outerHTML;
-  var habitHtml=document.getElementById('habit-stat-list').outerHTML;
-  var body='<h2>振り返り</h2><div class="card"><div class="card-title">気分スコア</div><img src="'+imgData+'"></div><div class="card">'+statsHtml+'</div><div class="card"><div class="card-title">生活習慣の達成率</div>'+habitHtml+'</div>';
-  localStorage.setItem('ashiato_print_body', body);
-  var isStandalone=window.navigator.standalone===true||window.matchMedia('(display-mode: standalone)').matches;
-  var html=buildPrintHTML(body);
-  var blob=new Blob([html],{type:'text/html'});
-  var url=URL.createObjectURL(blob);
-  if (isStandalone) {
-    showPrintGuide();
-  } else {
-    // aタグ経由で開く（Artifactサンドボックス対応）
-    var a=document.createElement('a');
-    a.href=url; a.target='_blank'; a.rel='noopener';
-    document.body.appendChild(a); a.click(); document.body.removeChild(a);
-    setTimeout(function(){URL.revokeObjectURL(url);},15000);
-  }
-}
-function showPrintGuide() {
-  var ov=document.createElement('div');
-  ov.id='print-guide-overlay';
-  ov.style.cssText='position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,0.55);display:flex;align-items:flex-end;';
-  var inner=document.createElement('div');
-  inner.style.cssText='background:var(--surface);border-radius:20px 20px 0 0;padding:28px 24px 40px;width:100%;max-width:480px;margin:0 auto;';
-  var title=document.createElement('div'); title.style.cssText='font-size:16px;font-weight:700;margin-bottom:12px;'; title.textContent='Safariで印刷する';
-  var desc=document.createElement('div'); desc.style.cssText='font-size:14px;color:var(--text-sub);line-height:1.8;margin-bottom:20px;';
-  desc.innerHTML='ホーム画面アプリからは直接印刷できません。<br>以下の手順でSafariから印刷してください。<br><br>① 下の「Safariで開く」をタップ<br>② 開いたページの「印刷 / PDFで保存」をタップ';
-  var btnOpen=document.createElement('button'); btnOpen.style.cssText='width:100%;padding:14px;background:var(--accent);color:white;border:none;border-radius:var(--radius);font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;margin-bottom:10px;display:block;'; btnOpen.textContent='Safariで開く'; btnOpen.onclick=openInSafari;
-  var btnCancel=document.createElement('button'); btnCancel.style.cssText='width:100%;padding:14px;background:var(--surface2);color:var(--text-sub);border:1.5px solid var(--border);border-radius:var(--radius);font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;display:block;'; btnCancel.textContent='キャンセル';
-  btnCancel.onclick=function(){var el=document.getElementById('print-guide-overlay');if(el)el.parentNode.removeChild(el);};
-  inner.appendChild(title); inner.appendChild(desc); inner.appendChild(btnOpen); inner.appendChild(btnCancel);
-  ov.appendChild(inner); document.body.appendChild(ov);
-}
-function openInSafari() {
-  var body=localStorage.getItem('ashiato_print_body')||'';
-  var html=buildPrintHTML(body);
-  var blob=new Blob([html],{type:'text/html'});
-  var url=URL.createObjectURL(blob);
-  var a=document.createElement('a'); a.href=url; a.target='_blank'; a.rel='noopener';
-  document.body.appendChild(a); a.click(); document.body.removeChild(a);
-  var el=document.getElementById('print-guide-overlay'); if(el) el.parentNode.removeChild(el);
-  setTimeout(function(){URL.revokeObjectURL(url);},15000);
-}
-
-// ===== PAGE NAV =====
 function showPage(id, btn) {
-  document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
+  document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
   document.getElementById('page-'+id).classList.add('active');
-  document.querySelectorAll('.nav-btn').forEach(function(b){ b.classList.remove('active'); });
+  document.querySelectorAll('.nav-btn').forEach(function(b) { b.classList.remove('active'); });
   btn.classList.add('active');
-  if (id==='graph') setTimeout(renderGraph,50);
-  if (id==='record') {
+  if (id === 'graph') setTimeout(renderGraph, 50);
+  if (id === 'record') {
+    // Reset to today when navigating to record tab normally
     document.getElementById('record-date').value = todayStr();
     editingDate = todayStr();
     resetRecordForm();
@@ -1097,117 +865,395 @@ function showPage(id, btn) {
   }
 }
 
-// ===== TOAST / CONFIRM =====
-function showToast(msg) {
-  var t=document.getElementById('toast');
-  t.textContent=msg; t.classList.add('show');
-  setTimeout(function(){t.classList.remove('show');},2000);
-}
-function showConfirm(msg, onOk) {
-  var ov=document.getElementById('confirm-overlay');
-  document.getElementById('confirm-msg').textContent=msg;
-  ov.style.display='flex';
-  document.getElementById('confirm-ok').onclick=function(){ov.style.display='none';onOk();};
-  document.getElementById('confirm-cancel').onclick=function(){ov.style.display='none';};
+function showAddToHomeGuide() {
+  var isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  var isAndroid = /android/i.test(navigator.userAgent);
+  var isStandalone = window.navigator.standalone === true
+    || window.matchMedia('(display-mode: standalone)').matches;
+
+  var ov = document.createElement('div');
+  ov.id = 'add-home-overlay';
+  ov.style.cssText = 'position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,0.55);display:flex;align-items:flex-end;';
+
+  var inner = document.createElement('div');
+  inner.style.cssText = 'background:var(--surface);border-radius:20px 20px 0 0;padding:24px 20px 40px;width:100%;max-width:480px;margin:0 auto;';
+
+  var title = document.createElement('div');
+  title.style.cssText = 'font-size:16px;font-weight:700;margin-bottom:16px;';
+  title.textContent = 'ホーム画面に追加する';
+
+  var desc = document.createElement('div');
+  desc.style.cssText = 'font-size:14px;line-height:1.9;color:var(--text);margin-bottom:20px;';
+
+  if (isStandalone) {
+    desc.textContent = 'すでにホーム画面から起動しています。';
+  } else if (isIOS) {
+    desc.innerHTML =
+      '① 画面下部の <strong>共有ボタン（□↑）</strong> をタップ<br>' +
+      '② 「<strong>ホーム画面に追加</strong>」をタップ<br>' +
+      '③ 右上の「<strong>追加</strong>」をタップ';
+  } else if (isAndroid) {
+    desc.innerHTML =
+      '① ブラウザ右上の <strong>メニュー（⋮）</strong> をタップ<br>' +
+      '② 「<strong>ホーム画面に追加</strong>」をタップ<br>' +
+      '③ 「<strong>追加</strong>」をタップ';
+  } else {
+    desc.innerHTML =
+      'ブラウザのメニューから<br>「<strong>ホーム画面に追加</strong>」または<br>「<strong>サイトをアプリとしてインストール</strong>」を選んでください。';
+  }
+
+  var btnClose = document.createElement('button');
+  btnClose.style.cssText = 'width:100%;padding:14px;background:var(--accent);color:white;border:none;border-radius:var(--radius);font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;';
+  btnClose.textContent = '閉じる';
+  btnClose.onclick = function() {
+    var el = document.getElementById('add-home-overlay');
+    if (el) el.parentNode.removeChild(el);
+  };
+
+  inner.appendChild(title);
+  inner.appendChild(desc);
+  inner.appendChild(btnClose);
+  ov.appendChild(inner);
+  document.body.appendChild(ov);
 }
 
-// ===== PIN =====
-var pinBuffer='', pinMode='unlock', pinTemp='';
-function updatePinDots(){for(var i=0;i<4;i++)document.getElementById('dot'+i).classList.toggle('filled',i<pinBuffer.length);}
-function pinInput(n){if(pinBuffer.length>=4)return;pinBuffer+=String(n);updatePinDots();if(pinBuffer.length===4)setTimeout(handlePinComplete,120);}
-function pinDelete(){pinBuffer=pinBuffer.slice(0,-1);updatePinDots();document.getElementById('lock-error').textContent='';}
-function handlePinComplete(){
-  if(pinMode==='unlock'){
-    if(pinBuffer===getPin()){document.getElementById('lock-screen').classList.add('hidden');checkClinicBanner();}
-    else{document.getElementById('lock-error').textContent='PINが違います';pinBuffer='';updatePinDots();}
-  } else if(pinMode==='setup1'){
-    pinTemp=pinBuffer;pinBuffer='';updatePinDots();pinMode='setup2';
-    document.getElementById('lock-title').textContent='もう一度入力';
-    document.getElementById('lock-sub').textContent='確認のためもう一度同じPINを入力してください';
-    document.getElementById('lock-error').textContent='';
-  } else if(pinMode==='setup2'){
-    if(pinBuffer===pinTemp){setStoredPin(pinBuffer);document.getElementById('lock-screen').classList.add('hidden');updatePinSettingsUI();showToast('PINを設定しました');}
-    else{document.getElementById('lock-error').textContent='入力が一致しません。最初からやり直してください';pinBuffer='';pinTemp='';updatePinDots();pinMode='setup1';document.getElementById('lock-title').textContent='PIN設定';document.getElementById('lock-sub').textContent='新しい4桁のPINを入力してください';}
+function showConfirm(msg, onOk) {
+  document.getElementById('confirm-msg').textContent = msg;
+  document.getElementById('confirm-overlay').style.display = 'flex';
+  document.getElementById('confirm-overlay').style.alignItems = 'center';
+  document.getElementById('confirm-ok').onclick = function() {
+    document.getElementById('confirm-overlay').style.display = 'none';
+    onOk();
+  };
+  document.getElementById('confirm-cancel').onclick = function() {
+    document.getElementById('confirm-overlay').style.display = 'none';
+  };
+}
+
+function closePrintOverlay() {
+  document.getElementById('print-overlay').style.display = 'none';
+}
+
+function executePrint() {
+  document.getElementById('print-overlay').style.display = 'none';
+
+  var canvas = document.getElementById('score-chart');
+  var imgData = canvas.toDataURL('image/png');
+  var statsHtml = document.getElementById('stats-row').outerHTML;
+  var habitHtml = document.getElementById('habit-stat-list').outerHTML;
+
+  // 印刷用HTMLを生成してlocalStorageに保存
+  var printBody = '<h2>振り返り</h2>'
+    + '<div class="card"><div class="card-title">気分スコア</div>'
+    + '<img src="' + imgData + '"></div>'
+    + '<div class="card">' + statsHtml + '</div>'
+    + '<div class="card"><div class="card-title">生活習慣の達成率</div>' + habitHtml + '</div>';
+
+  localStorage.setItem('ashiato_print_body', printBody);
+
+  // スタンドアロンモード判定
+  var isStandalone = window.navigator.standalone === true
+    || window.matchMedia('(display-mode: standalone)').matches;
+
+  if (isStandalone) {
+    // ホーム画面アプリ: Safariで開く案内を表示
+    showPrintGuide();
+  } else {
+    // ブラウザ: 別タブで印刷ページを開く
+    var html = buildPrintHTML(printBody);
+    var blob = new Blob([html], {type: 'text/html'});
+    var url = URL.createObjectURL(blob);
+    var win = window.open(url, '_blank');
+    if (!win) { location.href = url; }
+    setTimeout(function(){ URL.revokeObjectURL(url); }, 15000);
   }
 }
-function showLockScreen(mode){
-  pinBuffer='';pinMode=mode;updatePinDots();document.getElementById('lock-error').textContent='';
-  if(mode==='unlock'){document.getElementById('lock-title').textContent='ロック解除';document.getElementById('lock-sub').textContent='4桁のPINを入力してください';document.getElementById('lock-note').textContent='';document.getElementById('lock-cancel-btn').style.display='none';}
-  else{document.getElementById('lock-title').textContent='PIN設定';document.getElementById('lock-sub').textContent='新しい4桁のPINを入力してください';document.getElementById('lock-note').innerHTML='PINを忘れると記録を参照できなくなります。<br>ご注意ください。';document.getElementById('lock-cancel-btn').style.display='block';}
+
+function buildPrintHTML(body) {
+  return '<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8">'
+    + '<style>'
+    + '@page{size:A4 portrait;margin:12mm;}'
+    + '*{box-sizing:border-box;margin:0;padding:0;}'
+    + 'body{font-family:Hiragino Sans,sans-serif;color:#2D2A26;background:white;padding:0;}'
+    + 'h2{font-size:14px;font-weight:700;margin-bottom:8px;}'
+    + '.card{border:1px solid #ccc;border-radius:6px;padding:8px 10px;margin-bottom:8px;}'
+    + '.card-title{font-size:8px;font-weight:600;color:#7A746C;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px;}'
+    + '.stats-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:6px;}'
+    + '.stat-box{background:#F0EDE8;border-radius:5px;padding:6px;text-align:center;}'
+    + '.stat-val{font-size:15px;font-weight:700;color:#7B9E87;}'
+    + '.stat-lbl{font-size:8px;color:#7A746C;margin-top:1px;}'
+    + '.habit-stat-list{display:flex;flex-direction:column;gap:4px;}'
+    + '.habit-stat-row{display:flex;align-items:center;gap:8px;}'
+    + '.habit-stat-label{font-size:9px;width:95px;flex-shrink:0;}'
+    + '.habit-stat-bar-wrap{flex:1;background:#F0EDE8;border-radius:3px;height:7px;overflow:hidden;}'
+    + '.habit-stat-bar{height:100%;background:#7B9E87;border-radius:3px;}'
+    + '.habit-stat-bar.assist{background:#D4A840;}'
+    + '.habit-stat-pct{font-size:9px;font-weight:700;color:#4E7258;width:30px;text-align:right;flex-shrink:0;}'
+    + 'img{width:100%;display:block;border-radius:4px;}'
+    + '.print-btn-wrap{margin-top:16px;text-align:center;}'
+    + '.print-btn{padding:12px 32px;background:#7B9E87;color:white;border:none;border-radius:20px;font-size:15px;font-weight:700;cursor:pointer;}'
+    + '@media print{.print-btn-wrap{display:none;}}'
+    + '</style></head><body>'
+    + body
+    + '<div class="print-btn-wrap"><button class="print-btn" onclick="window.print()">印刷 / PDFで保存</button></div>'
+    + '</body></html>';
+}
+
+function showPrintGuide() {
+  var ov = document.createElement('div');
+  ov.id = 'print-guide-overlay';
+  ov.style.cssText = 'position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,0.55);display:flex;align-items:flex-end;';
+
+  var inner = document.createElement('div');
+  inner.style.cssText = 'background:var(--surface);border-radius:20px 20px 0 0;padding:28px 24px 40px;width:100%;max-width:480px;margin:0 auto;';
+
+  var title = document.createElement('div');
+  title.style.cssText = 'font-size:16px;font-weight:700;margin-bottom:12px;';
+  title.textContent = 'Safariで印刷する';
+
+  var desc = document.createElement('div');
+  desc.style.cssText = 'font-size:14px;color:var(--text-sub);line-height:1.8;margin-bottom:20px;';
+  desc.innerHTML = 'ホーム画面アプリからは直接印刷できません。<br>以下の手順でSafariから印刷してください。<br><br>① 下の「Safariで開く」をタップ<br>② 開いたページの「印刷 / PDFで保存」をタップ';
+
+  var btnOpen = document.createElement('button');
+  btnOpen.style.cssText = 'width:100%;padding:14px;background:var(--accent);color:white;border:none;border-radius:var(--radius);font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;margin-bottom:10px;display:block;';
+  btnOpen.textContent = 'Safariで開く';
+  btnOpen.onclick = openInSafari;
+
+  var btnCancel = document.createElement('button');
+  btnCancel.style.cssText = 'width:100%;padding:14px;background:var(--surface2);color:var(--text-sub);border:1.5px solid var(--border);border-radius:var(--radius);font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;display:block;';
+  btnCancel.textContent = 'キャンセル';
+  btnCancel.onclick = function() {
+    var el = document.getElementById('print-guide-overlay');
+    if (el) el.parentNode.removeChild(el);
+  };
+
+  inner.appendChild(title);
+  inner.appendChild(desc);
+  inner.appendChild(btnOpen);
+  inner.appendChild(btnCancel);
+  ov.appendChild(inner);
+  document.body.appendChild(ov);
+}
+
+function openInSafari() {
+  var body = localStorage.getItem('ashiato_print_body') || '';
+  var html = buildPrintHTML(body);
+  var blob = new Blob([html], {type: 'text/html'});
+  var url = URL.createObjectURL(blob);
+  // スタンドアロンからSafariへ: target="_blank"リンクをクリック
+  var a = document.createElement('a');
+  a.href = url;
+  a.target = '_blank';
+  a.rel = 'noopener';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  document.getElementById('print-guide-overlay').remove();
+  setTimeout(function(){ URL.revokeObjectURL(url); }, 15000);
+}
+
+function printReport() {
+  document.getElementById('print-overlay').style.display = 'flex';
+}
+
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(function() { t.classList.remove('show'); }, 2000);
+}
+
+// ===== PIN LOCK =====
+var pinBuffer = '';
+var pinMode = 'unlock';
+var pinTemp = '';
+
+function updatePinDots() {
+  for (var i=0;i<4;i++) {
+    document.getElementById('dot'+i).classList.toggle('filled', i < pinBuffer.length);
+  }
+}
+
+function pinInput(n) {
+  if (pinBuffer.length >= 4) return;
+  pinBuffer += String(n);
+  updatePinDots();
+  if (pinBuffer.length === 4) setTimeout(handlePinComplete, 120);
+}
+
+function pinDelete() {
+  pinBuffer = pinBuffer.slice(0,-1);
+  updatePinDots();
+  document.getElementById('lock-error').textContent = '';
+}
+
+function handlePinComplete() {
+  if (pinMode === 'unlock') {
+    if (pinBuffer === getPin()) {
+      document.getElementById('lock-screen').classList.add('hidden');
+      checkClinicBanner();
+      updateClinicIconOnRecord();
+    } else {
+      document.getElementById('lock-error').textContent = 'PINが違います';
+      pinBuffer = '';
+      updatePinDots();
+    }
+  } else if (pinMode === 'setup1') {
+    pinTemp = pinBuffer;
+    pinBuffer = '';
+    updatePinDots();
+    pinMode = 'setup2';
+    document.getElementById('lock-title').textContent = 'もう一度入力';
+    document.getElementById('lock-sub').textContent = '確認のためもう一度同じPINを入力してください';
+    document.getElementById('lock-error').textContent = '';
+  } else if (pinMode === 'setup2') {
+    if (pinBuffer === pinTemp) {
+      setStoredPin(pinBuffer);
+      document.getElementById('lock-screen').classList.add('hidden');
+      updatePinSettingsUI();
+      showToast('PINを設定しました');
+    } else {
+      document.getElementById('lock-error').textContent = '入力が一致しません。最初からやり直してください';
+      pinBuffer = ''; pinTemp = '';
+      updatePinDots();
+      pinMode = 'setup1';
+      document.getElementById('lock-title').textContent = 'PIN設定';
+      document.getElementById('lock-sub').textContent = '新しい4桁のPINを入力してください';
+    }
+  }
+}
+
+function showLockScreen(mode) {
+  pinBuffer = ''; pinMode = mode;
+  updatePinDots();
+  document.getElementById('lock-error').textContent = '';
+  if (mode === 'unlock') {
+    document.getElementById('lock-title').textContent = 'ロック解除';
+    document.getElementById('lock-sub').textContent = '4桁のPINを入力してください';
+    document.getElementById('lock-note').textContent = '';
+    document.getElementById('lock-cancel-btn').style.display = 'none';
+  } else {
+    document.getElementById('lock-title').textContent = 'PIN設定';
+    document.getElementById('lock-sub').textContent = '新しい4桁のPINを入力してください';
+    document.getElementById('lock-note').innerHTML = 'PINを忘れると記録を参照できなくなります。<br>ご注意ください。';
+    document.getElementById('lock-cancel-btn').style.display = 'block';
+  }
   document.getElementById('lock-screen').classList.remove('hidden');
 }
-function openPinSetup(){pinTemp='';showLockScreen('setup1');}
-function cancelPinSetup(){document.getElementById('lock-screen').classList.add('hidden');pinBuffer='';pinTemp='';}
-function removePin(){showConfirm('PINを削除してロックを解除しますか？',function(){clearStoredPin();updatePinSettingsUI();showToast('PINを削除しました');});}
-function updatePinSettingsUI(){
-  var hasPin=!!getPin();
-  document.getElementById('pin-status-label').textContent=hasPin?'設定済み':'設定されていません';
-  document.getElementById('pin-action-btn').textContent=hasPin?'変更する':'設定する';
-  document.getElementById('pin-remove-row').style.display=hasPin?'':'none';
+
+function openPinSetup() { pinTemp = ''; showLockScreen('setup1'); }
+
+function cancelPinSetup() {
+  document.getElementById('lock-screen').classList.add('hidden');
+  pinBuffer = ''; pinTemp = '';
 }
 
-// ===== CLINIC =====
-function updateClinicSettingsUI(){
-  var d=getClinicDate();
-  var label=document.getElementById('clinic-date-label');
-  var removeRow=document.getElementById('clinic-remove-row');
-  var input=document.getElementById('clinic-date-input');
-  if(d){label.textContent=fmtDate(d);removeRow.style.display='';if(input)input.value=d;}
-  else{label.textContent='設定されていません';removeRow.style.display='none';}
-}
-function confirmClinicDate(){
-  var d=document.getElementById('clinic-date-input').value;
-  if(!d){showToast('日付を選択してください');return;}
-  localStorage.setItem('ashiato_clinic_date',d);
-  updateClinicSettingsUI();showToast('通院日を設定しました');
-}
-function removeClinicDate(){
-  showConfirm('通院日を削除しますか？',function(){localStorage.removeItem('ashiato_clinic_date');updateClinicSettingsUI();showToast('通院日を削除しました');});
-}
-function checkClinicBanner(){
-  var d=getClinicDate();if(!d)return;
-  var now=new Date();
-  var todayS=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0');
-  var today=new Date(todayS+'T00:00:00');
-  var clinic=new Date(d+'T00:00:00');
-  var diff=Math.round((clinic-today)/(1000*60*60*24));
-  var banner=document.getElementById('clinic-banner');
-  var bannerText=document.getElementById('clinic-banner-text');
-  var dismissed=sessionStorage.getItem('clinic_banner_dismissed');
-  if(dismissed===d)return;
-  if(diff===0){bannerText.textContent='本日は通院日です 🏥';banner.style.display='block';banner.style.background='#8B2035';}
-  else if(diff===1){bannerText.textContent='明日（'+fmtDate(d)+'）は通院日です 🏥';banner.style.display='block';banner.style.background='var(--accent-dark)';}
-  else if(diff===3){bannerText.textContent='3日後（'+fmtDate(d)+'）に通院予定です';banner.style.display='block';banner.style.background='var(--accent)';}
-  else if(diff===7){bannerText.textContent='1週間後（'+fmtDate(d)+'）に通院予定です';banner.style.display='block';banner.style.background='var(--accent)';}
-  if(banner.style.display==='block'){document.querySelectorAll('.page').forEach(function(p){p.style.paddingTop='60px';});}
-}
-function dismissClinicBanner(){
-  var d=getClinicDate();sessionStorage.setItem('clinic_banner_dismissed',d);
-  document.getElementById('clinic-banner').style.display='none';
-  document.querySelectorAll('.page').forEach(function(p){p.style.paddingTop='';});
+function removePin() {
+  showConfirm('PINを削除してロックを解除しますか？', function() {
+    clearStoredPin();
+    updatePinSettingsUI();
+    showToast('PINを削除しました');
+  });
 }
 
-// ===== HOME GUIDE =====
-function showAddToHomeGuide(){
-  var isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent);
-  var isAndroid=/android/i.test(navigator.userAgent);
-  var isStandalone=window.navigator.standalone===true||window.matchMedia('(display-mode: standalone)').matches;
-  var ov=document.createElement('div'); ov.id='add-home-overlay'; ov.style.cssText='position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,0.55);display:flex;align-items:flex-end;';
-  var inner=document.createElement('div'); inner.style.cssText='background:var(--surface);border-radius:20px 20px 0 0;padding:24px 20px 40px;width:100%;max-width:480px;margin:0 auto;';
-  var title=document.createElement('div'); title.style.cssText='font-size:16px;font-weight:700;margin-bottom:16px;'; title.textContent='ホーム画面に追加する';
-  var desc=document.createElement('div'); desc.style.cssText='font-size:14px;line-height:1.9;color:var(--text);margin-bottom:20px;';
-  if(isStandalone){desc.textContent='すでにホーム画面から起動しています。';}
-  else if(isIOS){desc.innerHTML='① 画面下部の <strong>共有ボタン（□↑）</strong> をタップ<br>② 「<strong>ホーム画面に追加</strong>」をタップ<br>③ 右上の「<strong>追加</strong>」をタップ';}
-  else if(isAndroid){desc.innerHTML='① ブラウザ右上の <strong>メニュー（⋮）</strong> をタップ<br>② 「<strong>ホーム画面に追加</strong>」をタップ<br>③ 「<strong>追加</strong>」をタップ';}
-  else{desc.innerHTML='ブラウザのメニューから<br>「<strong>ホーム画面に追加</strong>」を選んでください。';}
-  var btnClose=document.createElement('button'); btnClose.style.cssText='width:100%;padding:14px;background:var(--accent);color:white;border:none;border-radius:var(--radius);font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;'; btnClose.textContent='閉じる';
-  btnClose.onclick=function(){var el=document.getElementById('add-home-overlay');if(el)el.parentNode.removeChild(el);};
-  inner.appendChild(title);inner.appendChild(desc);inner.appendChild(btnClose);ov.appendChild(inner);document.body.appendChild(ov);
+function updatePinSettingsUI() {
+  var hasPin = !!getPin();
+  document.getElementById('pin-status-label').textContent = hasPin ? '設定済み' : '設定されていません';
+  document.getElementById('pin-action-btn').textContent = hasPin ? '変更する' : '設定する';
+  document.getElementById('pin-remove-row').style.display = hasPin ? '' : 'none';
+}
+
+// ===== 通院日 =====
+function getClinicDate() { return localStorage.getItem('ashiato_clinic_date') || ''; }
+
+function confirmClinicDate() {
+  var d = document.getElementById('clinic-date-input').value;
+  if (!d) { showToast('日付を選択してください'); return; }
+  localStorage.setItem('ashiato_clinic_date', d);
+  document.getElementById('clinic-picker-row').style.display = 'none';
+  updateClinicSettingsUI();
+  showToast('通院日を設定しました');
+}
+function saveClinicDate() {
+  // 後方互換のため残す（呼ばれない）
+}
+function removeClinicDate() {
+  localStorage.removeItem('ashiato_clinic_date');
+  updateClinicSettingsUI();
+  showToast('通院日を削除しました');
+}
+function updateClinicSettingsUI() {
+  var d = getClinicDate();
+  var label = document.getElementById('clinic-date-label');
+  var removeRow = document.getElementById('clinic-remove-row');
+  var actionBtn = document.querySelector('#clinic-remove-row ~ * .text-btn, .setting-row .text-btn');
+  var input = document.getElementById('clinic-date-input');
+  if (d) {
+    label.textContent = fmtDate(d);
+    removeRow.style.display = '';
+    if (input) input.value = d;
+  } else {
+    label.textContent = '設定されていません';
+    removeRow.style.display = 'none';
+  }
+}
+function checkClinicBanner() {
+  var d = getClinicDate();
+  if (!d) return;
+  var now = new Date();
+  var todayStr2 = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + '-' + String(now.getDate()).padStart(2,'0');
+  var today = new Date(todayStr2 + 'T00:00:00');
+  var clinic = new Date(d + 'T00:00:00');
+  var diff = Math.round((clinic - today) / (1000 * 60 * 60 * 24));
+  var banner = document.getElementById('clinic-banner');
+  var bannerText = document.getElementById('clinic-banner-text');
+  var dismissed = sessionStorage.getItem('clinic_banner_dismissed');
+  if (dismissed === d) return;
+  if (diff === 0) {
+    bannerText.textContent = '本日は通院日です 🏥';
+    banner.style.display = 'block';
+    banner.style.background = '#8B2035';
+  } else if (diff === 1) {
+    bannerText.textContent = '明日（' + fmtDate(d) + '）は通院日です 🏥';
+    banner.style.display = 'block';
+    banner.style.background = 'var(--accent-dark)';
+  } else if (diff === 3) {
+    bannerText.textContent = '3日後（' + fmtDate(d) + '）に通院予定です';
+    banner.style.display = 'block';
+    banner.style.background = 'var(--accent)';
+  } else if (diff === 7) {
+    bannerText.textContent = '1週間後（' + fmtDate(d) + '）に通院予定です';
+    banner.style.display = 'block';
+    banner.style.background = 'var(--accent)';
+  }
+  // バナー表示時はページ上部にpaddingを追加
+  if (banner.style.display === 'block') {
+    document.querySelectorAll('.page').forEach(function(p) {
+      p.style.paddingTop = '60px';
+    });
+  }
+}
+function dismissClinicBanner() {
+  var d = getClinicDate();
+  sessionStorage.setItem('clinic_banner_dismissed', d);
+  document.getElementById('clinic-banner').style.display = 'none';
+  document.querySelectorAll('.page').forEach(function(p) {
+    p.style.paddingTop = '';
+  });
+}
+
+function updateClinicIconOnRecord() {
+  // 通院日バッジは非表示
+  var existing = document.getElementById('clinic-icon');
+  if (existing) existing.parentNode.removeChild(existing);
 }
 
 init();
-if(!getPin()){checkClinicBanner();}
-if(getPin()) showLockScreen('unlock');
+// PINなし起動時に通院バナー・アイコンを表示
+if (!getPin()) {
+  checkClinicBanner();
+  updateClinicIconOnRecord();
+}
 </script>
 </body>
 </html>
