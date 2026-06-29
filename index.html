@@ -1674,7 +1674,21 @@ async function startup() {
     if (getPin()) { showLockScreen('unlock'); }
   }
 }
-startup();
+// デバッグ開始
+(function() {
+  var dbgDiv = document.createElement('div');
+  dbgDiv.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:9999;background:red;color:white;font-size:12px;padding:8px;word-break:break-all;';
+  dbgDiv.id = 'top-debug';
+  dbgDiv.textContent = 'startup calling...';
+  document.body.appendChild(dbgDiv);
+})();
+startup().then(function() {
+  var el = document.getElementById('top-debug');
+  if (el) el.textContent = 'startup done / supabase=' + (supabase ? 'OK' : 'NULL');
+}).catch(function(e) {
+  var el = document.getElementById('top-debug');
+  if (el) el.textContent = 'startup ERROR: ' + e.message;
+});
 </script>
 </body>
 </html>
