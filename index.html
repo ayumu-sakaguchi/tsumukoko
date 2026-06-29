@@ -1292,35 +1292,47 @@ var supabase = null;
 var currentUser = null;
 
 function initSupabase() {
+  var debugLines = [];
   try {
-    // UMDビルドのグローバル名を複数パターンで試す
+    debugLines.push('SDK check start');
+    debugLines.push('supabaseJs: ' + typeof supabaseJs);
+    debugLines.push('window.supabase: ' + typeof window.supabase);
+    debugLines.push('window.Supabase: ' + typeof window.Supabase);
+
     var client = null;
     if (typeof supabaseJs !== 'undefined' && supabaseJs.createClient) {
       client = supabaseJs.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      debugLines.push('created via supabaseJs');
     } else if (typeof window.supabase !== 'undefined' && window.supabase.createClient) {
       client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      debugLines.push('created via window.supabase');
     } else if (typeof window.Supabase !== 'undefined' && window.Supabase.createClient) {
       client = window.Supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      debugLines.push('created via window.Supabase');
     } else {
-      // グローバルに存在するcreateClient関数を探す
       var keys = Object.keys(window);
       for (var i = 0; i < keys.length; i++) {
         var k = keys[i];
         if (window[k] && typeof window[k].createClient === 'function') {
           client = window[k].createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-          console.log('Supabase found at window.' + k);
+          debugLines.push('created via window.' + k);
           break;
         }
       }
     }
     if (client) {
       supabase = client;
-      console.log('Supabase initialized successfully');
+      debugLines.push('SUCCESS');
     } else {
-      console.error('Supabase SDK not found in window');
+      debugLines.push('FAILED: client is null');
+      // デバッグ情報をauth画面に表示
+      var errEl = document.getElementById('auth-error');
+      if (errEl) { errEl.textContent = debugLines.join(' | '); errEl.style.display = 'block'; }
     }
   } catch(e) {
-    console.error('Supabase init error:', e.message);
+    debugLines.push('EXCEPTION: ' + e.message);
+    var errEl = document.getElementById('auth-error');
+    if (errEl) { errEl.textContent = debugLines.join(' | '); errEl.style.display = 'block'; }
   }
 }
 
