@@ -1293,12 +1293,31 @@ var currentUser = null;
 
 function initSupabase() {
   try {
-    // UMDビルドではwindow.supabase.createClientが利用可能
-    if (typeof window.supabase !== 'undefined' && window.supabase.createClient) {
-      supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-      console.log('Supabase initialized:', !!supabase);
+    // UMDビルドのグローバル名を複数パターンで試す
+    var client = null;
+    if (typeof supabaseJs !== 'undefined' && supabaseJs.createClient) {
+      client = supabaseJs.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    } else if (typeof window.supabase !== 'undefined' && window.supabase.createClient) {
+      client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    } else if (typeof window.Supabase !== 'undefined' && window.Supabase.createClient) {
+      client = window.Supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     } else {
-      console.error('Supabase SDK not loaded. window.supabase:', typeof window.supabase);
+      // グローバルに存在するcreateClient関数を探す
+      var keys = Object.keys(window);
+      for (var i = 0; i < keys.length; i++) {
+        var k = keys[i];
+        if (window[k] && typeof window[k].createClient === 'function') {
+          client = window[k].createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+          console.log('Supabase found at window.' + k);
+          break;
+        }
+      }
+    }
+    if (client) {
+      supabase = client;
+      console.log('Supabase initialized successfully');
+    } else {
+      console.error('Supabase SDK not found in window');
     }
   } catch(e) {
     console.error('Supabase init error:', e.message);
