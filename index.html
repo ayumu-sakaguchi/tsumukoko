@@ -1651,6 +1651,12 @@ function updateClinicIconOnRecord() {
 async function startup() {
   init();
   initSupabase();
+  // デバッグ: supabase初期化状態を画面に表示
+  var errEl = document.getElementById('auth-error');
+  if (errEl) {
+    errEl.textContent = 'supabase=' + (supabase ? 'OK' : 'NULL') + ' / window.supabase=' + typeof window.supabase + ' / supabaseJs=' + typeof supabaseJs;
+    errEl.style.display = 'block';
+  }
   try {
     var sessionResult = await supabase.auth.getSession();
     var session = sessionResult.data && sessionResult.data.session;
