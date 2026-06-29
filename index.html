@@ -706,7 +706,7 @@ async function loadEntriesFromSupabase() {
   }
 }
 
-async async function saveEntryToSupabase(entry) {
+async function saveEntryToSupabase(entry) {
   if (!supabase || !currentUser) return;
   try {
     var row = {
@@ -1392,8 +1392,7 @@ async function authLogout() {
 async function onLoginSuccess() {
   hideAuthScreen();
   setAuthLoading(false);
-  var _elEmail = document.getElementById('auth-user-email');
-  if (_elEmail) _elEmail.textContent = currentUser.email;
+  document.getElementById('auth-user-email').textContent = currentUser.email;
   showToast('ログインしました');
   // Supabaseからデータを読み込む
   await loadEntriesFromSupabase();
@@ -1634,7 +1633,7 @@ async function startup() {
     var session = sessionResult.data && sessionResult.data.session;
     if (session && session.user) {
       currentUser = session.user;
-      var _el = document.getElementById('auth-user-email'); if (_el) _el.textContent = currentUser.email;
+      document.getElementById('auth-user-email').textContent = currentUser.email;
       await loadEntriesFromSupabase();
       renderHistory();
       renderGraph();
