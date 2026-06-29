@@ -1325,15 +1325,11 @@ function initSupabase() {
       debugLines.push('SUCCESS');
     } else {
       debugLines.push('FAILED: client is null');
-      // デバッグ情報をauth画面に表示
-      var errEl = document.getElementById('auth-error');
-      if (errEl) { errEl.textContent = debugLines.join(' | '); errEl.style.display = 'block'; }
     }
   } catch(e) {
     debugLines.push('EXCEPTION: ' + e.message);
-    var errEl = document.getElementById('auth-error');
-    if (errEl) { errEl.textContent = debugLines.join(' | '); errEl.style.display = 'block'; }
   }
+  alert(debugLines.join(' | '));
 }
 
 // ===== AUTH =====
@@ -1651,11 +1647,7 @@ function updateClinicIconOnRecord() {
 async function startup() {
   init();
   initSupabase();
-  // デバッグ: alertで表示
-  var dbgMsg = 'supabase=' + (supabase ? 'OK' : 'NULL');
-  dbgMsg += ', window.supabase=' + typeof window.supabase;
-  dbgMsg += ', supabaseJs=' + typeof supabaseJs;
-  alert(dbgMsg);
+
   try {
     var sessionResult = await supabase.auth.getSession();
     var session = sessionResult.data && sessionResult.data.session;
