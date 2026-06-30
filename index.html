@@ -1629,11 +1629,16 @@ async function startup() {
   initSupabase();
 
   try {
+    if (!supabase) {
+      showAuthScreen();
+      return;
+    }
     var sessionResult = await supabase.auth.getSession();
     var session = sessionResult.data && sessionResult.data.session;
     if (session && session.user) {
       currentUser = session.user;
-      document.getElementById('auth-user-email').textContent = currentUser.email;
+      var elEmail = document.getElementById('auth-user-email');
+      if (elEmail) elEmail.textContent = currentUser.email;
       await loadEntriesFromSupabase();
       renderHistory();
       renderGraph();
@@ -1643,9 +1648,8 @@ async function startup() {
       showAuthScreen();
     }
   } catch(e) {
-    console.warn('Supabase unavailable, using local data:', e);
-    if (!getPin()) { checkClinicBanner(); updateClinicIconOnRecord(); }
-    if (getPin()) { showLockScreen('unlock'); }
+    console.warn('Supabase error:', e);
+    showAuthScreen();
   }
 }
 startup();
