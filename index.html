@@ -1643,7 +1643,7 @@ function checkClinicBanner() {
     banner.style.lineHeight = '1.7';
     var infoBar = document.getElementById('clinic-info-bar');
     if (infoBar) infoBar.style.display = 'none';
-    var pt = banner._twoLine ? '86px' : '76px';
+    var pt = banner._twoLine ? '112px' : '76px';
     document.querySelectorAll('.page').forEach(function(p){ p.style.paddingTop = pt; });
   } else {
     updateClinicInfoBar();
