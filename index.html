@@ -784,6 +784,18 @@ function renderHistory() {
     list.appendChild(div);
   });
 }
+function openEntryEdit(dateStr) {
+  document.getElementById('record-date').value = dateStr;
+  editingDate = dateStr;
+  resetRecordForm();
+  loadEntryForDate(dateStr);
+  document.getElementById('today-label').innerHTML = fmtDateHTML(dateStr);
+  document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
+  document.getElementById('page-record').classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(function(b){ b.classList.remove('active'); });
+  document.querySelectorAll('.nav-btn')[0].classList.add('active');
+}
+
 function setPeriod(p, btn) {
   currentPeriod = p;
   document.querySelectorAll('.period-btn').forEach(function(b) { b.classList.remove('active'); });
