@@ -349,12 +349,26 @@ window._supabaseCreateClient = createClient;
   <div class="page-header"><div class="page-title">設定</div></div>
   <div class="card">
     <div class="setting-label">アカウント</div>
-    <div class="setting-row" style="border:none;">
+    <div class="setting-row">
       <div>
         <div class="setting-row-label">ログイン中</div>
         <div class="setting-row-sub" id="auth-user-email">-</div>
       </div>
       <button class="text-btn danger" onclick="authLogout()">ログアウト</button>
+    </div>
+    <div class="setting-row">
+      <div>
+        <div class="setting-row-label">メールアドレス変更</div>
+        <div class="setting-row-sub">新しいメールアドレスに変更します</div>
+      </div>
+      <button class="text-btn" onclick="showChangeEmail()">変更</button>
+    </div>
+    <div class="setting-row" style="border:none;">
+      <div>
+        <div class="setting-row-label">パスワード変更</div>
+        <div class="setting-row-sub">新しいパスワードに変更します</div>
+      </div>
+      <button class="text-btn" onclick="showChangePassword()">変更</button>
     </div>
   </div>
   <div class="card">
@@ -446,6 +460,37 @@ window._supabaseCreateClient = createClient;
 </div>
 
 <!-- CONFIRM DIALOG -->
+<!-- メールアドレス変更モーダル -->
+<div id="change-email-modal" style="display:none;position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,0.45);align-items:flex-end;justify-content:center;">
+  <div style="background:var(--surface);border-radius:20px 20px 0 0;padding:24px 20px 40px;width:100%;max-width:480px;">
+    <div style="font-size:16px;font-weight:700;margin-bottom:16px;">メールアドレス変更</div>
+    <div style="font-size:13px;color:var(--text-sub);margin-bottom:12px;">新しいメールアドレスを入力してください</div>
+    <input type="email" id="new-email-input" placeholder="新しいメールアドレス"
+      style="width:100%;padding:12px;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:var(--surface2);color:var(--text);font-family:inherit;font-size:15px;outline:none;margin-bottom:16px;">
+    <div id="change-email-error" style="display:none;font-size:13px;color:#C04040;background:#FFF0F0;border-radius:8px;padding:10px;margin-bottom:12px;"></div>
+    <div style="display:flex;gap:10px;">
+      <button onclick="closeChangeEmail()" style="flex:1;padding:12px;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:var(--surface2);color:var(--text);font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;white-space:nowrap;">キャンセル</button>
+      <button onclick="submitChangeEmail()" style="flex:1;padding:12px;border-radius:var(--radius-sm);border:none;background:var(--accent);color:white;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;white-space:nowrap;">変更する</button>
+    </div>
+  </div>
+</div>
+
+<!-- パスワード変更モーダル -->
+<div id="change-password-modal" style="display:none;position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,0.45);align-items:flex-end;justify-content:center;">
+  <div style="background:var(--surface);border-radius:20px 20px 0 0;padding:24px 20px 40px;width:100%;max-width:480px;">
+    <div style="font-size:16px;font-weight:700;margin-bottom:16px;">パスワード変更</div>
+    <div style="font-size:13px;color:var(--text-sub);margin-bottom:12px;">新しいパスワードを入力してください（8文字以上）</div>
+    <input type="password" id="new-password-input" placeholder="新しいパスワード（8文字以上）"
+      style="width:100%;padding:12px;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:var(--surface2);color:var(--text);font-family:inherit;font-size:15px;outline:none;margin-bottom:10px;">
+    <input type="password" id="new-password-confirm" placeholder="確認（もう一度入力）"
+      style="width:100%;padding:12px;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:var(--surface2);color:var(--text);font-family:inherit;font-size:15px;outline:none;margin-bottom:16px;">
+    <div id="change-password-error" style="display:none;font-size:13px;color:#C04040;background:#FFF0F0;border-radius:8px;padding:10px;margin-bottom:12px;"></div>
+    <div style="display:flex;gap:10px;">
+      <button onclick="closeChangePassword()" style="flex:1;padding:12px;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:var(--surface2);color:var(--text);font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;white-space:nowrap;">キャンセル</button>
+      <button onclick="submitChangePassword()" style="flex:1;padding:12px;border-radius:var(--radius-sm);border:none;background:var(--accent);color:white;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;white-space:nowrap;">変更する</button>
+    </div>
+  </div>
+</div>
 <div id="confirm-overlay" style="display:none;position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,0.45);align-items:center;justify-content:center;">
   <div style="background:var(--surface);border-radius:var(--radius);padding:24px;margin:24px;width:calc(100% - 48px);max-width:320px;box-shadow:var(--shadow);">
     <div id="confirm-msg" style="font-size:15px;font-weight:500;margin-bottom:20px;line-height:1.6;"></div>
