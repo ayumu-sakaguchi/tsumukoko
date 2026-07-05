@@ -573,11 +573,12 @@ window._supabaseCreateClient = createClient;
 <script>
 var DEFAULT_HABITS = [
   { key: 'sleep',    label: '睡眠（6時間以上）', type: 'simple' },
-  { key: 'meal_m',   label: '食事・朝',           type: 'dual' },
-  { key: 'meal_l',   label: '食事・昼',           type: 'dual' },
-  { key: 'meal_d',   label: '食事・夕',           type: 'dual' },
-  { key: 'bath',     label: '入浴',               type: 'dual' },
+  { key: 'meal_m',   label: '食事（朝）',         type: 'dual' },
+  { key: 'meal_l',   label: '食事（昼）',         type: 'dual' },
+  { key: 'meal_d',   label: '食事（夕）',         type: 'dual' },
   { key: 'dental',   label: '歯磨き',             type: 'dual' },
+  { key: 'clothes',  label: '着替え',             type: 'dual' },
+  { key: 'bath',     label: '入浴',               type: 'dual' },
   { key: 'walk',     label: '散歩',               type: 'dual' },
   { key: 'shopping', label: '買物',               type: 'dual' },
   { key: 'cooking',  label: '炊事',               type: 'dual' },
@@ -822,7 +823,7 @@ function buildThemeGrid() {
     el.className = 'theme-option' + (th.id === getTheme() ? ' active' : '');
     el.dataset.theme = th.id;
     el.innerHTML = '<div class="swatch" style="background:' + th.color + '"></div>' + th.name;
-    el.onclick = function() { setTheme(th.id); };
+    el.onclick = function() { setTheme(th.id); syncSettingsToSupabase(); };
     tg.appendChild(el);
   });
 }
@@ -980,6 +981,7 @@ function saveHabitEditor() {
   }
   HABITS = cloneHabits(habitEditorWorking);
   saveCustomHabits(HABITS);
+  syncSettingsToSupabase();
   buildHabitList();
   resetRecordForm();
   loadEntryForDate(editingDate);
@@ -1970,6 +1972,56 @@ async function submitChangePassword() {
   }
 }
 
+// ===== USER SETTINGS SYNC (通院日・テーマ・PIN・生活習慣・プレミアムをアカウントに紐付けて同期) =====
+async function loadSettingsFromSupabase() {
+  if (!supabase || !currentUser) return;
+  try {
+    var result = await supabase.from('user_settings').select('*').eq('user_id', currentUser.id).maybeSingle();
+    if (result.error) { console.warn('loadSettingsFromSupabase error:', result.error.message); return; }
+    var row = result.data;
+    if (row) {
+      // リモートの設定をローカルへ反映（このアカウントでの最新の設定を優先）
+      if (row.theme) { localStorage.setItem('diary_theme', row.theme); }
+      if (row.pin) { localStorage.setItem('diary_pin', row.pin); } else { localStorage.removeItem('diary_pin'); }
+      if (row.clinic_date) { localStorage.setItem('tsumukoko_clinic_date', row.clinic_date); } else { localStorage.removeItem('tsumukoko_clinic_date'); }
+      if (row.custom_habits) { localStorage.setItem('tsumukoko_custom_habits', JSON.stringify(row.custom_habits)); } else { localStorage.removeItem('tsumukoko_custom_habits'); }
+      localStorage.setItem('tsumukoko_premium', String(row.is_premium !== false));
+
+      // 画面に反映
+      setTheme(getTheme());
+      loadHabitsConfig();
+      buildHabitList();
+      initPremium();
+      updateClinicSettingsUI();
+      updatePinSettingsUI();
+    } else {
+      // このアカウントでの初回同期：今のローカル設定をアップロードして初期データを作る
+      await syncSettingsToSupabase();
+    }
+  } catch(e) {
+    console.warn('loadSettingsFromSupabase exception:', e.message);
+  }
+}
+
+async function syncSettingsToSupabase() {
+  if (!supabase || !currentUser) return;
+  try {
+    var payload = {
+      user_id: currentUser.id,
+      theme: getTheme(),
+      pin: getPin() || null,
+      clinic_date: getClinicDate() || null,
+      custom_habits: getCustomHabits(),
+      is_premium: getPremium(),
+      updated_at: new Date().toISOString()
+    };
+    var result = await supabase.from('user_settings').upsert(payload, { onConflict: 'user_id' });
+    if (result.error) { console.warn('syncSettingsToSupabase error:', result.error.message); }
+  } catch(e) {
+    console.warn('syncSettingsToSupabase exception:', e.message);
+  }
+}
+
 async function onLoginSuccess() {
   hideAuthScreen();
   setAuthLoading(false);
@@ -1977,6 +2029,7 @@ async function onLoginSuccess() {
   showToast('ログインしました');
   // Supabaseからデータを読み込む
   await loadEntriesFromSupabase();
+  await loadSettingsFromSupabase();
   renderHistory();
   renderGraph();
 }
@@ -1998,6 +2051,7 @@ function togglePremium() {
   knob.style.left = isPremium ? '23px' : '3px';
   slider.style.background = isPremium ? 'var(--accent)' : 'var(--border)';
   updateHabitEditButtonVisibility();
+  syncSettingsToSupabase();
   showToast(isPremium ? 'プレミアム有効' : 'フリープランに変更');
 }
 function initPremium() {
@@ -2063,6 +2117,7 @@ function handlePinComplete() {
   } else if (pinMode === 'setup2') {
     if (pinBuffer === pinTemp) {
       setStoredPin(pinBuffer);
+      syncSettingsToSupabase();
       document.getElementById('lock-screen').classList.add('hidden');
       updatePinSettingsUI();
       showToast('PINを設定しました');
@@ -2105,6 +2160,7 @@ function cancelPinSetup() {
 function removePin() {
   showConfirm('PINを削除してロックを解除しますか？', function() {
     clearStoredPin();
+    syncSettingsToSupabase();
     updatePinSettingsUI();
     showToast('PINを削除しました');
   });
@@ -2125,6 +2181,7 @@ function confirmClinicDate() {
   var d = input.value;
   if (!d) { showToast('日付を選択してください'); return; }
   localStorage.setItem('tsumukoko_clinic_date', d);
+  syncSettingsToSupabase();
   updateClinicSettingsUI();
   showToast('通院日を設定しました');
 }
@@ -2134,6 +2191,7 @@ function saveClinicDate() {
 function removeClinicDate() {
   showConfirm('通院日を削除しますか？', function() {
     localStorage.removeItem('tsumukoko_clinic_date');
+    syncSettingsToSupabase();
     updateClinicSettingsUI();
     showToast('通院日を削除しました');
   }, '削除する');
@@ -2286,6 +2344,7 @@ async function startup() {
       var elEmail = document.getElementById('auth-user-email');
       if (elEmail) elEmail.textContent = currentUser.email;
       await loadEntriesFromSupabase();
+      await loadSettingsFromSupabase();
       renderHistory();
       renderGraph();
       if (!getPin()) { checkClinicBanner(); updateClinicIconOnRecord(); }
