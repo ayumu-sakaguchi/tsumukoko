@@ -1295,22 +1295,6 @@ function renderGraph() {
   statList.innerHTML = html;
 }
 
-function showPage(id, btn) {
-  document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
-  document.getElementById('page-'+id).classList.add('active');
-  document.querySelectorAll('.nav-btn').forEach(function(b) { b.classList.remove('active'); });
-  btn.classList.add('active');
-  if (id === 'graph') setTimeout(renderGraph, 50);
-  if (id === 'record') {
-    // Reset to today when navigating to record tab normally
-    document.getElementById('record-date').value = todayStr();
-    editingDate = todayStr();
-    resetRecordForm();
-    loadEntryForDate(todayStr());
-    document.getElementById('today-label').innerHTML = fmtDateHTML(todayStr());
-  }
-}
-
 function showAddToHomeGuide() {
   var isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
   var isAndroid = /android/i.test(navigator.userAgent);
@@ -1991,6 +1975,9 @@ async function loadSettingsFromSupabase() {
       setTheme(getTheme());
       loadHabitsConfig();
       buildHabitList();
+      // buildHabitList()は選択状態を持たない状態でボタンを作り直すため、
+      // 現在編集中の日付のデータを再度反映する
+      loadEntryForDate(editingDate);
       initPremium();
       updateClinicSettingsUI();
       updatePinSettingsUI();
