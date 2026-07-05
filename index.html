@@ -474,7 +474,7 @@ window._supabaseCreateClient = createClient;
     <div id="change-email-error" style="display:none;font-size:13px;color:#C04040;background:#FFF0F0;border-radius:8px;padding:10px;margin-bottom:12px;"></div>
     <div style="display:flex;gap:10px;">
       <button onclick="closeChangeEmail()" style="flex:1;padding:12px;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:var(--surface2);color:var(--text);font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;white-space:nowrap;">キャンセル</button>
-      <button onclick="submitChangeEmail()" style="flex:1;padding:12px;border-radius:var(--radius-sm);border:none;background:var(--accent);color:white;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;white-space:nowrap;">変更する</button>
+      <button onclick="submitChangeEmail()" id="change-email-submit-btn" style="flex:1;padding:12px;border-radius:var(--radius-sm);border:none;background:var(--accent);color:white;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;white-space:nowrap;">変更する</button>
     </div>
   </div>
 </div>
@@ -491,7 +491,7 @@ window._supabaseCreateClient = createClient;
     <div id="change-password-error" style="display:none;font-size:13px;color:#C04040;background:#FFF0F0;border-radius:8px;padding:10px;margin-bottom:12px;"></div>
     <div style="display:flex;gap:10px;">
       <button onclick="closeChangePassword()" style="flex:1;padding:12px;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:var(--surface2);color:var(--text);font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;white-space:nowrap;">キャンセル</button>
-      <button onclick="submitChangePassword()" style="flex:1;padding:12px;border-radius:var(--radius-sm);border:none;background:var(--accent);color:white;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;white-space:nowrap;">変更する</button>
+      <button onclick="submitChangePassword()" id="change-password-submit-btn" style="flex:1;padding:12px;border-radius:var(--radius-sm);border:none;background:var(--accent);color:white;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;white-space:nowrap;">変更する</button>
     </div>
   </div>
 </div>
@@ -1419,6 +1419,32 @@ function initSupabase() {
   }
 }
 
+// Supabase Authが返す英語のエラーメッセージを、よくあるケースについて日本語に変換する。
+// 該当するパターンが見つからない場合は、元のメッセージをそのまま返す。
+function translateAuthError(msg) {
+  if (!msg) return 'エラーが発生しました';
+  var m = String(msg);
+
+  // 文字数不足（例: "Password should be at least 6 characters"）
+  var lenMatch = m.match(/should be at least (\d+) characters?/i);
+  if (lenMatch) return 'パスワードは' + lenMatch[1] + '文字以上で入力してください';
+
+  if (/invalid login credentials|invalid credentials/i.test(m)) return 'メールアドレスまたはパスワードが違います';
+  if (/email not confirmed/i.test(m)) return 'メールアドレスが未確認です。確認メールをご確認ください';
+  if (/user not found|no user found/i.test(m)) return 'このメールアドレスは登録されていません';
+  if (/user already registered|already registered/i.test(m)) return 'このメールアドレスは既に登録されています';
+  if (/unable to validate email address|invalid email/i.test(m)) return 'メールアドレスの形式が正しくありません';
+  if (/new password should be different/i.test(m)) return '新しいパスワードは現在のパスワードと異なるものにしてください';
+  if (/email rate limit exceeded/i.test(m)) return 'メール送信回数の上限に達しました。しばらくしてから再度お試しください';
+  if (/for security purposes.*after\s*\d+\s*seconds?/i.test(m)) return 'セキュリティのため、しばらく待ってから再度お試しください';
+  if (/token has expired or is invalid|invalid.*token|expired.*token/i.test(m)) return 'リンクの有効期限が切れています。お手数ですが、もう一度パスワード再設定をお試しください';
+  if (/auth session missing/i.test(m)) return 'セッションが確認できませんでした。もう一度お試しください';
+  if (/network|fetch|failed to fetch/i.test(m)) return '通信エラーが発生しました。ネットワーク環境をご確認のうえ、もう一度お試しください';
+  if (/same password|password.*same/i.test(m)) return '新しいパスワードは現在のパスワードと異なるものにしてください';
+
+  return m;
+}
+
 // ===== AUTH =====
 function showAuthScreen() {
   document.getElementById('auth-screen').style.display = 'flex';
@@ -1458,14 +1484,14 @@ async function authLogin() {
       } else if (msg.indexOf('User not found') >= 0 || msg.indexOf('No user') >= 0) {
         showAuthError('このメールアドレスは登録されていません。新規アカウント作成をお試しください');
       } else {
-        showAuthError('ログインに失敗しました: ' + msg);
+        showAuthError('ログインに失敗しました: ' + translateAuthError(msg));
       }
       setAuthLoading(false); return;
     }
     currentUser = result.data.user;
     await onLoginSuccess();
   } catch(e) {
-    showAuthError('エラーが発生しました: ' + e.message);
+    showAuthError('エラーが発生しました: ' + translateAuthError(e.message));
     setAuthLoading(false);
   }
 }
@@ -1481,7 +1507,7 @@ async function authSignup() {
   try {
     var result = await supabase.auth.signUp({ email: email, password: password });
     console.log('signUp result:', JSON.stringify(result));
-    if (result.error) { showAuthError('登録失敗: ' + result.error.message + ' (status:' + result.error.status + ')'); setAuthLoading(false); return; }
+    if (result.error) { showAuthError('登録に失敗しました: ' + translateAuthError(result.error.message)); setAuthLoading(false); return; }
     if (result.data && result.data.user) {
       if (result.data.session) {
         currentUser = result.data.user;
@@ -1495,7 +1521,7 @@ async function authSignup() {
       setAuthLoading(false);
     }
   } catch(e) {
-    showAuthError('例外エラー: ' + e.message + ' / ' + e.toString());
+    showAuthError('エラーが発生しました: ' + translateAuthError(e.message));
     setAuthLoading(false);
   }
 }
@@ -1541,7 +1567,7 @@ async function submitForgotPassword() {
     var result = await supabase.auth.resetPasswordForEmail(email, { redirectTo: APP_URL });
     btn.disabled = false;
     if (result.error) {
-      errEl.textContent = '送信に失敗しました: ' + result.error.message;
+      errEl.textContent = '送信に失敗しました: ' + translateAuthError(result.error.message);
       errEl.style.display = 'block';
       return;
     }
@@ -1549,7 +1575,7 @@ async function submitForgotPassword() {
     showToast('パスワード再設定用のメールを送信しました');
   } catch(e) {
     btn.disabled = false;
-    errEl.textContent = 'エラーが発生しました: ' + e.message;
+    errEl.textContent = 'エラーが発生しました: ' + translateAuthError(e.message);
     errEl.style.display = 'block';
   }
 }
@@ -1596,7 +1622,7 @@ async function submitResetPassword() {
   try {
     var result = await supabase.auth.updateUser({ password: p1 });
     if (result.error) {
-      errEl.textContent = '変更に失敗しました: ' + result.error.message;
+      errEl.textContent = '変更に失敗しました: ' + translateAuthError(result.error.message);
       errEl.style.display = 'block';
       setResetLoading(false);
       return;
@@ -1609,7 +1635,7 @@ async function submitResetPassword() {
     showToast('パスワードを変更しました');
     await onLoginSuccess();
   } catch(e) {
-    errEl.textContent = 'エラーが発生しました: ' + e.message;
+    errEl.textContent = 'エラーが発生しました: ' + translateAuthError(e.message);
     errEl.style.display = 'block';
     setResetLoading(false);
   }
@@ -1621,6 +1647,86 @@ async function cancelResetPassword() {
   currentUser = null;
   hideResetPasswordScreen();
   showAuthScreen();
+}
+
+// ===== CHANGE EMAIL (アカウント設定内) =====
+function showChangeEmail() {
+  document.getElementById('new-email-input').value = '';
+  document.getElementById('change-email-error').style.display = 'none';
+  document.getElementById('change-email-modal').style.display = 'flex';
+}
+function closeChangeEmail() {
+  document.getElementById('change-email-modal').style.display = 'none';
+}
+async function submitChangeEmail() {
+  var errEl = document.getElementById('change-email-error');
+  errEl.style.display = 'none';
+  if (!supabase) {
+    errEl.textContent = '接続エラー: Supabaseが初期化されていません。ページを再読み込みしてください。';
+    errEl.style.display = 'block';
+    return;
+  }
+  var email = document.getElementById('new-email-input').value.trim();
+  if (!email) { errEl.textContent = '新しいメールアドレスを入力してください'; errEl.style.display = 'block'; return; }
+  var btn = document.getElementById('change-email-submit-btn');
+  btn.disabled = true;
+  try {
+    var result = await supabase.auth.updateUser({ email: email });
+    btn.disabled = false;
+    if (result.error) {
+      errEl.textContent = '変更に失敗しました: ' + translateAuthError(result.error.message);
+      errEl.style.display = 'block';
+      return;
+    }
+    closeChangeEmail();
+    showToast('確認メールを送信しました。新しいメールアドレス宛のメールをご確認ください');
+  } catch(e) {
+    btn.disabled = false;
+    errEl.textContent = 'エラーが発生しました: ' + translateAuthError(e.message);
+    errEl.style.display = 'block';
+  }
+}
+
+// ===== CHANGE PASSWORD (アカウント設定内、ログイン済みの状態でのパスワード変更) =====
+function showChangePassword() {
+  document.getElementById('new-password-input').value = '';
+  document.getElementById('new-password-confirm').value = '';
+  document.getElementById('change-password-error').style.display = 'none';
+  document.getElementById('change-password-modal').style.display = 'flex';
+}
+function closeChangePassword() {
+  document.getElementById('change-password-modal').style.display = 'none';
+}
+async function submitChangePassword() {
+  var errEl = document.getElementById('change-password-error');
+  errEl.style.display = 'none';
+  if (!supabase) {
+    errEl.textContent = '接続エラー: Supabaseが初期化されていません。ページを再読み込みしてください。';
+    errEl.style.display = 'block';
+    return;
+  }
+  var p1 = document.getElementById('new-password-input').value;
+  var p2 = document.getElementById('new-password-confirm').value;
+  if (!p1 || !p2) { errEl.textContent = '新しいパスワードを入力してください'; errEl.style.display = 'block'; return; }
+  if (p1.length < 8) { errEl.textContent = 'パスワードは8文字以上にしてください'; errEl.style.display = 'block'; return; }
+  if (p1 !== p2) { errEl.textContent = '入力したパスワードが一致しません'; errEl.style.display = 'block'; return; }
+  var btn = document.getElementById('change-password-submit-btn');
+  btn.disabled = true;
+  try {
+    var result = await supabase.auth.updateUser({ password: p1 });
+    btn.disabled = false;
+    if (result.error) {
+      errEl.textContent = '変更に失敗しました: ' + translateAuthError(result.error.message);
+      errEl.style.display = 'block';
+      return;
+    }
+    closeChangePassword();
+    showToast('パスワードを変更しました');
+  } catch(e) {
+    btn.disabled = false;
+    errEl.textContent = 'エラーが発生しました: ' + translateAuthError(e.message);
+    errEl.style.display = 'block';
+  }
 }
 
 async function onLoginSuccess() {
