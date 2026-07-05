@@ -650,7 +650,30 @@ function fmtDateHTML(str) {
          '</div>';
 }
 
+// ローカルストレージのキー名を ashiato_ → tsumukoko_ に変更したための移行処理。
+// 旧キーにデータが残っている場合、新キーに引き継いでから旧キーを削除する。
+function migrateLegacyStorageKeys() {
+  var pairs = [
+    ['ashiato_custom_habits', 'tsumukoko_custom_habits'],
+    ['ashiato_premium',       'tsumukoko_premium'],
+    ['ashiato_clinic_date',   'tsumukoko_clinic_date'],
+    ['ashiato_print_body',    'tsumukoko_print_body']
+  ];
+  pairs.forEach(function(p) {
+    try {
+      var oldVal = localStorage.getItem(p[0]);
+      if (oldVal !== null) {
+        if (localStorage.getItem(p[1]) === null) {
+          localStorage.setItem(p[1], oldVal);
+        }
+        localStorage.removeItem(p[0]);
+      }
+    } catch(e) {}
+  });
+}
+
 function init() {
+  migrateLegacyStorageKeys();
   setTheme(getTheme());
   document.getElementById('today-label').innerHTML = fmtDateHTML(todayStr());
   document.getElementById('record-date').value = todayStr();
@@ -723,7 +746,7 @@ function loadEntryForDate(dateStr) {
 // ===== HABIT LIST =====
 function getCustomHabits() {
   try {
-    var raw = localStorage.getItem('ashiato_custom_habits');
+    var raw = localStorage.getItem('tsumukoko_custom_habits');
     if (!raw) return null;
     var arr = JSON.parse(raw);
     if (!Array.isArray(arr) || !arr.length) return null;
@@ -731,7 +754,7 @@ function getCustomHabits() {
   } catch(e) { return null; }
 }
 function saveCustomHabits(arr) {
-  localStorage.setItem('ashiato_custom_habits', JSON.stringify(arr));
+  localStorage.setItem('tsumukoko_custom_habits', JSON.stringify(arr));
 }
 function cloneHabits(arr) {
   return arr.map(function(h) { return Object.assign({}, h); });
@@ -1357,7 +1380,7 @@ function executePrint() {
     var isStandalone = window.navigator.standalone === true
       || window.matchMedia('(display-mode: standalone)').matches;
     if (isStandalone) {
-      localStorage.setItem('ashiato_print_body', html);
+      localStorage.setItem('tsumukoko_print_body', html);
       showPrintGuide();
       return;
     }
@@ -1459,7 +1482,7 @@ function executePrint() {
     + '<div class="card">' + statsHtml + '</div>'
     + '<div class="card"><div class="card-title">生活習慣の達成率</div>' + habitHtml + '</div>';
 
-  localStorage.setItem('ashiato_print_body', printBody);
+  localStorage.setItem('tsumukoko_print_body', printBody);
 
   // スタンドアロンモード判定
   var isStandalone = window.navigator.standalone === true
@@ -1548,7 +1571,7 @@ function showPrintGuide() {
 }
 
 function openInSafari() {
-  var body = localStorage.getItem('ashiato_print_body') || '';
+  var body = localStorage.getItem('tsumukoko_print_body') || '';
   var html = buildPrintHTML(body);
   var blob = new Blob([html], {type: 'text/html'});
   var url = URL.createObjectURL(blob);
@@ -1919,12 +1942,12 @@ async function onLoginSuccess() {
 var isPremium = true;
 
 function getPremium() {
-  var v = localStorage.getItem('ashiato_premium');
+  var v = localStorage.getItem('tsumukoko_premium');
   return v === null ? true : v === 'true';
 }
 function togglePremium() {
   isPremium = document.getElementById('premium-toggle').checked;
-  localStorage.setItem('ashiato_premium', String(isPremium));
+  localStorage.setItem('tsumukoko_premium', String(isPremium));
   var label = document.getElementById('premium-status-label');
   label.textContent = isPremium ? '有効' : '無効（フリープラン）';
   var knob = document.getElementById('premium-knob');
@@ -2052,13 +2075,13 @@ function updatePinSettingsUI() {
 }
 
 // ===== 通院日 =====
-function getClinicDate() { return localStorage.getItem('ashiato_clinic_date') || ''; }
+function getClinicDate() { return localStorage.getItem('tsumukoko_clinic_date') || ''; }
 
 function confirmClinicDate() {
   var input = document.getElementById('clinic-date-input');
   var d = input.value;
   if (!d) { showToast('日付を選択してください'); return; }
-  localStorage.setItem('ashiato_clinic_date', d);
+  localStorage.setItem('tsumukoko_clinic_date', d);
   updateClinicSettingsUI();
   showToast('通院日を設定しました');
 }
@@ -2067,7 +2090,7 @@ function saveClinicDate() {
 }
 function removeClinicDate() {
   showConfirm('通院日を削除しますか？', function() {
-    localStorage.removeItem('ashiato_clinic_date');
+    localStorage.removeItem('tsumukoko_clinic_date');
     updateClinicSettingsUI();
     showToast('通院日を削除しました');
   }, '削除する');
