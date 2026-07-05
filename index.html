@@ -208,6 +208,9 @@ window._supabaseCreateClient = createClient;
       style="width:100%;padding:14px;background:var(--accent);color:white;border:none;border-radius:var(--radius);font-size:16px;font-weight:700;font-family:inherit;cursor:pointer;margin-bottom:10px;">
       ログイン
     </button>
+    <div style="text-align:center;margin-bottom:14px;">
+      <span onclick="showForgotPassword()" style="font-size:13px;color:var(--accent);cursor:pointer;">パスワードをお忘れですか？</span>
+    </div>
     <button onclick="authSignup()" id="auth-signup-btn"
       style="width:100%;padding:14px;background:var(--surface2);color:var(--text);border:1.5px solid var(--border);border-radius:var(--radius);font-size:15px;font-weight:600;font-family:inherit;cursor:pointer;">
       新規アカウント作成
@@ -492,6 +495,50 @@ window._supabaseCreateClient = createClient;
     </div>
   </div>
 </div>
+
+<!-- パスワード再設定メール送信モーダル -->
+<div id="forgot-password-modal" style="display:none;position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,0.45);align-items:flex-end;justify-content:center;">
+  <div style="background:var(--surface);border-radius:20px 20px 0 0;padding:24px 20px 40px;width:100%;max-width:480px;">
+    <div style="font-size:16px;font-weight:700;margin-bottom:16px;">パスワード再設定</div>
+    <div style="font-size:13px;color:var(--text-sub);margin-bottom:12px;">登録済みのメールアドレスを入力してください。パスワード再設定用のリンクをメールでお送りします。</div>
+    <input type="email" id="forgot-email-input" placeholder="example@mail.com"
+      style="width:100%;padding:12px;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:var(--surface2);color:var(--text);font-family:inherit;font-size:15px;outline:none;margin-bottom:16px;">
+    <div id="forgot-password-error" style="display:none;font-size:13px;color:#C04040;background:#FFF0F0;border-radius:8px;padding:10px;margin-bottom:12px;"></div>
+    <div style="display:flex;gap:10px;">
+      <button onclick="closeForgotPassword()" style="flex:1;padding:12px;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:var(--surface2);color:var(--text);font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;white-space:nowrap;">キャンセル</button>
+      <button onclick="submitForgotPassword()" id="forgot-password-submit-btn" style="flex:1;padding:12px;border-radius:var(--radius-sm);border:none;background:var(--accent);color:white;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;white-space:nowrap;">送信する</button>
+    </div>
+  </div>
+</div>
+
+<!-- パスワード再設定画面（メールのリンクから復帰した際に表示） -->
+<div id="reset-password-screen" style="display:none;position:fixed;inset:0;z-index:2500;background:var(--bg);flex-direction:column;align-items:center;justify-content:center;padding:32px 24px;">
+  <div style="font-size:20px;font-weight:700;margin-bottom:4px;">新しいパスワードを設定</div>
+  <div style="font-size:14px;color:var(--text-sub);margin-bottom:32px;text-align:center;">新しいパスワードを入力してください</div>
+  <div style="width:100%;max-width:320px;">
+    <div id="reset-password-error" style="display:none;font-size:13px;color:#C04040;background:#FFF0F0;border-radius:8px;padding:10px 14px;margin-bottom:16px;"></div>
+    <div style="margin-bottom:14px;">
+      <div style="font-size:13px;font-weight:600;margin-bottom:6px;color:var(--text-sub);">新しいパスワード</div>
+      <input type="password" id="reset-password-input" placeholder="8文字以上"
+        style="width:100%;padding:12px;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:var(--surface2);color:var(--text);font-family:inherit;font-size:15px;outline:none;">
+    </div>
+    <div style="margin-bottom:24px;">
+      <div style="font-size:13px;font-weight:600;margin-bottom:6px;color:var(--text-sub);">新しいパスワード（確認）</div>
+      <input type="password" id="reset-password-confirm" placeholder="もう一度入力"
+        style="width:100%;padding:12px;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:var(--surface2);color:var(--text);font-family:inherit;font-size:15px;outline:none;">
+    </div>
+    <button onclick="submitResetPassword()" id="reset-password-submit-btn"
+      style="width:100%;padding:14px;background:var(--accent);color:white;border:none;border-radius:var(--radius);font-size:16px;font-weight:700;font-family:inherit;cursor:pointer;margin-bottom:10px;">
+      設定する
+    </button>
+    <button onclick="cancelResetPassword()"
+      style="width:100%;padding:14px;background:var(--surface2);color:var(--text);border:1.5px solid var(--border);border-radius:var(--radius);font-size:15px;font-weight:600;font-family:inherit;cursor:pointer;">
+      ログイン画面に戻る
+    </button>
+    <div id="reset-password-loading" style="display:none;text-align:center;margin-top:16px;font-size:14px;color:var(--text-sub);">処理中...</div>
+  </div>
+</div>
+
 <div id="confirm-overlay" style="display:none;position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,0.45);align-items:center;justify-content:center;">
   <div style="background:var(--surface);border-radius:var(--radius);padding:24px;margin:24px;width:calc(100% - 48px);max-width:320px;box-shadow:var(--shadow);">
     <div id="confirm-msg" style="font-size:15px;font-weight:500;margin-bottom:20px;line-height:1.6;"></div>
@@ -1355,8 +1402,12 @@ function showToast(msg) {
 // ===== SUPABASE =====
 var SUPABASE_URL = 'https://dbtbrdebjeyrstabeboy.supabase.co';
 var SUPABASE_ANON_KEY = 'sb_publishable_nVLFqGCv6PZ5bv3ok9Q5cA_OE9x1sHd';
+// SupabaseのSite URL / Redirect URLsに登録済みのアプリ本番URL。
+// パスワード再設定メールのリンクはこのURLに戻ってくる。
+var APP_URL = 'https://app.tsumukoko.com';
 var supabase = null;
 var currentUser = null;
+var isRecoveryFlow = false;
 
 function initSupabase() {
   try {
@@ -1456,6 +1507,120 @@ async function authLogout() {
     showAuthScreen();
     showToast('ログアウトしました');
   }, '実行');
+}
+
+// ===== FORGOT PASSWORD (再設定メール送信) =====
+function showForgotPassword() {
+  hideAuthError();
+  var emailInput = document.getElementById('forgot-email-input');
+  var prefill = document.getElementById('auth-email').value.trim();
+  emailInput.value = prefill;
+  document.getElementById('forgot-password-error').style.display = 'none';
+  document.getElementById('forgot-password-modal').style.display = 'flex';
+}
+function closeForgotPassword() {
+  document.getElementById('forgot-password-modal').style.display = 'none';
+}
+async function submitForgotPassword() {
+  var errEl = document.getElementById('forgot-password-error');
+  errEl.style.display = 'none';
+  if (!supabase) {
+    errEl.textContent = '接続エラー: Supabaseが初期化されていません。ページを再読み込みしてください。';
+    errEl.style.display = 'block';
+    return;
+  }
+  var email = document.getElementById('forgot-email-input').value.trim();
+  if (!email) {
+    errEl.textContent = 'メールアドレスを入力してください';
+    errEl.style.display = 'block';
+    return;
+  }
+  var btn = document.getElementById('forgot-password-submit-btn');
+  btn.disabled = true;
+  try {
+    var result = await supabase.auth.resetPasswordForEmail(email, { redirectTo: APP_URL });
+    btn.disabled = false;
+    if (result.error) {
+      errEl.textContent = '送信に失敗しました: ' + result.error.message;
+      errEl.style.display = 'block';
+      return;
+    }
+    closeForgotPassword();
+    showToast('パスワード再設定用のメールを送信しました');
+  } catch(e) {
+    btn.disabled = false;
+    errEl.textContent = 'エラーが発生しました: ' + e.message;
+    errEl.style.display = 'block';
+  }
+}
+
+// ===== RESET PASSWORD (メールのリンクから復帰後、新しいパスワードを設定) =====
+function checkRecoveryHash() {
+  var hash = window.location.hash || '';
+  var search = window.location.search || '';
+  return hash.indexOf('type=recovery') >= 0 || search.indexOf('type=recovery') >= 0;
+}
+function clearRecoveryUrl() {
+  try {
+    history.replaceState(null, '', window.location.pathname + window.location.search.replace(/([?&])?type=recovery[^&]*/,''));
+  } catch(e) {}
+}
+function showResetPasswordScreen() {
+  hideAuthScreen();
+  document.getElementById('reset-password-error').style.display = 'none';
+  document.getElementById('reset-password-input').value = '';
+  document.getElementById('reset-password-confirm').value = '';
+  document.getElementById('reset-password-screen').style.display = 'flex';
+}
+function hideResetPasswordScreen() {
+  document.getElementById('reset-password-screen').style.display = 'none';
+}
+function setResetLoading(flag) {
+  document.getElementById('reset-password-loading').style.display = flag ? 'block' : 'none';
+  document.getElementById('reset-password-submit-btn').disabled = flag;
+}
+async function submitResetPassword() {
+  var errEl = document.getElementById('reset-password-error');
+  errEl.style.display = 'none';
+  if (!supabase) {
+    errEl.textContent = '接続エラー: Supabaseが初期化されていません。ページを再読み込みしてください。';
+    errEl.style.display = 'block';
+    return;
+  }
+  var p1 = document.getElementById('reset-password-input').value;
+  var p2 = document.getElementById('reset-password-confirm').value;
+  if (!p1 || !p2) { errEl.textContent = '新しいパスワードを入力してください'; errEl.style.display = 'block'; return; }
+  if (p1.length < 8) { errEl.textContent = 'パスワードは8文字以上にしてください'; errEl.style.display = 'block'; return; }
+  if (p1 !== p2) { errEl.textContent = '入力したパスワードが一致しません'; errEl.style.display = 'block'; return; }
+  setResetLoading(true);
+  try {
+    var result = await supabase.auth.updateUser({ password: p1 });
+    if (result.error) {
+      errEl.textContent = '変更に失敗しました: ' + result.error.message;
+      errEl.style.display = 'block';
+      setResetLoading(false);
+      return;
+    }
+    isRecoveryFlow = false;
+    clearRecoveryUrl();
+    currentUser = result.data.user;
+    hideResetPasswordScreen();
+    setResetLoading(false);
+    showToast('パスワードを変更しました');
+    await onLoginSuccess();
+  } catch(e) {
+    errEl.textContent = 'エラーが発生しました: ' + e.message;
+    errEl.style.display = 'block';
+    setResetLoading(false);
+  }
+}
+async function cancelResetPassword() {
+  isRecoveryFlow = false;
+  clearRecoveryUrl();
+  try { if (supabase) await supabase.auth.signOut(); } catch(e) {}
+  currentUser = null;
+  hideResetPasswordScreen();
+  showAuthScreen();
 }
 
 async function onLoginSuccess() {
@@ -1726,6 +1891,10 @@ function updateClinicIconOnRecord() {
 // ===== STARTUP =====
 async function startup() {
   init();
+  // パスワード再設定メールのリンクから戻ってきたかどうかをURLで先に判定しておく
+  // （Supabaseクライアントの初期化やイベント発火のタイミングに依存しないようにするため）
+  if (checkRecoveryHash()) { isRecoveryFlow = true; }
+
   // SDKが完全に読み込まれるまで待つ（最大5秒）
   var maxWait = 50;
   var waited = 0;
@@ -1741,8 +1910,24 @@ async function startup() {
       showAuthScreen();
       return;
     }
+    // PASSWORD_RECOVERYイベントの監視（type=recoveryのURLをSupabaseが検出した際に発火）
+    supabase.auth.onAuthStateChange(function(event, session) {
+      if (event === 'PASSWORD_RECOVERY') {
+        isRecoveryFlow = true;
+        showResetPasswordScreen();
+      }
+    });
+
     var sessionResult = await supabase.auth.getSession();
     var session = sessionResult.data && sessionResult.data.session;
+
+    if (isRecoveryFlow) {
+      // リカバリーリンクからのアクセスの場合は、通常のログイン状態であっても
+      // 必ず新しいパスワード入力画面を表示する（メイン画面には進ませない）
+      showResetPasswordScreen();
+      return;
+    }
+
     if (session && session.user) {
       currentUser = session.user;
       var elEmail = document.getElementById('auth-user-email');
