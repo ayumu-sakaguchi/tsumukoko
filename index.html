@@ -560,7 +560,7 @@ window._supabaseCreateClient = createClient;
   </div>
 </div>
 
-<div id="confirm-overlay" style="display:none;position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,0.45);align-items:center;justify-content:center;">
+<div id="confirm-overlay" style="display:none;position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,0.45);align-items:center;justify-content:center;">
   <div style="background:var(--surface);border-radius:var(--radius);padding:24px;margin:24px;width:calc(100% - 48px);max-width:320px;box-shadow:var(--shadow);">
     <div id="confirm-msg" style="font-size:15px;font-weight:500;margin-bottom:20px;line-height:1.6;"></div>
     <div style="display:flex;gap:10px;justify-content:flex-end;">
@@ -859,6 +859,28 @@ function renderHabitEditorList() {
     topRow.style.gap = '8px';
     topRow.style.marginBottom = '8px';
 
+    var moveGroup = document.createElement('div');
+    moveGroup.style.display = 'flex';
+    moveGroup.style.flexDirection = 'column';
+    moveGroup.style.gap = '3px';
+    moveGroup.style.flexShrink = '0';
+
+    var upBtn = document.createElement('button');
+    upBtn.textContent = '▲';
+    upBtn.disabled = (idx === 0);
+    upBtn.style.cssText = 'width:28px;height:19px;padding:0;border-radius:5px;border:1.5px solid var(--border);background:var(--surface);color:var(--text);font-size:10px;line-height:1;font-family:inherit;cursor:pointer;' + (idx === 0 ? 'opacity:0.35;cursor:default;' : '');
+    upBtn.onclick = function() { moveHabitEditorRow(idx, -1); };
+
+    var downBtn = document.createElement('button');
+    downBtn.textContent = '▼';
+    downBtn.disabled = (idx === habitEditorWorking.length - 1);
+    downBtn.style.cssText = 'width:28px;height:19px;padding:0;border-radius:5px;border:1.5px solid var(--border);background:var(--surface);color:var(--text);font-size:10px;line-height:1;font-family:inherit;cursor:pointer;' + (idx === habitEditorWorking.length - 1 ? 'opacity:0.35;cursor:default;' : '');
+    downBtn.onclick = function() { moveHabitEditorRow(idx, 1); };
+
+    moveGroup.appendChild(upBtn);
+    moveGroup.appendChild(downBtn);
+    topRow.appendChild(moveGroup);
+
     var labelInput = document.createElement('input');
     labelInput.type = 'text';
     labelInput.value = h.label;
@@ -910,6 +932,14 @@ function renderHabitEditorList() {
 
 function addHabitEditorRow() {
   habitEditorWorking.push({ key: generateHabitKey(), label: '新しい項目', type: 'dual', btn1: '自分で', btn2: '介助あり' });
+  renderHabitEditorList();
+}
+function moveHabitEditorRow(idx, delta) {
+  var target = idx + delta;
+  if (target < 0 || target >= habitEditorWorking.length) return;
+  var tmp = habitEditorWorking[idx];
+  habitEditorWorking[idx] = habitEditorWorking[target];
+  habitEditorWorking[target] = tmp;
   renderHabitEditorList();
 }
 function removeHabitEditorRow(idx) {
