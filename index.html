@@ -1000,6 +1000,7 @@ function selectScore(n) {
 function toggleSimple(key, el) {
   var checked = el.classList.toggle('checked');
   state.habits[key] = checked ? 'self' : null;
+  saveEntry();
 }
 
 function selectDual(key, val, btn) {
@@ -1012,6 +1013,7 @@ function selectDual(key, val, btn) {
     state.habits[key] = val;
     btn.classList.add(val === 'self' ? 'sel-self' : 'sel-assist');
   }
+  saveEntry();
 }
 
 function toggleTag(t, btn) {
