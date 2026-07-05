@@ -759,6 +759,17 @@ function saveCustomHabits(arr) {
 function cloneHabits(arr) {
   return arr.map(function(h) { return Object.assign({}, h); });
 }
+// dual項目でbtn1/btn2が未設定の場合、表示上のフォールバック値を実データとして補完する。
+// （編集画面で触れていない項目でも保存時のチェックに引っかからないようにするため）
+function normalizeHabitDefaults(arr) {
+  arr.forEach(function(h) {
+    if (h.type === 'dual') {
+      h.btn1 = h.btn1 || '自分で';
+      h.btn2 = h.btn2 || '介助あり';
+    }
+  });
+  return arr;
+}
 function loadHabitsConfig() {
   var custom = getCustomHabits();
   HABITS = custom ? cloneHabits(custom) : cloneHabits(DEFAULT_HABITS);
@@ -825,7 +836,7 @@ function generateHabitKey() {
 
 function showHabitEditor() {
   if (!isPremium) { showToast('この機能はプレミアムでご利用いただけます'); return; }
-  habitEditorWorking = cloneHabits(HABITS);
+  habitEditorWorking = normalizeHabitDefaults(cloneHabits(HABITS));
   document.getElementById('habit-editor-error').style.display = 'none';
   renderHabitEditorList();
   document.getElementById('habit-editor-modal').style.display = 'flex';
@@ -907,7 +918,7 @@ function removeHabitEditorRow(idx) {
 }
 function resetHabitEditorToDefault() {
   showConfirm('生活習慣の項目をデフォルトに戻しますか？（保存するまで確定しません）', function() {
-    habitEditorWorking = cloneHabits(DEFAULT_HABITS);
+    habitEditorWorking = normalizeHabitDefaults(cloneHabits(DEFAULT_HABITS));
     renderHabitEditorList();
   }, '戻す');
 }
