@@ -287,7 +287,10 @@ window._supabaseCreateClient = createClient;
     </div>
   </div>
   <div class="card">
-    <div class="card-title">生活習慣</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+      <div class="card-title" style="margin:0">生活習慣</div>
+      <button id="habit-edit-btn" onclick="showHabitEditor()" style="display:none;background:none;border:none;color:var(--accent);font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;padding:2px 0;">編集</button>
+    </div>
     <div class="habit-list" id="habit-list"></div>
   </div>
   <div class="card">
@@ -539,6 +542,24 @@ window._supabaseCreateClient = createClient;
   </div>
 </div>
 
+<!-- 生活習慣編集モーダル（プレミアム限定） -->
+<div id="habit-editor-modal" style="display:none;position:fixed;inset:0;z-index:2200;background:rgba(0,0,0,0.45);align-items:flex-end;justify-content:center;">
+  <div style="background:var(--surface);border-radius:20px 20px 0 0;padding:20px 20px 24px;width:100%;max-width:480px;max-height:85vh;display:flex;flex-direction:column;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;flex-shrink:0;">
+      <div style="font-size:16px;font-weight:700;">生活習慣の編集</div>
+      <span onclick="resetHabitEditorToDefault()" style="font-size:13px;color:var(--text-sub);cursor:pointer;text-decoration:underline;">デフォルトに戻す</span>
+    </div>
+    <div style="font-size:13px;color:var(--text-sub);margin-bottom:12px;flex-shrink:0;">項目名やボタンの文言を変更したり、項目を増減できます（ボタンは2つまで）</div>
+    <div id="habit-editor-error" style="display:none;font-size:13px;color:#C04040;background:#FFF0F0;border-radius:8px;padding:10px;margin-bottom:10px;flex-shrink:0;"></div>
+    <div id="habit-editor-list" style="overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:10px;padding-bottom:4px;"></div>
+    <button onclick="addHabitEditorRow()" style="margin-top:12px;padding:11px;border-radius:var(--radius-sm);border:1.5px dashed var(--border);background:var(--surface2);color:var(--accent);font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;flex-shrink:0;">＋ 項目を追加</button>
+    <div style="display:flex;gap:10px;margin-top:16px;flex-shrink:0;">
+      <button onclick="closeHabitEditor()" style="flex:1;padding:12px;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:var(--surface2);color:var(--text);font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;white-space:nowrap;">キャンセル</button>
+      <button onclick="saveHabitEditor()" style="flex:1;padding:12px;border-radius:var(--radius-sm);border:none;background:var(--accent);color:white;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;white-space:nowrap;">保存する</button>
+    </div>
+  </div>
+</div>
+
 <div id="confirm-overlay" style="display:none;position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,0.45);align-items:center;justify-content:center;">
   <div style="background:var(--surface);border-radius:var(--radius);padding:24px;margin:24px;width:calc(100% - 48px);max-width:320px;box-shadow:var(--shadow);">
     <div id="confirm-msg" style="font-size:15px;font-weight:500;margin-bottom:20px;line-height:1.6;"></div>
@@ -550,7 +571,7 @@ window._supabaseCreateClient = createClient;
 </div>
 
 <script>
-var HABITS = [
+var DEFAULT_HABITS = [
   { key: 'sleep',    label: '睡眠（6時間以上）', type: 'simple' },
   { key: 'meal_m',   label: '食事・朝',           type: 'dual' },
   { key: 'meal_l',   label: '食事・昼',           type: 'dual' },
@@ -564,6 +585,8 @@ var HABITS = [
   { key: 'cleaning', label: '掃除',               type: 'dual' },
   { key: 'bowel',    label: 'お通じ',             type: 'dual', btn1: 'ふつう', btn2: 'ゆるい' }
 ];
+// HABITSは実際に画面に表示される生活習慣リスト（プレミアムユーザーがカスタマイズ可能）
+var HABITS = [];
 
 var TAGS = ['不安','憂うつ','疲れ','焦り','孤独','悲しみ','怒り','イライラ','混乱','恐怖','落ち着き','感謝','やる気','嬉しい','楽しい','安心','達成感'];
 
@@ -632,6 +655,7 @@ function init() {
   document.getElementById('today-label').innerHTML = fmtDateHTML(todayStr());
   document.getElementById('record-date').value = todayStr();
   editingDate = todayStr();
+  loadHabitsConfig();
   buildHabitList();
   buildTagGrid();
   buildThemeGrid();
@@ -697,6 +721,25 @@ function loadEntryForDate(dateStr) {
 }
 
 // ===== HABIT LIST =====
+function getCustomHabits() {
+  try {
+    var raw = localStorage.getItem('ashiato_custom_habits');
+    if (!raw) return null;
+    var arr = JSON.parse(raw);
+    if (!Array.isArray(arr) || !arr.length) return null;
+    return arr;
+  } catch(e) { return null; }
+}
+function saveCustomHabits(arr) {
+  localStorage.setItem('ashiato_custom_habits', JSON.stringify(arr));
+}
+function cloneHabits(arr) {
+  return arr.map(function(h) { return Object.assign({}, h); });
+}
+function loadHabitsConfig() {
+  var custom = getCustomHabits();
+  HABITS = custom ? cloneHabits(custom) : cloneHabits(DEFAULT_HABITS);
+}
 function buildHabitList() {
   var list = document.getElementById('habit-list');
   list.innerHTML = '';
@@ -749,6 +792,138 @@ function buildThemeGrid() {
     tg.appendChild(el);
   });
 }
+
+// ===== HABIT EDITOR (プレミアム限定：生活習慣項目の増減・編集) =====
+var habitEditorWorking = [];
+
+function generateHabitKey() {
+  return 'custom_' + Date.now() + '_' + Math.floor(Math.random() * 10000);
+}
+
+function showHabitEditor() {
+  if (!isPremium) { showToast('この機能はプレミアムでご利用いただけます'); return; }
+  habitEditorWorking = cloneHabits(HABITS);
+  document.getElementById('habit-editor-error').style.display = 'none';
+  renderHabitEditorList();
+  document.getElementById('habit-editor-modal').style.display = 'flex';
+}
+function closeHabitEditor() {
+  document.getElementById('habit-editor-modal').style.display = 'none';
+}
+
+function renderHabitEditorList() {
+  var list = document.getElementById('habit-editor-list');
+  list.innerHTML = '';
+  habitEditorWorking.forEach(function(h, idx) {
+    var row = document.createElement('div');
+    row.style.background = 'var(--surface2)';
+    row.style.borderRadius = 'var(--radius-sm)';
+    row.style.padding = '12px';
+
+    var topRow = document.createElement('div');
+    topRow.style.display = 'flex';
+    topRow.style.gap = '8px';
+    topRow.style.marginBottom = '8px';
+
+    var labelInput = document.createElement('input');
+    labelInput.type = 'text';
+    labelInput.value = h.label;
+    labelInput.placeholder = '項目名';
+    labelInput.style.cssText = 'flex:1;min-width:0;padding:9px 10px;border:1.5px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text);font-family:inherit;font-size:14px;outline:none;';
+    labelInput.oninput = function() { habitEditorWorking[idx].label = labelInput.value; };
+
+    var delBtn = document.createElement('button');
+    delBtn.textContent = '削除';
+    delBtn.style.cssText = 'padding:9px 12px;border-radius:8px;border:1.5px solid var(--border);background:var(--surface);color:#C04040;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;white-space:nowrap;flex-shrink:0;';
+    delBtn.onclick = function() { removeHabitEditorRow(idx); };
+
+    topRow.appendChild(labelInput);
+    topRow.appendChild(delBtn);
+    row.appendChild(topRow);
+
+    if (h.type === 'dual') {
+      var btnRow = document.createElement('div');
+      btnRow.style.display = 'flex';
+      btnRow.style.gap = '8px';
+
+      var btn1Input = document.createElement('input');
+      btn1Input.type = 'text';
+      btn1Input.value = h.btn1 || '自分で';
+      btn1Input.placeholder = 'ボタン1';
+      btn1Input.style.cssText = 'flex:1;min-width:0;padding:9px 10px;border:1.5px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text);font-family:inherit;font-size:13px;outline:none;';
+      btn1Input.oninput = function() { habitEditorWorking[idx].btn1 = btn1Input.value; };
+
+      var btn2Input = document.createElement('input');
+      btn2Input.type = 'text';
+      btn2Input.value = h.btn2 || '介助あり';
+      btn2Input.placeholder = 'ボタン2';
+      btn2Input.style.cssText = 'flex:1;min-width:0;padding:9px 10px;border:1.5px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text);font-family:inherit;font-size:13px;outline:none;';
+      btn2Input.oninput = function() { habitEditorWorking[idx].btn2 = btn2Input.value; };
+
+      btnRow.appendChild(btn1Input);
+      btnRow.appendChild(btn2Input);
+      row.appendChild(btnRow);
+    } else {
+      var note = document.createElement('div');
+      note.textContent = 'チェック形式（ボタンなし）';
+      note.style.cssText = 'font-size:12px;color:var(--text-sub);';
+      row.appendChild(note);
+    }
+
+    list.appendChild(row);
+  });
+}
+
+function addHabitEditorRow() {
+  habitEditorWorking.push({ key: generateHabitKey(), label: '新しい項目', type: 'dual', btn1: '自分で', btn2: '介助あり' });
+  renderHabitEditorList();
+}
+function removeHabitEditorRow(idx) {
+  habitEditorWorking.splice(idx, 1);
+  renderHabitEditorList();
+}
+function resetHabitEditorToDefault() {
+  showConfirm('生活習慣の項目をデフォルトに戻しますか？（保存するまで確定しません）', function() {
+    habitEditorWorking = cloneHabits(DEFAULT_HABITS);
+    renderHabitEditorList();
+  }, '戻す');
+}
+function saveHabitEditor() {
+  var errEl = document.getElementById('habit-editor-error');
+  errEl.style.display = 'none';
+  if (!habitEditorWorking.length) {
+    errEl.textContent = '項目を1つ以上設定してください';
+    errEl.style.display = 'block';
+    return;
+  }
+  for (var i = 0; i < habitEditorWorking.length; i++) {
+    var h = habitEditorWorking[i];
+    h.label = (h.label || '').trim();
+    if (!h.label) {
+      errEl.textContent = 'すべての項目名を入力してください';
+      errEl.style.display = 'block';
+      return;
+    }
+    if (h.type === 'dual') {
+      h.btn1 = (h.btn1 || '').trim();
+      h.btn2 = (h.btn2 || '').trim();
+      if (!h.btn1 || !h.btn2) {
+        errEl.textContent = 'すべてのボタンの文言を入力してください';
+        errEl.style.display = 'block';
+        return;
+      }
+    }
+  }
+  HABITS = cloneHabits(habitEditorWorking);
+  saveCustomHabits(HABITS);
+  buildHabitList();
+  resetRecordForm();
+  loadEntryForDate(editingDate);
+  renderGraph();
+  closeHabitEditor();
+  showToast('生活習慣を更新しました');
+}
+
 
 // ===== INTERACTIONS =====
 function selectScore(n) {
@@ -1756,6 +1931,7 @@ function togglePremium() {
   var slider = document.getElementById('premium-slider');
   knob.style.left = isPremium ? '23px' : '3px';
   slider.style.background = isPremium ? 'var(--accent)' : 'var(--border)';
+  updateHabitEditButtonVisibility();
   showToast(isPremium ? 'プレミアム有効' : 'フリープランに変更');
 }
 function initPremium() {
@@ -1768,6 +1944,11 @@ function initPremium() {
   if (label) label.textContent = isPremium ? '有効' : '無効（フリープラン）';
   if (knob) knob.style.left = isPremium ? '23px' : '3px';
   if (slider) slider.style.background = isPremium ? 'var(--accent)' : 'var(--border)';
+  updateHabitEditButtonVisibility();
+}
+function updateHabitEditButtonVisibility() {
+  var btn = document.getElementById('habit-edit-btn');
+  if (btn) btn.style.display = isPremium ? 'block' : 'none';
 }
 
 // ===== PIN LOCK =====
