@@ -152,7 +152,7 @@ window._supabaseCreateClient = createClient;
   .habit-stat-bar-wrap{flex:1;background:var(--surface2);border-radius:4px;height:10px;overflow:hidden;}
   .habit-stat-bar{height:100%;background:var(--accent);border-radius:4px;transition:width 0.4s;}
   .habit-stat-bar.assist{background:var(--assist-border);}
-  .habit-stat-pct{font-size:12px;font-weight:700;color:var(--accent);width:36px;text-align:right;flex-shrink:0;}
+  .habit-stat-pct{font-size:11px;font-weight:700;color:var(--accent);width:62px;text-align:right;flex-shrink:0;white-space:nowrap;}
 
   /* SETTINGS */
   .setting-section{margin-bottom:24px;}
@@ -1252,7 +1252,7 @@ function renderGraph() {
   document.getElementById('stats-row').innerHTML =
     '<div class="stat-box"><div class="stat-val">' + (avgNum === null ? '-' : scoreEmoji[Math.round(avgNum)]) + '</div><div class="stat-lbl">平均気分</div></div>' +
     '<div class="stat-box"><div class="stat-val">' + avg + '</div><div class="stat-lbl">スコア平均</div></div>' +
-    '<div class="stat-box"><div class="stat-val">' + rate + '%</div><div class="stat-lbl">記録率（' + recorded.length + '/' + dates.length + '日）</div></div>';
+    '<div class="stat-box"><div class="stat-val">' + rate + '%</div><div class="stat-lbl">記録率<br>（' + recorded.length + '/' + dates.length + '日）</div></div>';
 
   // Habit stats
   var recordedEntries = dates.map(function(d){ return entryMap[d] || null; }).filter(Boolean);
@@ -1389,7 +1389,7 @@ function buildPrintHTML(imgData, statsHtml, habitHtml) {
     + '.habit-stat-bar-wrap{flex:1;background:#F0EDE8;border-radius:3px;height:7px;overflow:hidden;}'
     + '.habit-stat-bar{height:100%;background:#7B9E87;border-radius:3px;}'
     + '.habit-stat-bar.assist{background:#D4A840;}'
-    + '.habit-stat-pct{font-size:9px;font-weight:700;color:#4E7258;width:30px;text-align:right;flex-shrink:0;}'
+    + '.habit-stat-pct{font-size:8px;font-weight:700;color:#4E7258;width:44px;text-align:right;flex-shrink:0;white-space:nowrap;}'
     + 'img{width:100%;display:block;border-radius:4px;}'
     + '.print-btn-wrap{margin-top:16px;text-align:center;}'
     + '.print-btn{padding:12px 32px;background:#7B9E87;color:white;border:none;border-radius:20px;font-size:15px;font-weight:700;cursor:pointer;}'
@@ -1555,7 +1555,7 @@ function buildPrintHTML(body) {
     + '.habit-stat-bar-wrap{flex:1;background:#F0EDE8;border-radius:3px;height:7px;overflow:hidden;}'
     + '.habit-stat-bar{height:100%;background:#7B9E87;border-radius:3px;}'
     + '.habit-stat-bar.assist{background:#D4A840;}'
-    + '.habit-stat-pct{font-size:9px;font-weight:700;color:#4E7258;width:30px;text-align:right;flex-shrink:0;}'
+    + '.habit-stat-pct{font-size:8px;font-weight:700;color:#4E7258;width:44px;text-align:right;flex-shrink:0;white-space:nowrap;}'
     + 'img{width:100%;display:block;border-radius:4px;}'
     + '.print-btn-wrap{margin-top:16px;text-align:center;}'
     + '.print-btn{padding:12px 32px;background:#7B9E87;color:white;border:none;border-radius:20px;font-size:15px;font-weight:700;cursor:pointer;}'
