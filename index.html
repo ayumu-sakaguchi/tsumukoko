@@ -1249,7 +1249,7 @@ function renderGraph() {
   document.getElementById('stats-row').innerHTML =
     '<div class="stat-box"><div class="stat-val">' + (avgNum === null ? '-' : scoreEmoji[Math.round(avgNum)]) + '</div><div class="stat-lbl">平均気分</div></div>' +
     '<div class="stat-box"><div class="stat-val">' + avg + '</div><div class="stat-lbl">スコア平均</div></div>' +
-    '<div class="stat-box"><div class="stat-val">' + rate + '%</div><div class="stat-lbl">記録率</div></div>';
+    '<div class="stat-box"><div class="stat-val">' + rate + '%</div><div class="stat-lbl">記録率（' + recorded.length + '/' + dates.length + '日）</div></div>';
 
   // Habit stats
   var recordedEntries = dates.map(function(d){ return entryMap[d] || null; }).filter(Boolean);
@@ -1279,17 +1279,17 @@ function renderGraph() {
       html += '<div class="habit-stat-row">' +
         '<span class="habit-stat-label">' + h.label + '</span>' +
         '<div class="habit-stat-bar-wrap"><div class="habit-stat-bar" style="width:' + pct + '%"></div></div>' +
-        '<span class="habit-stat-pct">' + pct + '%</span></div>';
+        '<span class="habit-stat-pct">' + pct + '% (' + doneCount + '/' + total + ')</span></div>';
     } else {
       html += '<div class="habit-stat-row">' +
         '<span class="habit-stat-label">' + h.label + '</span>' +
         '<div class="habit-stat-bar-wrap"><div class="habit-stat-bar" style="width:' + selfPct + '%"></div></div>' +
-        '<span class="habit-stat-pct" style="color:var(--accent)">' + selfPct + '%</span></div>';
+        '<span class="habit-stat-pct" style="color:var(--accent)">' + selfPct + '% (' + selfCount + '/' + total + ')</span></div>';
       if (assistCount > 0) {
         html += '<div class="habit-stat-row">' +
           '<span class="habit-stat-label" style="font-size:11px;color:var(--assist-text)">　└' + btn2 + '</span>' +
           '<div class="habit-stat-bar-wrap"><div class="habit-stat-bar assist" style="width:' + assistPct + '%"></div></div>' +
-          '<span class="habit-stat-pct" style="color:var(--assist-text)">' + assistPct + '%</span></div>';
+          '<span class="habit-stat-pct" style="color:var(--assist-text)">' + assistPct + '% (' + assistCount + '/' + total + ')</span></div>';
       }
     }
   });
