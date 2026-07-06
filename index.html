@@ -279,11 +279,11 @@ window._supabaseCreateClient = createClient;
   <div class="card">
     <div class="card-title">今日の気分</div>
     <div class="score-row">
-      <button class="score-btn" data-score="1" onclick="selectScore(1)">&#x1F61E;<span>つらい</span></button>
-      <button class="score-btn" data-score="2" onclick="selectScore(2)">&#x1F615;<span>しんどい</span></button>
-      <button class="score-btn" data-score="3" onclick="selectScore(3)">&#x1F610;<span>ふつう</span></button>
-      <button class="score-btn" data-score="4" onclick="selectScore(4)">&#x1F642;<span>よい</span></button>
-      <button class="score-btn" data-score="5" onclick="selectScore(5)">&#x1F60A;<span>とても&#10;よい</span></button>
+      <button class="score-btn" data-score="1" onclick="selectScoreAndSave(1)">&#x1F61E;<span>つらい</span></button>
+      <button class="score-btn" data-score="2" onclick="selectScoreAndSave(2)">&#x1F615;<span>しんどい</span></button>
+      <button class="score-btn" data-score="3" onclick="selectScoreAndSave(3)">&#x1F610;<span>ふつう</span></button>
+      <button class="score-btn" data-score="4" onclick="selectScoreAndSave(4)">&#x1F642;<span>よい</span></button>
+      <button class="score-btn" data-score="5" onclick="selectScoreAndSave(5)">&#x1F60A;<span>とても&#10;よい</span></button>
     </div>
   </div>
   <div class="card">
@@ -1001,6 +1001,12 @@ function selectScore(n) {
   document.querySelectorAll('.score-btn').forEach(function(b) {
     b.classList.toggle('selected', Number(b.dataset.score) === n);
   });
+}
+
+// ユーザーがボタンをタップした時だけ呼ばれる（読み込み時のselectScore()単体呼び出しとは分離）
+function selectScoreAndSave(n) {
+  selectScore(n);
+  saveEntry();
 }
 
 function toggleSimple(key, el) {
