@@ -1253,9 +1253,9 @@ function renderGraph() {
 
   // Habit stats
   var recordedEntries = dates.map(function(d){ return entryMap[d] || null; }).filter(Boolean);
-  var total = recordedEntries.length;
+  var total = dates.length; // 記録率と同じく、期間の日数を分母にする
   var statList = document.getElementById('habit-stat-list');
-  if (!total) {
+  if (!recordedEntries.length) {
     statList.innerHTML = '<div style="font-size:13px;color:var(--text-sub)">この期間の記録がありません</div>';
     return;
   }
