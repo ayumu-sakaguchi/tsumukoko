@@ -736,8 +736,11 @@ function loadEntryForDate(dateStr) {
       }
     });
   }
+  document.querySelectorAll('.tag-btn').forEach(function(b) { b.classList.remove('selected'); });
+  state.tags = [];
   if (entry.tags) {
     entry.tags.forEach(function(t) {
+      if (state.tags.indexOf(t) >= 0) return; // 重複防止
       var btn = Array.from(document.querySelectorAll('.tag-btn')).find(function(b) { return b.textContent === t; });
       if (btn) { btn.classList.add('selected'); state.tags.push(t); }
     });
@@ -1085,7 +1088,7 @@ function saveEntry() {
     date: editingDate,
     score: state.score,
     habits: Object.assign({}, state.habits),
-    tags: state.tags.slice(),
+    tags: state.tags.filter(function(t, i) { return state.tags.indexOf(t) === i; }), // 重複除去
     memo: document.getElementById('memo-input').value.trim()
   };
   var entries = getEntries().filter(function(e) { return e.date !== editingDate; });
