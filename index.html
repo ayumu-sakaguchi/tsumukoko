@@ -1258,7 +1258,7 @@ function renderGraph() {
   document.getElementById('stats-row').innerHTML =
     '<div class="stat-box"><div class="stat-val">' + (avgNum === null ? '-' : scoreEmoji[Math.round(avgNum)]) + '</div><div class="stat-lbl">平均気分</div></div>' +
     '<div class="stat-box"><div class="stat-val">' + avg + '</div><div class="stat-lbl">スコア平均</div></div>' +
-    '<div class="stat-box"><div class="stat-val">' + rate + '%</div><div class="stat-lbl">記録率<br>（' + recorded.length + '/' + dates.length + '日）</div></div>';
+    '<div class="stat-box"><div class="stat-val">' + rate + '%</div><div class="stat-lbl">記録率<br>（' + recorded.length + '/' + dates.length + '日間）</div></div>';
 
   // Habit stats
   var recordedEntries = dates.map(function(d){ return entryMap[d] || null; }).filter(Boolean);
