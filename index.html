@@ -369,12 +369,19 @@ window._supabaseCreateClient = createClient;
       </div>
       <button class="text-btn" onclick="showChangeEmail()">変更</button>
     </div>
-    <div class="setting-row" style="border:none;">
+    <div class="setting-row">
       <div>
         <div class="setting-row-label">パスワード変更</div>
         <div class="setting-row-sub">新しいパスワードに変更します</div>
       </div>
       <button class="text-btn" onclick="showChangePassword()">変更</button>
+    </div>
+    <div class="setting-row" style="border:none;">
+      <div>
+        <div class="setting-row-label">アカウント削除</div>
+        <div class="setting-row-sub">アカウントとすべてのデータを削除します</div>
+      </div>
+      <button class="text-btn danger" onclick="confirmDeleteAccount()">削除</button>
     </div>
   </div>
   <div class="card">
@@ -1763,10 +1770,62 @@ async function authSignup() {
   }
 }
 
+// ログアウト時、アカウント固有のローカルデータを全てクリアする。
+// これを行わないと、次に別のアカウントでログイン（特に新規登録）した際、
+// 前のアカウントの設定がそのまま新しいアカウントの初期値としてアップロードされてしまう。
+function clearLocalAccountData() {
+  localStorage.removeItem('diary_entries');
+  localStorage.removeItem('diary_theme');
+  localStorage.removeItem('diary_pin');
+  localStorage.removeItem('tsumukoko_clinic_date');
+  localStorage.removeItem('tsumukoko_custom_habits');
+  localStorage.removeItem('tsumukoko_premium');
+  localStorage.removeItem('tsumukoko_print_body');
+
+  // 画面表示も初期状態に戻す
+  setTheme('default');
+  loadHabitsConfig();
+  buildHabitList();
+  initPremium();
+  updateClinicSettingsUI();
+  updatePinSettingsUI();
+  checkClinicBanner();
+  updateClinicIconOnRecord();
+  state = { score: null, habits: {}, tags: [], memo: '' };
+  renderHistory();
+  renderGraph();
+}
+
+// ===== DELETE ACCOUNT (アカウント削除) =====
+function confirmDeleteAccount() {
+  showConfirm('実行すると今までのデータは全て削除され、復元はできません。ご注意ください。', function() {
+    deleteAccount();
+  }, '削除する');
+}
+async function deleteAccount() {
+  if (!supabase || !currentUser) { showToast('接続エラー: Supabaseが初期化されていません。ページを再読み込みしてください。'); return; }
+  showToast('削除しています...');
+  try {
+    var result = await supabase.rpc('delete_own_account');
+    if (result.error) {
+      showToast('削除に失敗しました: ' + translateAuthError(result.error.message));
+      return;
+    }
+    try { await supabase.auth.signOut(); } catch(e) {}
+    currentUser = null;
+    clearLocalAccountData();
+    showAuthScreen();
+    showToast('アカウントを削除しました');
+  } catch(e) {
+    showToast('エラーが発生しました: ' + translateAuthError(e.message));
+  }
+}
+
 async function authLogout() {
   showConfirm('ログアウトしますか？', async function() {
     await supabase.auth.signOut();
     currentUser = null;
+    clearLocalAccountData();
     showAuthScreen();
     showToast('ログアウトしました');
   }, '実行');
