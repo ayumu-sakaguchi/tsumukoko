@@ -515,10 +515,12 @@ window._supabaseCreateClient = createClient;
     <input type="email" id="forgot-email-input" placeholder="example@mail.com"
       style="width:100%;padding:12px;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:var(--surface2);color:var(--text);font-family:inherit;font-size:15px;outline:none;margin-bottom:16px;">
     <div id="forgot-password-error" style="display:none;font-size:13px;color:#C04040;background:#FFF0F0;border-radius:8px;padding:10px;margin-bottom:12px;"></div>
-    <div style="display:flex;gap:10px;">
+    <div id="forgot-password-success" style="display:none;font-size:13px;color:var(--text);background:var(--surface2);border-radius:8px;padding:12px;margin-bottom:16px;line-height:1.6;"></div>
+    <div id="forgot-password-form-row" style="display:flex;gap:10px;">
       <button onclick="closeForgotPassword()" style="flex:1;padding:12px;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:var(--surface2);color:var(--text);font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;white-space:nowrap;">キャンセル</button>
       <button onclick="submitForgotPassword()" id="forgot-password-submit-btn" style="flex:1;padding:12px;border-radius:var(--radius-sm);border:none;background:var(--accent);color:white;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;white-space:nowrap;">送信する</button>
     </div>
+    <button onclick="closeForgotPassword()" id="forgot-password-close-btn" style="display:none;width:100%;padding:12px;border-radius:var(--radius-sm);border:none;background:var(--accent);color:white;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;">閉じる</button>
   </div>
 </div>
 
@@ -1838,6 +1840,10 @@ function showForgotPassword() {
   var prefill = document.getElementById('auth-email').value.trim();
   emailInput.value = prefill;
   document.getElementById('forgot-password-error').style.display = 'none';
+  document.getElementById('forgot-password-success').style.display = 'none';
+  document.getElementById('forgot-password-form-row').style.display = 'flex';
+  document.getElementById('forgot-password-close-btn').style.display = 'none';
+  emailInput.style.display = 'block';
   document.getElementById('forgot-password-modal').style.display = 'flex';
 }
 function closeForgotPassword() {
@@ -1867,8 +1873,12 @@ async function submitForgotPassword() {
       errEl.style.display = 'block';
       return;
     }
-    closeForgotPassword();
-    showToast('パスワード再設定用のメールを送信しました');
+    document.getElementById('forgot-email-input').style.display = 'none';
+    document.getElementById('forgot-password-form-row').style.display = 'none';
+    var successEl = document.getElementById('forgot-password-success');
+    successEl.textContent = 'ご入力のメールアドレスが登録されている場合、再設定用のメールをお送りしました。数分経っても届かない場合は、迷惑メールフォルダもご確認いただくか、メールアドレスをご確認のうえ再度お試しください。';
+    successEl.style.display = 'block';
+    document.getElementById('forgot-password-close-btn').style.display = 'block';
   } catch(e) {
     btn.disabled = false;
     errEl.textContent = 'エラーが発生しました: ' + translateAuthError(e.message);
