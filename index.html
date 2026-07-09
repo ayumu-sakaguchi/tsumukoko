@@ -207,12 +207,12 @@ window._supabaseCreateClient = createClient;
 
     <div style="margin-bottom:14px;">
       <div style="font-size:13px;font-weight:600;margin-bottom:6px;color:var(--text-sub);">メールアドレス</div>
-      <input type="email" id="auth-email" placeholder="example@mail.com"
+      <input type="email" id="auth-email" placeholder="example@mail.com" autocomplete="username" inputmode="email"
         style="width:100%;padding:12px;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:var(--surface2);color:var(--text);font-family:inherit;font-size:15px;outline:none;">
     </div>
     <div style="margin-bottom:24px;">
       <div style="font-size:13px;font-weight:600;margin-bottom:6px;color:var(--text-sub);">パスワード</div>
-      <input type="password" id="auth-password" placeholder="8文字以上"
+      <input type="password" id="auth-password" placeholder="8文字以上" autocomplete="current-password"
         style="width:100%;padding:12px;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:var(--surface2);color:var(--text);font-family:inherit;font-size:15px;outline:none;">
     </div>
 
