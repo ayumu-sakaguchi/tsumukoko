@@ -228,6 +228,10 @@ window._supabaseCreateClient = createClient;
       新規アカウント作成
     </button>
     <div id="auth-loading" style="display:none;text-align:center;margin-top:16px;font-size:14px;color:var(--text-sub);">処理中...</div>
+
+    <!-- ▼一時広告（忍者AdMax／審査通過後は本ブロックごと削除） -->
+    <div id="auth-ad-space" style="width:100%;margin-top:20px;"></div>
+    <!-- ▲一時広告 -->
   </div>
 </div>
 
@@ -1789,9 +1793,29 @@ function hideStartupLoading() {
   var el = document.getElementById('startup-loading');
   if (el) el.style.display = 'none';
 }
+
+// ===== ログイン画面の一時広告（忍者AdMax／審査通過後はこの関数の呼び出しとHTMLブロックを削除） =====
+var authAdRendered = false;
+function renderAuthAd() {
+  var space = document.getElementById('auth-ad-space');
+  if (!space || authAdRendered) return;
+  var iframe = document.createElement('iframe');
+  iframe.style.cssText = 'width:100%;height:60px;border:none;display:block;';
+  iframe.scrolling = 'no';
+  space.appendChild(iframe);
+  var doc = iframe.contentWindow.document;
+  doc.open();
+  doc.write('<!DOCTYPE html><html><head><style>body{margin:0;padding:0;display:flex;align-items:center;justify-content:center;overflow:hidden;}</style></head><body>' +
+    '<script src="https://adm.shinobi.jp/s/74a6c7a5bf6f802d8b65602d7bd89669"><\/script>' +
+    '</body></html>');
+  doc.close();
+  authAdRendered = true;
+}
+
 function showAuthScreen() {
   hideStartupLoading();
   document.getElementById('auth-screen').style.display = 'flex';
+  renderAuthAd();
 }
 function hideAuthScreen() {
   document.getElementById('auth-screen').style.display = 'none';
