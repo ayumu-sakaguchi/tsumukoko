@@ -324,10 +324,8 @@ window._supabaseCreateClient = createClient;
     </div>
   </div>
   <button class="save-btn" onclick="saveEntry()">記録する</button>
-  <!-- 広告スペース -->
-  <div id="ad-space" style="width:100%;min-height:60px;margin-top:14px;background:var(--surface2);border-radius:var(--radius);border:1.5px dashed var(--border);display:flex;align-items:center;justify-content:center;">
-    <span style="font-size:11px;color:var(--text-sub);">広告スペース</span>
-  </div>
+  <!-- 広告スペース（is_premiumがfalseの時だけ表示。trueの場合はDOMごと空にして余白も残さない） -->
+  <div id="ad-space" style="display:none;width:100%;"></div>
 </div>
 
 <!-- HISTORY PAGE -->
@@ -2244,6 +2242,43 @@ function updateHabitEditButtonVisibility() {
   var btn = document.getElementById('habit-edit-btn');
   if (btn) btn.style.display = isPremium ? 'block' : 'none';
   if (document.getElementById('theme-grid')) buildThemeGrid();
+  updateAdVisibility();
+}
+
+// ===== 広告（忍者AdMax） =====
+// is_premiumがfalse（無料版）の時だけ「記録」ページ下部に広告を表示する。
+// trueの場合はコンテナ自体を空にして高さ0にし、余白が残らないようにする。
+// 広告スクリプトはdocument.writeを使う可能性があるため、影響が本体ページに及ばないよう
+// 専用のiframe内で読み込む。
+var adRendered = false;
+function renderFreeAd() {
+  var space = document.getElementById('ad-space');
+  if (!space) return;
+  var iframe = document.createElement('iframe');
+  iframe.id = 'ad-space-frame';
+  iframe.style.cssText = 'width:100%;height:60px;border:none;display:block;';
+  iframe.scrolling = 'no';
+  space.appendChild(iframe);
+  var doc = iframe.contentWindow.document;
+  doc.open();
+  doc.write('<!DOCTYPE html><html><head><style>body{margin:0;padding:0;display:flex;align-items:center;justify-content:center;overflow:hidden;}</style></head><body>' +
+    '<script src="https://adm.shinobi.jp/s/74a6c7a5bf6f802d8b65602d7bd89669"><\/script>' +
+    '</body></html>');
+  doc.close();
+  adRendered = true;
+}
+function updateAdVisibility() {
+  var space = document.getElementById('ad-space');
+  if (!space) return;
+  if (isPremium) {
+    space.style.display = 'none';
+    space.innerHTML = '';
+    adRendered = false;
+  } else {
+    space.style.display = 'block';
+    space.style.marginTop = '14px';
+    if (!adRendered) renderFreeAd();
+  }
 }
 
 // ===== PIN LOCK =====
