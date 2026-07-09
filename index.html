@@ -378,9 +378,12 @@ window._supabaseCreateClient = createClient;
     </div>
   </div>
   <div class="card">
-    <div class="setting-section">
-      <div class="setting-label">テーマ</div>
-      <div class="theme-grid" id="theme-grid"></div>
+    <div class="setting-row" style="border:none;cursor:pointer;" onclick="openThemePage()">
+      <div>
+        <div class="setting-row-label">テーマ</div>
+        <div class="setting-row-sub" id="theme-summary-label">-</div>
+      </div>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;color:var(--text-sub);"><polyline points="9 18 15 12 9 6"/></svg>
     </div>
   </div>
   <div class="card">
@@ -461,6 +464,23 @@ window._supabaseCreateClient = createClient;
         <div class="setting-row-sub">アカウントとすべてのデータを削除します</div>
       </div>
       <button class="text-btn danger" onclick="confirmDeleteAccount()">削除</button>
+    </div>
+  </div>
+</div>
+
+<!-- THEME PAGE (設定ページから独立) -->
+<div id="page-theme" class="page">
+  <div class="page-header">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <button onclick="closeThemePage()" style="background:none;border:none;padding:2px;cursor:pointer;color:var(--text);display:flex;align-items:center;">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <div class="page-title">テーマ</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="setting-section">
+      <div class="theme-grid" id="theme-grid"></div>
     </div>
   </div>
 </div>
@@ -656,6 +676,11 @@ function setTheme(id) {
   document.querySelectorAll('.theme-option').forEach(function(el) {
     el.classList.toggle('active', el.dataset.theme === id);
   });
+  var summaryEl = document.getElementById('theme-summary-label');
+  if (summaryEl) {
+    var current = THEMES.find(function(th) { return th.id === id; });
+    summaryEl.textContent = current ? current.name : '-';
+  }
 }
 
 function todayStr() {
@@ -860,6 +885,11 @@ function buildTagGrid() {
 function buildThemeGrid() {
   var tg = document.getElementById('theme-grid');
   tg.innerHTML = '';
+  var summaryEl = document.getElementById('theme-summary-label');
+  if (summaryEl) {
+    var current = THEMES.find(function(th) { return th.id === getTheme(); });
+    summaryEl.textContent = current ? current.name : '-';
+  }
   THEMES.forEach(function(th) {
     var locked = th.premium && !isPremium;
     var el = document.createElement('div');
@@ -1500,6 +1530,18 @@ function openAccountPage() {
   document.getElementById('page-account').classList.add('active');
 }
 function closeAccountPage() {
+  document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
+  document.getElementById('page-settings').classList.add('active');
+}
+
+// テーマページ（設定ページから独立した詳細ページ）。
+// ボトムナビの「設定」タブはアクティブ状態を維持したまま、
+// テーマ詳細ページを重ねて表示する。
+function openThemePage() {
+  document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
+  document.getElementById('page-theme').classList.add('active');
+}
+function closeThemePage() {
   document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
   document.getElementById('page-settings').classList.add('active');
 }
