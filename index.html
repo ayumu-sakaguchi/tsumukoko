@@ -399,7 +399,7 @@ window._supabaseCreateClient = createClient;
         絵文字
       </div>
       <div class="theme-option" id="mood-icon-cat-option" onclick="setMoodIconSet('cat')">
-        <img src="" id="mood-icon-cat-preview" style="width:26px;height:26px;margin-bottom:4px;" alt="">
+        <img src="" id="mood-icon-cat-preview" style="width:28px;height:24px;object-fit:contain;margin-bottom:4px;" alt="">
         <div>ねこ</div>
       </div>
     </div>
@@ -2303,7 +2303,7 @@ function applyMoodIconSet() {
     var labelSpan = btn.querySelector('span');
     if (!labelSpan) return;
     if (useCat && CAT_MOOD_ICONS[score]) {
-      btn.innerHTML = '<img src="' + CAT_MOOD_ICONS[score] + '" style="width:28px;height:28px;" alt="">';
+      btn.innerHTML = '<img src="' + CAT_MOOD_ICONS[score] + '" style="width:30px;height:26px;object-fit:contain;" alt="">';
       btn.appendChild(labelSpan);
     } else {
       btn.innerHTML = MOOD_EMOJI_HTML[score];
