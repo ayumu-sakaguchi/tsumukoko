@@ -2208,11 +2208,11 @@ async function onLoginSuccess() {
 }
 
 // ===== PREMIUM FLAG =====
-var isPremium = true;
+var isPremium = false;
 
 function getPremium() {
   var v = localStorage.getItem('tsumukoko_premium');
-  return v === null ? true : v === 'true';
+  return v === null ? false : v === 'true';
 }
 function togglePremium() {
   isPremium = document.getElementById('premium-toggle').checked;
@@ -2568,7 +2568,16 @@ async function startup() {
     }
   } catch(e) {
     console.warn('Supabase error:', e);
-    showAuthScreen();
+    // currentUserが既に設定済み＝認証自体は成功している。
+    // ここで例外が起きたのはデータ読み込みなど後続処理の一時的な問題であり、
+    // 本当は未ログインではないので、誤ってログイン画面に戻さないようにする。
+    hideStartupLoading();
+    if (!currentUser) {
+      showAuthScreen();
+    } else if (getPin()) {
+      // PIN設定済みの場合は、通常フロー同様ロック画面を確実に表示する
+      showLockScreen('unlock');
+    }
   }
 }
 startup();
