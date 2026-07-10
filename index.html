@@ -2608,7 +2608,22 @@ async function startup() {
       }
     });
 
-    var sessionResult = await supabase.auth.getSession();
+    // getSession()はトークン更新のため内部でネットワーク通信を行うことがある。
+    // html更新直後のハードリフレッシュ等でこの通信が一時的に失敗しても、
+    // 即座に「未ログイン」と判定しないよう、短い間隔で数回リトライする。
+    var sessionResult = null;
+    var sessionErr = null;
+    for (var attempt = 0; attempt < 3; attempt++) {
+      try {
+        sessionResult = await supabase.auth.getSession();
+        sessionErr = sessionResult && sessionResult.error;
+        if (!sessionErr) break;
+      } catch(e) {
+        sessionErr = e;
+      }
+      if (attempt < 2) { await new Promise(function(r){ setTimeout(r, 800); }); }
+    }
+    if (sessionErr && !sessionResult) { throw sessionErr; }
     var session = sessionResult.data && sessionResult.data.session;
 
     if (isRecoveryFlow) {
