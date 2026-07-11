@@ -395,11 +395,13 @@ window._supabaseCreateClient = createClient;
     <div class="setting-label">気分アイコン</div>
     <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;">
       <div class="theme-option" id="mood-icon-emoji-option" onclick="setMoodIconSet('emoji')">
-        <div style="font-size:24px;margin-bottom:4px;">🙂</div>
-        絵文字
+        <div style="height:26px;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:4px;">🙂</div>
+        <div>絵文字</div>
       </div>
       <div class="theme-option" id="mood-icon-cat-option" onclick="setMoodIconSet('cat')">
-        <img src="" id="mood-icon-cat-preview" style="width:28px;height:24px;object-fit:contain;margin-bottom:4px;" alt="">
+        <div style="height:26px;display:flex;align-items:center;justify-content:center;margin-bottom:4px;">
+          <img src="" id="mood-icon-cat-preview" style="width:28px;height:24px;object-fit:contain;" alt="">
+        </div>
         <div>ねこ</div>
       </div>
     </div>
