@@ -321,7 +321,7 @@ window._supabaseCreateClient = createClient;
   </div>
   <div class="card">
     <div class="collapsible-header" onclick="toggleCollapsible('tags-body',this)">
-      <div class="card-title" style="margin:0">気持ちのタグ（【記録する】ボタンで保存）</div>
+      <div class="card-title" style="margin:0">気持ちのタグ／【記録する】ボタンで保存</div>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
     </div>
     <div class="collapsible-body" id="tags-body">
@@ -330,7 +330,7 @@ window._supabaseCreateClient = createClient;
   </div>
   <div class="card">
     <div class="collapsible-header" onclick="toggleCollapsible('memo-body',this)">
-      <div class="card-title" style="margin:0">メモ（【記録する】ボタンで保存）</div>
+      <div class="card-title" style="margin:0">メモ／【記録する】ボタンで保存</div>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
     </div>
     <div class="collapsible-body" id="memo-body">
@@ -683,7 +683,7 @@ var DEFAULT_HABITS = [
 // HABITSは実際に画面に表示される生活習慣リスト（プレミアムユーザーがカスタマイズ可能）
 var HABITS = [];
 
-var TAGS = ['不安','憂うつ','疲れ','焦り','孤独','悲しみ','怒り','イライラ','混乱','恐怖','落ち着き','感謝','やる気','嬉しい','楽しい','安心','達成感'];
+var TAGS = ['不安','憂うつ','疲れ','焦り','孤独','悲しみ','怒り','イライラ','混乱','恐怖','落ち着き','感謝','やる気','嬉しい','楽しい','安心','達成感','高揚感'];
 
 var CAT_MOOD_ICONS = [
   '',
@@ -708,7 +708,7 @@ var THEMES = [
   { id: 'sakura',  name: 'さくら',    color: '#D4789A' },
   { id: 'sky',     name: 'そら',      color: '#5B9BD5' },
   { id: 'forest',  name: 'もり',      color: '#4A8C5C' },
-  { id: 'orange',  name: 'オレンジ',  color: '#E08830' },
+  { id: 'orange',  name: 'みかん',  color: '#E08830' },
   { id: 'night',   name: 'よる',      color: '#8B9EC8' },
   { id: 'dot',     name: 'ドット',    color: '#8DC97A', premium: true },
   { id: 'rain',    name: 'あめ',      color: '#4F86C6', premium: true }
