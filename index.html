@@ -290,7 +290,7 @@ window._supabaseCreateClient = createClient;
   <div class="page-header">
     <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0;overflow:hidden;">
       <div id="app-icon" style="width:44px;height:44px;border-radius:10px;flex-shrink:0;background-size:cover;background-position:center;"></div>
-      <div id="today-label" style="min-width:0;overflow:hidden;background:var(--surface2);border:1.5px solid var(--border);padding:4px 10px;border-radius:10px;"></div>
+      <div id="today-label" style="min-width:0;overflow:hidden;"></div>
     </div>
     <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
       <div id="already-saved-badge" style="display:none" class="badge">記録済み</div>
@@ -321,7 +321,7 @@ window._supabaseCreateClient = createClient;
   </div>
   <div class="card">
     <div class="collapsible-header" onclick="toggleCollapsible('tags-body',this)">
-      <div class="card-title" style="margin:0">気持ちのタグ（【記録する】ボタンで保存）</div>
+      <div class="card-title" style="margin:0">気持ちのタグ<br>（【記録する】ボタンで保存）</div>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
     </div>
     <div class="collapsible-body" id="tags-body">
@@ -1387,17 +1387,8 @@ function renderGraph() {
   var avg = avgNum !== null ? avgNum.toFixed(1) : '-';
   var rate = Math.round((recorded.length/dates.length)*100);
   var scoreEmoji = ['','😞','😕','😐','🙂','😊'];
-  var avgMoodHTML = '-';
-  if (avgNum !== null) {
-    var avgScore = Math.round(avgNum);
-    var useCatAvg = getMoodIconSet() === 'cat';
-    var iconSetAvg = document.body.classList.contains('theme-night') ? CAT_MOOD_ICONS_DARK : CAT_MOOD_ICONS;
-    avgMoodHTML = (useCatAvg && iconSetAvg[avgScore])
-      ? '<img src="' + iconSetAvg[avgScore] + '" style="width:30px;height:26px;object-fit:contain;" alt="">'
-      : scoreEmoji[avgScore];
-  }
   document.getElementById('stats-row').innerHTML =
-    '<div class="stat-box"><div class="stat-val">' + avgMoodHTML + '</div><div class="stat-lbl">平均気分</div></div>' +
+    '<div class="stat-box"><div class="stat-val">' + (avgNum === null ? '-' : scoreEmoji[Math.round(avgNum)]) + '</div><div class="stat-lbl">平均気分</div></div>' +
     '<div class="stat-box"><div class="stat-val">' + avg + '</div><div class="stat-lbl">スコア平均</div></div>' +
     '<div class="stat-box"><div class="stat-val">' + rate + '%</div><div class="stat-lbl">記録率<br>（' + recorded.length + '/' + dates.length + '日間）</div></div>';
 
