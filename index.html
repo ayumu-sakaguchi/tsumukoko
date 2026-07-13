@@ -30,6 +30,8 @@ window._supabaseCreateClient = createClient;
   .theme-orange{--bg:#FFF6ED;--surface:#FFFFFF;--surface2:#FFE7D2;--accent:#E08830;--accent-light:#FFD9B0;--accent-dark:#A85F1A;--border:#FFD3AC;}
   .theme-rain{--bg:#FFFFFF;--surface:#FFFFFF;--surface2:#EAF3FE;--accent:#4F86C6;--accent-light:#CFE3FA;--accent-dark:#2F5F99;--border:#D6E8FB;}
   body.theme-rain{background-color:#FFFFFF;background-image:url('assets/themes/rain.webp');background-repeat:repeat;background-size:192px auto;}
+  .theme-asagao{--bg:#FFFFFF;--surface:#FFFFFF;--surface2:#F3EEFC;--accent:#9B7FD4;--accent-light:#E3D6FA;--accent-dark:#6B4FA0;--border:#E4D9F8;}
+  body.theme-asagao{background-color:#FFFFFF;background-image:url('assets/themes/asagao.webp');background-repeat:repeat;background-size:220px auto;}
   *{box-sizing:border-box;margin:0;padding:0;}  html,body{overflow-x:hidden;max-width:100%;}
   body{font-family:'Hiragino Sans','Hiragino Kaku Gothic ProN','Noto Sans JP',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:15px;line-height:1.6;}
 
@@ -290,7 +292,7 @@ window._supabaseCreateClient = createClient;
   <div class="page-header">
     <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0;overflow:hidden;">
       <div id="app-icon" style="width:44px;height:44px;border-radius:10px;flex-shrink:0;background-size:cover;background-position:center;"></div>
-      <div id="today-label" style="min-width:0;overflow:hidden;"></div>
+      <div id="today-label" style="min-width:0;overflow:hidden;background:var(--surface2);border:1.5px solid var(--border);padding:4px 10px;border-radius:10px;"></div>
     </div>
     <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
       <div id="already-saved-badge" style="display:none" class="badge">記録済み</div>
@@ -321,7 +323,7 @@ window._supabaseCreateClient = createClient;
   </div>
   <div class="card">
     <div class="collapsible-header" onclick="toggleCollapsible('tags-body',this)">
-      <div class="card-title" style="margin:0">気持ちのタグ<br>（【記録する】ボタンで保存）</div>
+      <div class="card-title" style="margin:0">気持ちのタグ（【記録する】ボタンで保存）</div>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
     </div>
     <div class="collapsible-body" id="tags-body">
@@ -711,7 +713,8 @@ var THEMES = [
   { id: 'orange',  name: 'オレンジ',  color: '#E08830' },
   { id: 'night',   name: 'よる',      color: '#8B9EC8' },
   { id: 'dot',     name: 'ドット',    color: '#8DC97A', premium: true },
-  { id: 'rain',    name: 'あめ',      color: '#4F86C6', premium: true }
+  { id: 'rain',    name: 'あめ',      color: '#4F86C6', premium: true },
+  { id: 'asagao',  name: 'あさがお',  color: '#9B7FD4', premium: true }
 ];
 
 var state = { score: null, habits: {}, tags: [], memo: '' };
@@ -1387,8 +1390,17 @@ function renderGraph() {
   var avg = avgNum !== null ? avgNum.toFixed(1) : '-';
   var rate = Math.round((recorded.length/dates.length)*100);
   var scoreEmoji = ['','😞','😕','😐','🙂','😊'];
+  var avgMoodHTML = '-';
+  if (avgNum !== null) {
+    var avgScore = Math.round(avgNum);
+    var useCatAvg = getMoodIconSet() === 'cat';
+    var iconSetAvg = document.body.classList.contains('theme-night') ? CAT_MOOD_ICONS_DARK : CAT_MOOD_ICONS;
+    avgMoodHTML = (useCatAvg && iconSetAvg[avgScore])
+      ? '<img src="' + iconSetAvg[avgScore] + '" style="width:30px;height:26px;object-fit:contain;" alt="">'
+      : scoreEmoji[avgScore];
+  }
   document.getElementById('stats-row').innerHTML =
-    '<div class="stat-box"><div class="stat-val">' + (avgNum === null ? '-' : scoreEmoji[Math.round(avgNum)]) + '</div><div class="stat-lbl">平均気分</div></div>' +
+    '<div class="stat-box"><div class="stat-val">' + avgMoodHTML + '</div><div class="stat-lbl">平均気分</div></div>' +
     '<div class="stat-box"><div class="stat-val">' + avg + '</div><div class="stat-lbl">スコア平均</div></div>' +
     '<div class="stat-box"><div class="stat-val">' + rate + '%</div><div class="stat-lbl">記録率<br>（' + recorded.length + '/' + dates.length + '日間）</div></div>';
 
