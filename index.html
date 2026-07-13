@@ -149,7 +149,7 @@ window._supabaseCreateClient = createClient;
   canvas{width:100%!important;border-radius:var(--radius-sm);}
   .stats-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:14px;}
   .stat-box{background:var(--surface2);border-radius:var(--radius-sm);padding:12px;text-align:center;}
-  .stat-val{font-size:22px;font-weight:700;color:var(--accent);min-height:28px;display:flex;align-items:center;justify-content:center;}
+  .stat-val{font-size:22px;font-weight:700;color:var(--accent);height:28px;display:flex;align-items:center;justify-content:center;overflow:visible;}
   .stat-lbl{font-size:11px;color:var(--text-sub);margin-top:2px;}
   .print-btn{width:100%;padding:13px;background:var(--surface2);color:var(--text);border:1.5px solid var(--border);border-radius:var(--radius);font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:14px;}
 
@@ -1531,7 +1531,7 @@ function buildPrintHTML(imgData, statsHtml, habitHtml) {
     + '.card-title{font-size:8px;font-weight:600;color:#7A746C;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px;}'
     + '.stats-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:6px;}'
     + '.stat-box{background:#F0EDE8;border-radius:5px;padding:6px;text-align:center;}'
-    + '.stat-val{font-size:15px;font-weight:700;color:#7B9E87;min-height:20px;display:flex;align-items:center;justify-content:center;}'
+    + '.stat-val{font-size:15px;font-weight:700;color:#7B9E87;height:20px;display:flex;align-items:center;justify-content:center;overflow:visible;}'
     + '.stat-lbl{font-size:8px;color:#7A746C;margin-top:1px;}'
     + '.habit-stat-list{display:flex;flex-direction:column;gap:4px;}'
     + '.habit-stat-row{display:flex;align-items:center;gap:8px;}'
@@ -1721,7 +1721,7 @@ function buildPrintHTML(body) {
     + '.card-title{font-size:8px;font-weight:600;color:#7A746C;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px;}'
     + '.stats-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:6px;}'
     + '.stat-box{background:#F0EDE8;border-radius:5px;padding:6px;text-align:center;}'
-    + '.stat-val{font-size:15px;font-weight:700;color:#7B9E87;min-height:20px;display:flex;align-items:center;justify-content:center;}'
+    + '.stat-val{font-size:15px;font-weight:700;color:#7B9E87;height:20px;display:flex;align-items:center;justify-content:center;overflow:visible;}'
     + '.stat-lbl{font-size:8px;color:#7A746C;margin-top:1px;}'
     + '.habit-stat-list{display:flex;flex-direction:column;gap:4px;}'
     + '.habit-stat-row{display:flex;align-items:center;gap:8px;}'
