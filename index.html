@@ -34,6 +34,10 @@ window._supabaseCreateClient = createClient;
   body.theme-asagao{background-color:#FFFFFF;background-image:url('assets/themes/asagao.webp');background-repeat:repeat;background-size:400px auto;}
   .theme-shimashima{--bg:#F7F1E6;--surface:#FFFFFF;--surface2:#F0E6D2;--accent:#A67C48;--accent-light:#E8D4B0;--accent-dark:#7A5A30;--border:#E0D0AC;}
   body.theme-shimashima{background-color:#F7F1E6;background-image:repeating-linear-gradient(45deg,#F7F1E6 0px,#F7F1E6 20px,#EAD9BE 20px,#EAD9BE 40px,#D8C09A 40px,#D8C09A 60px);}
+  .theme-ringo{--bg:#FBE4DD;--surface:#FFFFFF;--surface2:#FCEEE9;--accent:#E85B4E;--accent-light:#FFD3C4;--accent-dark:#B23A2E;--border:#F6CFC4;}
+  body.theme-ringo{background-color:#FBE4DD;background-image:url('assets/themes/ringo.webp');background-repeat:repeat;background-size:98px auto;}
+  .theme-hoshizora{--bg:#12162A;--surface:#1B2038;--surface2:#242A46;--text:#E8ECF7;--text-sub:#9BA3C4;--accent:#6C8FD6;--accent-light:#3A4A78;--accent-dark:#AFC2F0;--border:#2E3556;--shadow:0 2px 12px rgba(0,0,0,0.4);--assist:#1F2A4A;--assist-border:#4A5FA0;--assist-text:#9FB4E8;}
+  body.theme-hoshizora{background-color:#12162A;background-image:url('assets/themes/hoshizora.webp');background-repeat:repeat;background-size:225px auto;}
   .theme-yoake{--bg:#FFFFF0;--surface:#FFFFFF;--surface2:#FFFDF5;--accent:#505B86;--accent-light:#C9CEE0;--accent-dark:#33395C;--border:#DDD9C0;}
   body.theme-yoake{background-color:#FFFFF0;background-image:linear-gradient(to top,#505B86 0%,#FFD298 50%,#FFFFF0 100%);}
   *{box-sizing:border-box;margin:0;padding:0;}  html,body{overflow-x:hidden;max-width:100%;}
@@ -729,7 +733,9 @@ var THEMES = [
   { id: 'dot',     name: 'ドット',    color: '#8DC97A', premium: true },
   { id: 'rain',    name: 'あめ',      color: '#4F86C6', premium: true },
   { id: 'asagao',  name: 'あさがお',  color: '#9B7FD4', premium: true },
-  { id: 'shimashima', name: 'しましま', color: '#A67C48', premium: true }
+  { id: 'shimashima', name: 'しましま', color: '#A67C48', premium: true },
+  { id: 'ringo',   name: 'りんご',    color: '#E85B4E', premium: true },
+  { id: 'hoshizora', name: 'ほしぞら', color: '#6C8FD6', premium: true }
 ];
 
 var state = { score: null, habits: {}, tags: [], memo: '' };
@@ -1359,7 +1365,7 @@ function renderGraph() {
   var cW=W-padL-padR, cH=180-padT-padB;
   var n=dates.length;
   var barW=Math.max(4,Math.min(28,(cW/n)-4));
-  var isDark = document.body.classList.contains('theme-night');
+  var isDark = (document.body.classList.contains('theme-night') || document.body.classList.contains('theme-hoshizora'));
 
   ctx.strokeStyle = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)';
   ctx.lineWidth = 1;
@@ -1423,7 +1429,7 @@ function renderGraph() {
   if (avgNum !== null) {
     var avgScore = Math.round(avgNum);
     var useCatAvg = getMoodIconSet() === 'cat';
-    var iconSetAvg = document.body.classList.contains('theme-night') ? CAT_MOOD_ICONS_DARK : CAT_MOOD_ICONS;
+    var iconSetAvg = (document.body.classList.contains('theme-night') || document.body.classList.contains('theme-hoshizora')) ? CAT_MOOD_ICONS_DARK : CAT_MOOD_ICONS;
     avgMoodHTML = (useCatAvg && iconSetAvg[avgScore])
       ? '<img src="' + iconSetAvg[avgScore] + '" style="width:30px;height:26px;object-fit:contain;" alt="">'
       : scoreEmoji[avgScore];
@@ -2368,13 +2374,13 @@ function updateMoodIconSettingUI() {
   if (emojiOpt) emojiOpt.classList.toggle('active', v === 'emoji');
   if (catOpt) catOpt.classList.toggle('active', v === 'cat');
   var preview = document.getElementById('mood-icon-cat-preview');
-  var previewSet = document.body.classList.contains('theme-night') ? CAT_MOOD_ICONS_DARK : CAT_MOOD_ICONS;
+  var previewSet = (document.body.classList.contains('theme-night') || document.body.classList.contains('theme-hoshizora')) ? CAT_MOOD_ICONS_DARK : CAT_MOOD_ICONS;
   if (preview && previewSet[4]) preview.src = previewSet[4];
 }
 var MOOD_EMOJI_HTML = ['', '&#x1F61E;', '&#x1F615;', '&#x1F610;', '&#x1F642;', '&#x1F60A;'];
 function applyMoodIconSet() {
   var useCat = getMoodIconSet() === 'cat';
-  var isDarkTheme = document.body.classList.contains('theme-night');
+  var isDarkTheme = (document.body.classList.contains('theme-night') || document.body.classList.contains('theme-hoshizora'));
   var iconSet = isDarkTheme ? CAT_MOOD_ICONS_DARK : CAT_MOOD_ICONS;
   document.querySelectorAll('.score-btn').forEach(function(btn) {
     var score = btn.getAttribute('data-score');
