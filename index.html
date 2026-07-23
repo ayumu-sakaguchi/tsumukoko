@@ -1402,8 +1402,8 @@ function renderGraph() {
       var dayNum = new Date(dates[i]).getDate();
       if (i === 0 || i === n-1 || dayNum === 5 || dayNum === 10 || dayNum === 15 || dayNum === 20 || dayNum === 25) showLabel = true;
     } else {
-      // 今週・期間指定: 1週間(7日)以下は全表示、8日以上は間引き(最低でも1日飛ばし)
-      if (n <= 7 || i % Math.max(2, Math.ceil(n/10)) === 0) showLabel = true;
+      // 今週・期間指定: 14日以下は全表示、それ以上は間引き
+      if (n <= 14 || i % Math.ceil(n/10) === 0) showLabel = true;
     }
     if (showLabel) {
       ctx.fillStyle = isDark ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.4)';
@@ -1654,7 +1654,7 @@ function closePrintOverlay() {
   document.getElementById('print-overlay').style.display = 'none';
 }
 
-// 印刷用の各カードCSS(measurePrintFit / buildPrintHTML で共通利用)
+// 印刷用の各カードCSS(fitPrintChartImage / buildPrintHTML で共通利用)
 var PRINT_CARD_CSS =
     '*{box-sizing:border-box;margin:0;padding:0;}'
   + 'body{font-family:Hiragino Sans,sans-serif;color:#2D2A26;background:white;}'
@@ -1677,6 +1677,8 @@ var PRINT_CARD_CSS =
 // 生活習慣の項目数が増えて印刷内容がA4 1枚(12mm余白)に収まらない場合、
 // その分だけ気分グラフの画像を縦に縮めて1枚に収まるようにする。
 // Shadow DOM上に実際のCSSで仮組みして高さを測るため、フォントやレイアウトの誤差なく判定できる。
+// natW/natHはcanvas要素の表示上のCSSピクセル寸法(width/height属性として明示することで、
+// 画像デコード前でも正しい縦横比で高さが確保され、測定が0になることを防ぐ)。
 function fitPrintChartImage(imgData, natW, natH, statsHtml, habitHtml) {
   var mmToPx = 96 / 25.4;
   var printWidthPx = Math.round((210 - 24) * mmToPx);  // A4横 - 左右12mm
@@ -1686,8 +1688,6 @@ function fitPrintChartImage(imgData, natW, natH, statsHtml, habitHtml) {
   host.style.cssText = 'position:fixed;left:-9999px;top:0;width:' + printWidthPx + 'px;';
   document.body.appendChild(host);
   var shadow = host.attachShadow({ mode: 'open' });
-  // width/height属性を明示することで、画像のデコード前でも正しい縦横比で高さが確保される
-  // (これがないと画像デコード完了前は高さ0として測定されてしまう)
   shadow.innerHTML = '<style>' + PRINT_CARD_CSS + '</style>'
     + '<div id="root">'
     + '<h2>振り返り</h2>'
@@ -1754,12 +1754,12 @@ function buildPrintHTML(body) {
     + '<style>'
     + '@page{size:A4 portrait;margin:12mm;}'
     + PRINT_CARD_CSS
-    + '.print-btn-wrap{margin-top:16px;text-align:center;}'
-    + '.print-btn{padding:12px 32px;background:#7B9E87;color:white;border:none;border-radius:20px;font-size:15px;font-weight:700;cursor:pointer;}'
-    + '@media print{.print-btn-wrap{display:none;}}'
+    + '.print-guide-wrap{margin-top:16px;padding:12px 14px;background:#F0EDE8;border-radius:8px;font-size:13px;line-height:1.7;color:#4E4A44;text-align:center;}'
+    + '.print-guide-wrap b{font-size:15px;}'
+    + '@media print{.print-guide-wrap{display:none;}}'
     + '</style></head><body>'
     + body
-    + '<div class="print-btn-wrap"><button class="print-btn" onclick="window.print()">印刷 / PDFで保存</button></div>'
+    + '<div class="print-guide-wrap">印刷するには、画面下部の共有ボタン（<b>□↑</b>）をタップし、「プリント」を選んでください。<br>（PCのSafari/Chromeでは <b>⌘P</b> または画面右上のメニューから印刷できます）</div>'
     + '</body></html>';
 }
 
@@ -1777,7 +1777,7 @@ function showPrintGuide() {
 
   var desc = document.createElement('div');
   desc.style.cssText = 'font-size:14px;color:var(--text-sub);line-height:1.8;margin-bottom:20px;';
-  desc.innerHTML = 'ホーム画面アプリからは直接印刷できません。<br>以下の手順でSafariから印刷してください。<br><br>① 下の「Safariで開く」をタップ<br>② 開いたページの「印刷 / PDFで保存」をタップ';
+  desc.innerHTML = 'ホーム画面アプリからは直接印刷できません。<br>以下の手順でSafariから印刷してください。<br><br>① 下の「Safariで開く」をタップ<br>② 画面下部の共有ボタン（□↑）から「プリント」を選択';
 
   var btnOpen = document.createElement('button');
   btnOpen.style.cssText = 'width:100%;padding:14px;background:var(--accent);color:white;border:none;border-radius:var(--radius);font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;margin-bottom:10px;display:block;';
