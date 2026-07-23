@@ -1402,8 +1402,8 @@ function renderGraph() {
       var dayNum = new Date(dates[i]).getDate();
       if (i === 0 || i === n-1 || dayNum === 5 || dayNum === 10 || dayNum === 15 || dayNum === 20 || dayNum === 25) showLabel = true;
     } else {
-      // 今週・期間指定: 14日以下は全表示、それ以上は間引き
-      if (n <= 14 || i % Math.ceil(n/10) === 0) showLabel = true;
+      // 今週・期間指定: 1週間(7日)以下は全表示、8日以上は間引き(最低でも1日飛ばし)
+      if (n <= 7 || i % Math.max(2, Math.ceil(n/10)) === 0) showLabel = true;
     }
     if (showLabel) {
       ctx.fillStyle = isDark ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.4)';
@@ -1557,68 +1557,6 @@ function showConfirm(msg, onOk, okLabel) {
   };
 }
 
-function closePrintOverlay() {
-  document.getElementById('print-overlay').style.display = 'none';
-}
-function printReport() {
-  document.getElementById('print-overlay').style.display = 'flex';
-}
-function buildPrintHTML(imgData, statsHtml, habitHtml) {
-  return '<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8"><style>'
-    + '@page{size:A4 portrait;margin:12mm;}'
-    + '*{box-sizing:border-box;margin:0;padding:0;}'
-    + 'body{font-family:Hiragino Sans,sans-serif;color:#2D2A26;background:white;}'
-    + 'h2{font-size:14px;font-weight:700;margin-bottom:8px;}'
-    + '.card{border:1px solid #ccc;border-radius:6px;padding:8px 10px;margin-bottom:8px;}'
-    + '.card-title{font-size:8px;font-weight:600;color:#7A746C;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px;}'
-    + '.stats-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:6px;}'
-    + '.stat-box{background:#F0EDE8;border-radius:5px;padding:6px;text-align:center;}'
-    + '.stat-val{font-size:15px;font-weight:700;color:#7B9E87;height:20px;display:flex;align-items:center;justify-content:center;overflow:visible;}'
-    + '.stat-lbl{font-size:8px;color:#7A746C;margin-top:1px;}'
-    + '.habit-stat-list{display:flex;flex-direction:column;gap:4px;}'
-    + '.habit-stat-row{display:flex;align-items:center;gap:8px;}'
-    + '.habit-stat-label{font-size:9px;width:95px;flex-shrink:0;}'
-    + '.habit-stat-bar-wrap{flex:1;background:#F0EDE8;border-radius:3px;height:7px;overflow:hidden;}'
-    + '.habit-stat-bar{height:100%;background:#7B9E87;border-radius:3px;}'
-    + '.habit-stat-bar.assist{background:#D4A840;}'
-    + '.habit-stat-pct{font-size:8px;font-weight:700;color:#4E7258;width:44px;text-align:right;flex-shrink:0;white-space:nowrap;}'
-    + 'img{width:100%;display:block;border-radius:4px;}'
-    + '.print-btn-wrap{margin-top:16px;text-align:center;}'
-    + '.print-btn{padding:12px 32px;background:#7B9E87;color:white;border:none;border-radius:20px;font-size:15px;font-weight:700;cursor:pointer;}'
-    + '@media print{.print-btn-wrap{display:none;}}'
-    + '</style></head><body>'
-    + '<h2>振り返り</h2>'
-    + '<div class="card"><div class="card-title">気分スコア</div><img src="' + imgData + '"></div>'
-    + '<div class="card">' + statsHtml + '</div>'
-    + '<div class="card"><div class="card-title">生活習慣の達成率</div>' + habitHtml + '</div>'
-    + '<div class="print-btn-wrap"><button class="print-btn" onclick="window.print()">印刷 / PDFで保存</button></div>'
-    + '</body></html>';
-}
-function executePrint() {
-  document.getElementById('print-overlay').style.display = 'none';
-  try {
-    var canvas = document.getElementById('score-chart');
-    var imgData = canvas.toDataURL('image/png');
-    var statsHtml = document.getElementById('stats-row').outerHTML;
-    var habitHtml = document.getElementById('habit-stat-list').outerHTML;
-    var html = buildPrintHTML(imgData, statsHtml, habitHtml);
-    var isStandalone = window.navigator.standalone === true
-      || window.matchMedia('(display-mode: standalone)').matches;
-    if (isStandalone) {
-      localStorage.setItem('tsumukoko_print_body', html);
-      showPrintGuide();
-      return;
-    }
-    var blob = new Blob([html], {type: 'text/html'});
-    var url = URL.createObjectURL(blob);
-    var a = document.createElement('a');
-    a.href = url; a.target = '_blank'; a.rel = 'noopener';
-    document.body.appendChild(a); a.click(); document.body.removeChild(a);
-    setTimeout(function(){ URL.revokeObjectURL(url); }, 15000);
-  } catch(e) {
-    showToast('印刷はGitHub版でご利用ください');
-  }
-}
 function showPage(id, btn) {
   document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
   document.getElementById('page-'+id).classList.add('active');
@@ -1716,18 +1654,77 @@ function closePrintOverlay() {
   document.getElementById('print-overlay').style.display = 'none';
 }
 
+// 印刷用の各カードCSS(measurePrintFit / buildPrintHTML で共通利用)
+var PRINT_CARD_CSS =
+    '*{box-sizing:border-box;margin:0;padding:0;}'
+  + 'body{font-family:Hiragino Sans,sans-serif;color:#2D2A26;background:white;}'
+  + 'h2{font-size:14px;font-weight:700;margin-bottom:8px;}'
+  + '.card{border:1px solid #ccc;border-radius:6px;padding:8px 10px;margin-bottom:8px;}'
+  + '.card-title{font-size:8px;font-weight:600;color:#7A746C;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px;}'
+  + '.stats-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:6px;}'
+  + '.stat-box{background:#F0EDE8;border-radius:5px;padding:6px;text-align:center;}'
+  + '.stat-val{font-size:15px;font-weight:700;color:#7B9E87;height:20px;display:flex;align-items:center;justify-content:center;overflow:visible;}'
+  + '.stat-lbl{font-size:8px;color:#7A746C;margin-top:1px;}'
+  + '.habit-stat-list{display:flex;flex-direction:column;gap:4px;}'
+  + '.habit-stat-row{display:flex;align-items:center;gap:8px;}'
+  + '.habit-stat-label{font-size:9px;width:95px;flex-shrink:0;}'
+  + '.habit-stat-bar-wrap{flex:1;background:#F0EDE8;border-radius:3px;height:7px;overflow:hidden;}'
+  + '.habit-stat-bar{height:100%;background:#7B9E87;border-radius:3px;}'
+  + '.habit-stat-bar.assist{background:#D4A840;}'
+  + '.habit-stat-pct{font-size:8px;font-weight:700;color:#4E7258;width:44px;text-align:right;flex-shrink:0;white-space:nowrap;}'
+  + 'img{width:100%;display:block;border-radius:4px;}';
+
+// 生活習慣の項目数が増えて印刷内容がA4 1枚(12mm余白)に収まらない場合、
+// その分だけ気分グラフの画像を縦に縮めて1枚に収まるようにする。
+// Shadow DOM上に実際のCSSで仮組みして高さを測るため、フォントやレイアウトの誤差なく判定できる。
+function fitPrintChartImage(imgData, natW, natH, statsHtml, habitHtml) {
+  var mmToPx = 96 / 25.4;
+  var printWidthPx = Math.round((210 - 24) * mmToPx);  // A4横 - 左右12mm
+  var printHeightPx = Math.round((297 - 24) * mmToPx); // A4縦 - 上下12mm
+
+  var host = document.createElement('div');
+  host.style.cssText = 'position:fixed;left:-9999px;top:0;width:' + printWidthPx + 'px;';
+  document.body.appendChild(host);
+  var shadow = host.attachShadow({ mode: 'open' });
+  // width/height属性を明示することで、画像のデコード前でも正しい縦横比で高さが確保される
+  // (これがないと画像デコード完了前は高さ0として測定されてしまう)
+  shadow.innerHTML = '<style>' + PRINT_CARD_CSS + '</style>'
+    + '<div id="root">'
+    + '<h2>振り返り</h2>'
+    + '<div class="card"><div class="card-title">気分スコア</div><img id="chartimg" width="' + natW + '" height="' + natH + '" src="' + imgData + '"></div>'
+    + '<div class="card">' + statsHtml + '</div>'
+    + '<div class="card"><div class="card-title">生活習慣の達成率</div>' + habitHtml + '</div>'
+    + '</div>';
+
+  var root = shadow.querySelector('#root');
+  var imgEl = shadow.querySelector('#chartimg');
+  var measuredHeight = root.getBoundingClientRect().height;
+  var imgHeight = imgEl.getBoundingClientRect().height;
+  document.body.removeChild(host);
+
+  var imgTag = '<img width="' + natW + '" height="' + natH + '" src="' + imgData + '">';
+  if (measuredHeight > printHeightPx) {
+    var overflow = measuredHeight - printHeightPx;
+    var newImgHeight = Math.max(60, Math.round(imgHeight - overflow - 6));
+    imgTag = '<img width="' + natW + '" height="' + natH + '" src="' + imgData + '" style="height:' + newImgHeight + 'px;object-fit:fill;">';
+  }
+  return imgTag;
+}
+
 function executePrint() {
   document.getElementById('print-overlay').style.display = 'none';
 
   var canvas = document.getElementById('score-chart');
+  var canvasRect = canvas.getBoundingClientRect();
   var imgData = canvas.toDataURL('image/png');
   var statsHtml = document.getElementById('stats-row').outerHTML;
   var habitHtml = document.getElementById('habit-stat-list').outerHTML;
+  var imgTag = fitPrintChartImage(imgData, Math.round(canvasRect.width), Math.round(canvasRect.height), statsHtml, habitHtml);
 
   // 印刷用HTMLを生成してlocalStorageに保存
   var printBody = '<h2>振り返り</h2>'
     + '<div class="card"><div class="card-title">気分スコア</div>'
-    + '<img src="' + imgData + '"></div>'
+    + imgTag + '</div>'
     + '<div class="card">' + statsHtml + '</div>'
     + '<div class="card"><div class="card-title">生活習慣の達成率</div>' + habitHtml + '</div>';
 
@@ -1756,23 +1753,7 @@ function buildPrintHTML(body) {
   return '<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8">'
     + '<style>'
     + '@page{size:A4 portrait;margin:12mm;}'
-    + '*{box-sizing:border-box;margin:0;padding:0;}'
-    + 'body{font-family:Hiragino Sans,sans-serif;color:#2D2A26;background:white;padding:0;}'
-    + 'h2{font-size:14px;font-weight:700;margin-bottom:8px;}'
-    + '.card{border:1px solid #ccc;border-radius:6px;padding:8px 10px;margin-bottom:8px;}'
-    + '.card-title{font-size:8px;font-weight:600;color:#7A746C;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px;}'
-    + '.stats-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:6px;}'
-    + '.stat-box{background:#F0EDE8;border-radius:5px;padding:6px;text-align:center;}'
-    + '.stat-val{font-size:15px;font-weight:700;color:#7B9E87;height:20px;display:flex;align-items:center;justify-content:center;overflow:visible;}'
-    + '.stat-lbl{font-size:8px;color:#7A746C;margin-top:1px;}'
-    + '.habit-stat-list{display:flex;flex-direction:column;gap:4px;}'
-    + '.habit-stat-row{display:flex;align-items:center;gap:8px;}'
-    + '.habit-stat-label{font-size:9px;width:95px;flex-shrink:0;}'
-    + '.habit-stat-bar-wrap{flex:1;background:#F0EDE8;border-radius:3px;height:7px;overflow:hidden;}'
-    + '.habit-stat-bar{height:100%;background:#7B9E87;border-radius:3px;}'
-    + '.habit-stat-bar.assist{background:#D4A840;}'
-    + '.habit-stat-pct{font-size:8px;font-weight:700;color:#4E7258;width:44px;text-align:right;flex-shrink:0;white-space:nowrap;}'
-    + 'img{width:100%;display:block;border-radius:4px;}'
+    + PRINT_CARD_CSS
     + '.print-btn-wrap{margin-top:16px;text-align:center;}'
     + '.print-btn{padding:12px 32px;background:#7B9E87;color:white;border:none;border-radius:20px;font-size:15px;font-weight:700;cursor:pointer;}'
     + '@media print{.print-btn-wrap{display:none;}}'
