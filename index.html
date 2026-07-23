@@ -1666,49 +1666,95 @@ var PRINT_CARD_CSS =
   + '.stat-val{font-size:15px;font-weight:700;color:#7B9E87;height:20px;display:flex;align-items:center;justify-content:center;overflow:visible;}'
   + '.stat-lbl{font-size:8px;color:#7A746C;margin-top:1px;}'
   + '.habit-stat-list{display:flex;flex-direction:column;gap:4px;}'
-  + '.habit-stat-row{display:flex;align-items:center;gap:8px;}'
+  + '.habit-stat-row{display:flex;align-items:center;gap:8px;break-inside:avoid;page-break-inside:avoid;}'
   + '.habit-stat-label{font-size:9px;width:95px;flex-shrink:0;}'
   + '.habit-stat-bar-wrap{flex:1;background:#F0EDE8;border-radius:3px;height:7px;overflow:hidden;}'
   + '.habit-stat-bar{height:100%;background:#7B9E87;border-radius:3px;}'
   + '.habit-stat-bar.assist{background:#D4A840;}'
   + '.habit-stat-pct{font-size:8px;font-weight:700;color:#4E7258;width:44px;text-align:right;flex-shrink:0;white-space:nowrap;}'
-  + 'img{width:100%;display:block;border-radius:4px;}';
+  + 'img{width:100%;display:block;border-radius:4px;}'
+  // 生活習慣が多い場合の圧縮段階1(compact): 行間・文字・バーの高さを少し詰める
+  + '.habit-stat-list.pc-compact{gap:2px;}'
+  + '.habit-stat-list.pc-compact .habit-stat-row{gap:6px;}'
+  + '.habit-stat-list.pc-compact .habit-stat-label{font-size:8px;width:88px;}'
+  + '.habit-stat-list.pc-compact .habit-stat-bar-wrap{height:6px;}'
+  + '.habit-stat-list.pc-compact .habit-stat-pct{font-size:7.5px;width:40px;}'
+  // 圧縮段階2(mini): さらに詰める(読める最低限のサイズ)
+  + '.habit-stat-list.pc-mini{gap:1px;}'
+  + '.habit-stat-list.pc-mini .habit-stat-row{gap:5px;}'
+  + '.habit-stat-list.pc-mini .habit-stat-label{font-size:7.5px;width:82px;}'
+  + '.habit-stat-list.pc-mini .habit-stat-bar-wrap{height:5px;}'
+  + '.habit-stat-list.pc-mini .habit-stat-pct{font-size:7px;width:36px;}';
 
 // 生活習慣の項目数が増えて印刷内容がA4 1枚(12mm余白)に収まらない場合、
-// その分だけ気分グラフの画像を縦に縮めて1枚に収まるようにする。
+// (1)まず気分グラフの画像を縦に縮め、(2)それでも収まらなければ生活習慣リストの行間・文字も
+// 段階的に詰めて、できる限り1枚に収める。読める最低限のサイズまで詰めても収まらない場合は
+// 2枚以上になることを許容する(項目の途中でページが切れないようCSS側でbreak-inside:avoid済み)。
 // Shadow DOM上に実際のCSSで仮組みして高さを測るため、フォントやレイアウトの誤差なく判定できる。
 // natW/natHはcanvas要素の表示上のCSSピクセル寸法(width/height属性として明示することで、
 // 画像デコード前でも正しい縦横比で高さが確保され、測定が0になることを防ぐ)。
-function fitPrintChartImage(imgData, natW, natH, statsHtml, habitHtml) {
+
+function measurePrintHeight(imgTag, statsHtml, habitHtml, habitClass) {
   var mmToPx = 96 / 25.4;
-  var printWidthPx = Math.round((210 - 24) * mmToPx);  // A4横 - 左右12mm
-  var printHeightPx = Math.round((297 - 24) * mmToPx); // A4縦 - 上下12mm
+  var printWidthPx = Math.round((210 - 24) * mmToPx);
 
   var host = document.createElement('div');
   host.style.cssText = 'position:fixed;left:-9999px;top:0;width:' + printWidthPx + 'px;';
   document.body.appendChild(host);
   var shadow = host.attachShadow({ mode: 'open' });
+  var habitHtmlClassed = habitClass
+    ? habitHtml.replace('class="habit-stat-list"', 'class="habit-stat-list ' + habitClass + '"')
+    : habitHtml;
   shadow.innerHTML = '<style>' + PRINT_CARD_CSS + '</style>'
     + '<div id="root">'
     + '<h2>振り返り</h2>'
-    + '<div class="card"><div class="card-title">気分スコア</div><img id="chartimg" width="' + natW + '" height="' + natH + '" src="' + imgData + '"></div>'
+    + '<div class="card"><div class="card-title">気分スコア</div>' + imgTag + '</div>'
     + '<div class="card">' + statsHtml + '</div>'
-    + '<div class="card"><div class="card-title">生活習慣の達成率</div>' + habitHtml + '</div>'
+    + '<div class="card"><div class="card-title">生活習慣の達成率</div>' + habitHtmlClassed + '</div>'
     + '</div>';
-
   var root = shadow.querySelector('#root');
-  var imgEl = shadow.querySelector('#chartimg');
+  var imgEl = shadow.querySelector('img');
   var measuredHeight = root.getBoundingClientRect().height;
-  var imgHeight = imgEl.getBoundingClientRect().height;
+  var imgHeight = imgEl ? imgEl.getBoundingClientRect().height : 0;
   document.body.removeChild(host);
+  return { measuredHeight: measuredHeight, imgHeight: imgHeight, printWidthPx: printWidthPx };
+}
 
-  var imgTag = '<img width="' + natW + '" height="' + natH + '" src="' + imgData + '">';
-  if (measuredHeight > printHeightPx) {
-    var overflow = measuredHeight - printHeightPx;
-    var newImgHeight = Math.max(60, Math.round(imgHeight - overflow - 6));
-    imgTag = '<img width="' + natW + '" height="' + natH + '" src="' + imgData + '" style="height:' + newImgHeight + 'px;object-fit:fill;">';
+function fitPrintContent(imgData, natW, natH, statsHtml, habitHtml) {
+  var mmToPx = 96 / 25.4;
+  var printHeightPx = Math.round((297 - 24) * mmToPx); // A4縦 - 上下12mm
+  var natImgTag = '<img width="' + natW + '" height="' + natH + '" src="' + imgData + '">';
+
+  // 0. まずはグラフ・リストともに通常サイズで収まるか
+  var m0 = measurePrintHeight(natImgTag, statsHtml, habitHtml, '');
+  if (m0.measuredHeight <= printHeightPx) {
+    return { imgTag: natImgTag, habitClass: '' };
   }
-  return imgTag;
+
+  // 1. グラフだけを縮めて収まるか(最小60pxまで)
+  var overflow0 = m0.measuredHeight - printHeightPx;
+  var shrunkHeight = Math.max(60, Math.round(m0.imgHeight - overflow0 - 6));
+  var shrunkImgTag = '<img width="' + natW + '" height="' + natH + '" src="' + imgData + '" style="height:' + shrunkHeight + 'px;object-fit:fill;">';
+  var m1 = measurePrintHeight(shrunkImgTag, statsHtml, habitHtml, '');
+  if (m1.measuredHeight <= printHeightPx + 2) {
+    // グラフの縮小だけで収まる範囲
+    return { imgTag: shrunkImgTag, habitClass: '' };
+  }
+
+  // 2. グラフを最小(60px)まで縮めた上で、生活習慣リストも段階的に詰める
+  var floorImgTag = '<img width="' + natW + '" height="' + natH + '" src="' + imgData + '" style="height:60px;object-fit:fill;">';
+  var mCompact = measurePrintHeight(floorImgTag, statsHtml, habitHtml, 'pc-compact');
+  if (mCompact.measuredHeight <= printHeightPx) {
+    return { imgTag: floorImgTag, habitClass: 'pc-compact' };
+  }
+  var mMini = measurePrintHeight(floorImgTag, statsHtml, habitHtml, 'pc-mini');
+  if (mMini.measuredHeight <= printHeightPx) {
+    return { imgTag: floorImgTag, habitClass: 'pc-mini' };
+  }
+
+  // 3. 読める最低限まで詰めても収まらない場合は2枚以上になることを許容する
+  //    (habit-stat-rowにbreak-inside:avoidを指定済みのため、項目の途中では切れない)
+  return { imgTag: floorImgTag, habitClass: 'pc-mini' };
 }
 
 function executePrint() {
@@ -1719,14 +1765,17 @@ function executePrint() {
   var imgData = canvas.toDataURL('image/png');
   var statsHtml = document.getElementById('stats-row').outerHTML;
   var habitHtml = document.getElementById('habit-stat-list').outerHTML;
-  var imgTag = fitPrintChartImage(imgData, Math.round(canvasRect.width), Math.round(canvasRect.height), statsHtml, habitHtml);
+  var fitted = fitPrintContent(imgData, Math.round(canvasRect.width), Math.round(canvasRect.height), statsHtml, habitHtml);
+  var habitHtmlFitted = fitted.habitClass
+    ? habitHtml.replace('class="habit-stat-list"', 'class="habit-stat-list ' + fitted.habitClass + '"')
+    : habitHtml;
 
   // 印刷用HTMLを生成してlocalStorageに保存
   var printBody = '<h2>振り返り</h2>'
     + '<div class="card"><div class="card-title">気分スコア</div>'
-    + imgTag + '</div>'
+    + fitted.imgTag + '</div>'
     + '<div class="card">' + statsHtml + '</div>'
-    + '<div class="card"><div class="card-title">生活習慣の達成率</div>' + habitHtml + '</div>';
+    + '<div class="card"><div class="card-title">生活習慣の達成率</div>' + habitHtmlFitted + '</div>';
 
   localStorage.setItem('tsumukoko_print_body', printBody);
 
