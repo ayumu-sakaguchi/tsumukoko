@@ -1665,8 +1665,11 @@ var PRINT_CARD_CSS =
   + '.stat-box{background:#F0EDE8;border-radius:5px;padding:6px;text-align:center;}'
   + '.stat-val{font-size:15px;font-weight:700;color:#7B9E87;height:20px;display:flex;align-items:center;justify-content:center;overflow:visible;}'
   + '.stat-lbl{font-size:8px;color:#7A746C;margin-top:1px;}'
-  + '.habit-stat-list{display:flex;flex-direction:column;gap:4px;}'
-  + '.habit-stat-row{display:flex;align-items:center;gap:8px;break-inside:avoid;page-break-inside:avoid;}'
+  // habit-stat-listはdisplay:flexにしない(WebKit/Safariの印刷エンジンはflexコンテナの
+  // ページ分割に対応しておらず、収まりきらない場合リスト全体が丸ごと次ページへ送られてしまうため)。
+  // 各行(habit-stat-row)側は横並びのままflexで組み、行間はmargin-bottomで表現する。
+  + '.habit-stat-row{display:flex;align-items:center;gap:8px;margin-bottom:4px;break-inside:avoid;page-break-inside:avoid;}'
+  + '.habit-stat-row:last-child{margin-bottom:0;}'
   + '.habit-stat-label{font-size:9px;width:95px;flex-shrink:0;}'
   + '.habit-stat-bar-wrap{flex:1;background:#F0EDE8;border-radius:3px;height:7px;overflow:hidden;}'
   + '.habit-stat-bar{height:100%;background:#7B9E87;border-radius:3px;}'
@@ -1674,14 +1677,12 @@ var PRINT_CARD_CSS =
   + '.habit-stat-pct{font-size:8px;font-weight:700;color:#4E7258;width:44px;text-align:right;flex-shrink:0;white-space:nowrap;}'
   + 'img{width:100%;display:block;border-radius:4px;}'
   // 生活習慣が多い場合の圧縮段階1(compact): 行間・文字・バーの高さを少し詰める
-  + '.habit-stat-list.pc-compact{gap:2px;}'
-  + '.habit-stat-list.pc-compact .habit-stat-row{gap:6px;}'
+  + '.habit-stat-list.pc-compact .habit-stat-row{gap:6px;margin-bottom:2px;}'
   + '.habit-stat-list.pc-compact .habit-stat-label{font-size:8px;width:88px;}'
   + '.habit-stat-list.pc-compact .habit-stat-bar-wrap{height:6px;}'
   + '.habit-stat-list.pc-compact .habit-stat-pct{font-size:7.5px;width:40px;}'
   // 圧縮段階2(mini): さらに詰める(読める最低限のサイズ)
-  + '.habit-stat-list.pc-mini{gap:1px;}'
-  + '.habit-stat-list.pc-mini .habit-stat-row{gap:5px;}'
+  + '.habit-stat-list.pc-mini .habit-stat-row{gap:5px;margin-bottom:1px;}'
   + '.habit-stat-list.pc-mini .habit-stat-label{font-size:7.5px;width:82px;}'
   + '.habit-stat-list.pc-mini .habit-stat-bar-wrap{height:5px;}'
   + '.habit-stat-list.pc-mini .habit-stat-pct{font-size:7px;width:36px;}';
