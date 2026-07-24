@@ -164,11 +164,11 @@ window._supabaseCreateClient = createClient;
   /* HABIT STATS */
   .habit-stat-list{display:flex;flex-direction:column;gap:8px;}
   .habit-stat-row{display:flex;align-items:center;gap:10px;}
-  .habit-stat-label{font-size:13px;width:100px;flex-shrink:0;}
-  .habit-stat-bar-wrap{flex:1;background:var(--surface2);border-radius:4px;height:10px;overflow:hidden;}
+  .habit-stat-label{font-size:13px;width:100px;flex-shrink:0;overflow-wrap:break-word;word-break:break-word;}
+  .habit-stat-bar-wrap{flex:1;min-width:0;background:var(--surface2);border-radius:4px;height:10px;overflow:hidden;}
   .habit-stat-bar{height:100%;background:var(--accent);border-radius:4px;transition:width 0.4s;}
   .habit-stat-bar.assist{background:var(--assist-border);}
-  .habit-stat-pct{font-size:11px;font-weight:700;color:var(--accent);width:62px;text-align:right;flex-shrink:0;white-space:nowrap;}
+  .habit-stat-pct{font-size:11px;font-weight:700;color:var(--accent);width:62px;flex-shrink:0;text-align:right;white-space:nowrap;}
 
   /* SETTINGS */
   .setting-section{margin-bottom:24px;}
@@ -1671,7 +1671,7 @@ var PRINT_CARD_CSS =
   + '.habit-stat-row{display:flex;align-items:center;gap:8px;margin-bottom:4px;break-inside:avoid;page-break-inside:avoid;}'
   + '.habit-stat-row:last-child{margin-bottom:0;}'
   + '.habit-stat-label{font-size:9px;width:95px;flex-shrink:0;}'
-  + '.habit-stat-bar-wrap{flex:1;background:#F0EDE8;border-radius:3px;height:7px;overflow:hidden;}'
+  + '.habit-stat-bar-wrap{flex:1;min-width:0;background:#F0EDE8;border-radius:3px;height:7px;overflow:hidden;}'
   + '.habit-stat-bar{height:100%;background:#7B9E87;border-radius:3px;}'
   + '.habit-stat-bar.assist{background:#D4A840;}'
   + '.habit-stat-pct{font-size:8px;font-weight:700;color:#4E7258;width:44px;text-align:right;flex-shrink:0;white-space:nowrap;}'
@@ -1721,12 +1721,12 @@ function measurePrintHeight(imgTag, statsHtml, habitHtml, habitClass) {
   return { measuredHeight: measuredHeight, imgHeight: imgHeight, printWidthPx: printWidthPx };
 }
 
-// 実機(Safari)での印刷は、こちらの計算値ぴったりだと生活習慣が1行分だけあふれることが
+// 実機(Safari)での印刷は、こちらの計算値ぴったりだと生活習慣が数行分あふれることが
 // 実機テストで確認されたため、安全マージンを差し引いて判定する。
 // iOS Safariは印刷時にページ下部へURL/日時のフッターを自動挿入する仕様があり、
-// これがアプリ側のCSSでは制御できない「見えない天引き」になっていると見られるため、
-// 1行分(30px)では不足していた。2行分程度(60px)に拡大する。
-var PRINT_SAFETY_MARGIN_PX = 60;
+// これがアプリ側のCSSでは制御できない「見えない天引き」になっていると見られる。
+// 30px→60pxと段階的に増やして残り1行まで詰められたため、もう一段階引き上げる。
+var PRINT_SAFETY_MARGIN_PX = 100;
 
 function fitPrintContent(imgData, natW, natH, statsHtml, habitHtml) {
   var mmToPx = 96 / 25.4;
