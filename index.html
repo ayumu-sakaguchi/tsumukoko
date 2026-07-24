@@ -1721,9 +1721,13 @@ function measurePrintHeight(imgTag, statsHtml, habitHtml, habitClass) {
   return { measuredHeight: measuredHeight, imgHeight: imgHeight, printWidthPx: printWidthPx };
 }
 
+// 実機(Safari)での印刷は、こちらの計算値ぴったりだと生活習慣が1行分だけあふれることが
+// 実機テストで確認されたため、安全マージンとして1行分程度(30px)を差し引いて判定する。
+var PRINT_SAFETY_MARGIN_PX = 30;
+
 function fitPrintContent(imgData, natW, natH, statsHtml, habitHtml) {
   var mmToPx = 96 / 25.4;
-  var printHeightPx = Math.round((297 - 24) * mmToPx); // A4縦 - 上下12mm
+  var printHeightPx = Math.round((297 - 24) * mmToPx) - PRINT_SAFETY_MARGIN_PX; // A4縦 - 上下12mm - 安全マージン
   var natImgTag = '<img width="' + natW + '" height="' + natH + '" src="' + imgData + '">';
 
   // 0. まずはグラフ・リストともに通常サイズで収まるか
@@ -1737,7 +1741,7 @@ function fitPrintContent(imgData, natW, natH, statsHtml, habitHtml) {
   var shrunkHeight = Math.max(60, Math.round(m0.imgHeight - overflow0 - 6));
   var shrunkImgTag = '<img width="' + natW + '" height="' + natH + '" src="' + imgData + '" style="height:' + shrunkHeight + 'px;object-fit:fill;">';
   var m1 = measurePrintHeight(shrunkImgTag, statsHtml, habitHtml, '');
-  if (m1.measuredHeight <= printHeightPx + 2) {
+  if (m1.measuredHeight <= printHeightPx) {
     // グラフの縮小だけで収まる範囲
     return { imgTag: shrunkImgTag, habitClass: '' };
   }
