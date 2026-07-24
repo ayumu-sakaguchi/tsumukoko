@@ -1722,8 +1722,11 @@ function measurePrintHeight(imgTag, statsHtml, habitHtml, habitClass) {
 }
 
 // 実機(Safari)での印刷は、こちらの計算値ぴったりだと生活習慣が1行分だけあふれることが
-// 実機テストで確認されたため、安全マージンとして1行分程度(30px)を差し引いて判定する。
-var PRINT_SAFETY_MARGIN_PX = 30;
+// 実機テストで確認されたため、安全マージンを差し引いて判定する。
+// iOS Safariは印刷時にページ下部へURL/日時のフッターを自動挿入する仕様があり、
+// これがアプリ側のCSSでは制御できない「見えない天引き」になっていると見られるため、
+// 1行分(30px)では不足していた。2行分程度(60px)に拡大する。
+var PRINT_SAFETY_MARGIN_PX = 60;
 
 function fitPrintContent(imgData, natW, natH, statsHtml, habitHtml) {
   var mmToPx = 96 / 25.4;
