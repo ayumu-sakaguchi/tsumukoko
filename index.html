@@ -1821,15 +1821,20 @@ function executePrint() {
 }
 
 function buildPrintHTML(body) {
+  // 実機テストで「Chromeは99%・Safariは95%の印刷サイズ調整で1枚に収まる」ことが確認できたため、
+  // その縮小率をzoomとしてあらかじめ適用する。transformは印刷時のページ分割判定に反映されない
+  // 場合があるため、実際にレイアウトへ効くzoom(Chromium/WebKit共通で対応)を使用する。
+  var printZoom = IS_IOS_SAFARI ? 0.95 : 0.99;
   return '<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8">'
     + '<style>'
     + '@page{size:A4 portrait;margin:12mm;}'
     + PRINT_CARD_CSS
+    + '.print-zoom-wrap{zoom:' + printZoom + ';}'
     + '.print-guide-wrap{margin-top:16px;padding:12px 14px;background:#F0EDE8;border-radius:8px;font-size:13px;line-height:1.7;color:#4E4A44;text-align:center;}'
     + '.print-guide-wrap b{font-size:15px;}'
     + '@media print{.print-guide-wrap{display:none;}}'
     + '</style></head><body>'
-    + body
+    + '<div class="print-zoom-wrap">' + body + '</div>'
     + '<div class="print-guide-wrap">印刷するには、画面下部の共有ボタン（<b>□↑</b>）をタップし、「プリント」を選んでください。<br>（PCのSafari/Chromeでは <b>⌘P</b> または画面右上のメニューから印刷できます）</div>'
     + '</body></html>';
 }
