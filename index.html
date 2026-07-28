@@ -1658,9 +1658,9 @@ function closePrintOverlay() {
 var PRINT_CARD_CSS =
     '*{box-sizing:border-box;margin:0;padding:0;}'
   + 'body{font-family:Hiragino Sans,sans-serif;color:#2D2A26;background:white;}'
-  + 'h2{font-size:14px;font-weight:700;margin-bottom:8px;}'
-  + '.card{border:1px solid #ccc;border-radius:6px;padding:8px 10px;margin-bottom:8px;}'
-  + '.card-title{font-size:8px;font-weight:600;color:#7A746C;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px;}'
+  + 'h2{font-size:14px;font-weight:700;margin-bottom:6px;}'
+  + '.card{border:1px solid #ccc;border-radius:6px;padding:6px 8px;margin-bottom:6px;}'
+  + '.card-title{font-size:8px;font-weight:600;color:#7A746C;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;}'
   + '.stats-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:6px;}'
   + '.stat-box{background:#F0EDE8;border-radius:5px;padding:6px;text-align:center;}'
   + '.stat-val{font-size:15px;font-weight:700;color:#7B9E87;height:20px;display:flex;align-items:center;justify-content:center;overflow:visible;}'
@@ -1687,10 +1687,11 @@ var PRINT_CARD_CSS =
   + '.habit-stat-list.pc-mini .habit-stat-bar-wrap{height:5px;}'
   + '.habit-stat-list.pc-mini .habit-stat-pct{font-size:7px;min-width:36px;}'
   // 圧縮段階3(nano): miniでも収まらない行数(無料モード最大25行など)向けの最終圧縮
-  + '.habit-stat-list.pc-nano .habit-stat-row{gap:4px;margin-bottom:0.5px;}'
-  + '.habit-stat-list.pc-nano .habit-stat-label{font-size:7px;width:76px;}'
-  + '.habit-stat-list.pc-nano .habit-stat-bar-wrap{height:4px;}'
-  + '.habit-stat-list.pc-nano .habit-stat-pct{font-size:6.5px;min-width:32px;}';
+  // line-heightを明示指定し、ブラウザ間のデフォルト行間差による誤差を抑える
+  + '.habit-stat-list.pc-nano .habit-stat-row{gap:3px;margin-bottom:0;}'
+  + '.habit-stat-list.pc-nano .habit-stat-label{font-size:6.5px;line-height:1;width:72px;}'
+  + '.habit-stat-list.pc-nano .habit-stat-bar-wrap{height:3px;}'
+  + '.habit-stat-list.pc-nano .habit-stat-pct{font-size:6px;line-height:1;min-width:30px;}';
 
 // 生活習慣の項目数が増えて印刷内容がA4 1枚(12mm余白)に収まらない場合、
 // (1)まず気分グラフの画像を縦に縮め、(2)それでも収まらなければ生活習慣リストの行間・文字も
