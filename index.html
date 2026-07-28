@@ -1658,9 +1658,9 @@ function closePrintOverlay() {
 var PRINT_CARD_CSS =
     '*{box-sizing:border-box;margin:0;padding:0;}'
   + 'body{font-family:Hiragino Sans,sans-serif;color:#2D2A26;background:white;}'
-  + 'h2{font-size:14px;font-weight:700;margin-bottom:6px;}'
-  + '.card{border:1px solid #ccc;border-radius:6px;padding:6px 8px;margin-bottom:6px;}'
-  + '.card-title{font-size:8px;font-weight:600;color:#7A746C;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;}'
+  + 'h2{font-size:13px;font-weight:700;margin-bottom:4px;}'
+  + '.card{border:1px solid #ccc;border-radius:6px;padding:4px 6px;margin-bottom:4px;}'
+  + '.card-title{font-size:8px;font-weight:600;color:#7A746C;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:3px;}'
   + '.stats-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:6px;}'
   + '.stat-box{background:#F0EDE8;border-radius:5px;padding:6px;text-align:center;}'
   + '.stat-val{font-size:15px;font-weight:700;color:#7B9E87;height:20px;display:flex;align-items:center;justify-content:center;overflow:visible;}'
@@ -1688,10 +1688,10 @@ var PRINT_CARD_CSS =
   + '.habit-stat-list.pc-mini .habit-stat-pct{font-size:7px;min-width:36px;}'
   // 圧縮段階3(nano): miniでも収まらない行数(無料モード最大25行など)向けの最終圧縮
   // line-heightを明示指定し、ブラウザ間のデフォルト行間差による誤差を抑える
-  + '.habit-stat-list.pc-nano .habit-stat-row{gap:3px;margin-bottom:0;}'
-  + '.habit-stat-list.pc-nano .habit-stat-label{font-size:6.5px;line-height:1;width:72px;}'
-  + '.habit-stat-list.pc-nano .habit-stat-bar-wrap{height:3px;}'
-  + '.habit-stat-list.pc-nano .habit-stat-pct{font-size:6px;line-height:1;min-width:30px;}';
+  + '.habit-stat-list.pc-nano .habit-stat-row{gap:2px;margin-bottom:0;}'
+  + '.habit-stat-list.pc-nano .habit-stat-label{font-size:6px;line-height:1;width:68px;}'
+  + '.habit-stat-list.pc-nano .habit-stat-bar-wrap{height:2.5px;}'
+  + '.habit-stat-list.pc-nano .habit-stat-pct{font-size:5.5px;line-height:1;min-width:28px;}';
 
 // 生活習慣の項目数が増えて印刷内容がA4 1枚(12mm余白)に収まらない場合、
 // (1)まず気分グラフの画像を縦に縮め、(2)それでも収まらなければ生活習慣リストの行間・文字も
@@ -1749,7 +1749,7 @@ function fitPrintContent(imgData, natW, natH, statsHtml, habitHtml) {
 
   // 1. グラフだけを縮めて収まるか(最小60pxまで)
   var overflow0 = m0.measuredHeight - printHeightPx;
-  var shrunkHeight = Math.max(60, Math.round(m0.imgHeight - overflow0 - 6));
+  var shrunkHeight = Math.max(40, Math.round(m0.imgHeight - overflow0 - 6));
   var shrunkImgTag = '<img width="' + natW + '" height="' + natH + '" src="' + imgData + '" style="height:' + shrunkHeight + 'px;object-fit:fill;">';
   var m1 = measurePrintHeight(shrunkImgTag, statsHtml, habitHtml, '');
   if (m1.measuredHeight <= printHeightPx) {
@@ -1758,7 +1758,7 @@ function fitPrintContent(imgData, natW, natH, statsHtml, habitHtml) {
   }
 
   // 2. グラフを最小(60px)まで縮めた上で、生活習慣リストも段階的に詰める
-  var floorImgTag = '<img width="' + natW + '" height="' + natH + '" src="' + imgData + '" style="height:60px;object-fit:fill;">';
+  var floorImgTag = '<img width="' + natW + '" height="' + natH + '" src="' + imgData + '" style="height:40px;object-fit:fill;">';
   var mCompact = measurePrintHeight(floorImgTag, statsHtml, habitHtml, 'pc-compact');
   if (mCompact.measuredHeight <= printHeightPx) {
     return { imgTag: floorImgTag, habitClass: 'pc-compact' };
