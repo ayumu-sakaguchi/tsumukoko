@@ -1685,7 +1685,12 @@ var PRINT_CARD_CSS =
   + '.habit-stat-list.pc-mini .habit-stat-row{gap:5px;margin-bottom:1px;}'
   + '.habit-stat-list.pc-mini .habit-stat-label{font-size:7.5px;width:82px;}'
   + '.habit-stat-list.pc-mini .habit-stat-bar-wrap{height:5px;}'
-  + '.habit-stat-list.pc-mini .habit-stat-pct{font-size:7px;min-width:36px;}';
+  + '.habit-stat-list.pc-mini .habit-stat-pct{font-size:7px;min-width:36px;}'
+  // 圧縮段階3(nano): miniでも収まらない行数(無料モード最大25行など)向けの最終圧縮
+  + '.habit-stat-list.pc-nano .habit-stat-row{gap:4px;margin-bottom:0.5px;}'
+  + '.habit-stat-list.pc-nano .habit-stat-label{font-size:7px;width:76px;}'
+  + '.habit-stat-list.pc-nano .habit-stat-bar-wrap{height:4px;}'
+  + '.habit-stat-list.pc-nano .habit-stat-pct{font-size:6.5px;min-width:32px;}';
 
 // 生活習慣の項目数が増えて印刷内容がA4 1枚(12mm余白)に収まらない場合、
 // (1)まず気分グラフの画像を縦に縮め、(2)それでも収まらなければ生活習慣リストの行間・文字も
@@ -1725,8 +1730,10 @@ function measurePrintHeight(imgTag, statsHtml, habitHtml, habitClass) {
 // 実機テストで確認されたため、安全マージンを差し引いて判定する。
 // iOS Safariは印刷時にページ下部へURL/日時のフッターを自動挿入する仕様があり、
 // これがアプリ側のCSSでは制御できない「見えない天引き」になっていると見られる。
-// 30px→60pxと段階的に増やして残り1行まで詰められたため、もう一段階引き上げる。
-var PRINT_SAFETY_MARGIN_PX = 100;
+// Chromeはこのフッターを標準では挿入しないため、同じマージンを両方に適用すると
+// Chrome側で不要に圧縮されすぎてしまう。UAで判定してブラウザごとに変える。
+var IS_IOS_SAFARI = /iP(hone|ad|od)/.test(navigator.userAgent) && !/CriOS|FxiOS|EdgiOS/.test(navigator.userAgent);
+var PRINT_SAFETY_MARGIN_PX = IS_IOS_SAFARI ? 140 : 60;
 
 function fitPrintContent(imgData, natW, natH, statsHtml, habitHtml) {
   var mmToPx = 96 / 25.4;
@@ -1760,9 +1767,15 @@ function fitPrintContent(imgData, natW, natH, statsHtml, habitHtml) {
     return { imgTag: floorImgTag, habitClass: 'pc-mini' };
   }
 
-  // 3. 読める最低限まで詰めても収まらない場合は2枚以上になることを許容する
+  // 3. miniでも収まらない場合(無料モード最大25行など)、さらに詰めるnano段階を試す
+  var mNano = measurePrintHeight(floorImgTag, statsHtml, habitHtml, 'pc-nano');
+  if (mNano.measuredHeight <= printHeightPx) {
+    return { imgTag: floorImgTag, habitClass: 'pc-nano' };
+  }
+
+  // 4. 読める最低限まで詰めても収まらない場合は2枚以上になることを許容する
   //    (habit-stat-rowにbreak-inside:avoidを指定済みのため、項目の途中では切れない)
-  return { imgTag: floorImgTag, habitClass: 'pc-mini' };
+  return { imgTag: floorImgTag, habitClass: 'pc-nano' };
 }
 
 function executePrint() {
