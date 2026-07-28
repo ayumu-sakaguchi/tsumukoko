@@ -1821,10 +1821,10 @@ function executePrint() {
 }
 
 function buildPrintHTML(body) {
-  // 実機テストで「Chromeは99%・Safariは95%の印刷サイズ調整で1枚に収まる」ことが確認できたため、
-  // その縮小率をzoomとしてあらかじめ適用する。transformは印刷時のページ分割判定に反映されない
-  // 場合があるため、実際にレイアウトへ効くzoom(Chromium/WebKit共通で対応)を使用する。
-  var printZoom = IS_IOS_SAFARI ? 0.95 : 0.99;
+  // 実機テストで「Chromeは99%・Safariは95%の印刷サイズ調整で1枚に収まる」ことが確認できたが、
+  // CSSのzoomはブラウザの印刷ダイアログの「サイズ調整」ほど強くページ分割に効かないため、
+  // 実測の残り溢れ分(枠線含む)を踏まえてさらに余裕を持たせた値にしている。
+  var printZoom = IS_IOS_SAFARI ? 0.88 : 0.96;
   return '<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8">'
     + '<style>'
     + '@page{size:A4 portrait;margin:12mm;}'
