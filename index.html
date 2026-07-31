@@ -2725,7 +2725,23 @@ function updateClinicIconOnRecord() {
 }
 
 // ===== STARTUP =====
-async function startup() {
+// localStorageにSupabaseのセッション（アクセストークン等）が保存されているかを確認する。
+// これがtrueの場合、getSession()のネットワーク呼び出し（トークン更新）が一時的に失敗しても
+// 「本当にログアウトした」のではなく「確認できなかっただけ」の可能性が高いと判断する材料にする。
+function hasStoredSupabaseAuthToken() {
+  try {
+    for (var i = 0; i < localStorage.length; i++) {
+      var k = localStorage.key(i);
+      if (k && k.indexOf('sb-') === 0 && k.indexOf('-auth-token') !== -1) {
+        return !!localStorage.getItem(k);
+      }
+    }
+  } catch(e) {}
+  return false;
+}
+
+async function startup(retryCount) {
+  retryCount = retryCount || 0;
   init();
   // パスワード再設定メールのリンクから戻ってきたかどうかをURLで先に判定しておく
   // （Supabaseクライアントの初期化やイベント発火のタイミングに依存しないようにするため）
@@ -2757,11 +2773,12 @@ async function startup() {
     });
 
     // getSession()はトークン更新のため内部でネットワーク通信を行うことがある。
-    // html更新直後のハードリフレッシュ等でこの通信が一時的に失敗しても、
-    // 即座に「未ログイン」と判定しないよう、短い間隔で数回リトライする。
+    // html更新直後のハードリフレッシュや、スリープ復帰直後の回線不安定時にこの通信が
+    // 一時的に失敗しても、即座に「未ログイン」と判定しないよう複数回リトライする。
     var sessionResult = null;
     var sessionErr = null;
-    for (var attempt = 0; attempt < 3; attempt++) {
+    var backoffs = [800, 1500, 2500, 4000];
+    for (var attempt = 0; attempt < backoffs.length + 1; attempt++) {
       try {
         sessionResult = await supabase.auth.getSession();
         sessionErr = sessionResult && sessionResult.error;
@@ -2769,7 +2786,7 @@ async function startup() {
       } catch(e) {
         sessionErr = e;
       }
-      if (attempt < 2) { await new Promise(function(r){ setTimeout(r, 800); }); }
+      if (attempt < backoffs.length) { await new Promise(function(r){ setTimeout(r, backoffs[attempt]); }); }
     }
     if (sessionErr && !sessionResult) { throw sessionErr; }
     var session = sessionResult.data && sessionResult.data.session;
@@ -2792,6 +2809,12 @@ async function startup() {
       hideStartupLoading();
       if (!getPin()) { checkClinicBanner(); updateClinicIconOnRecord(); }
       if (getPin()) { showLockScreen('unlock'); }
+    } else if (hasStoredSupabaseAuthToken() && retryCount < 3) {
+      // ローカルにはセッション情報が残っているのに未ログイン扱いになった。
+      // 回線が不安定でトークン確認だけがうまくいかなかった可能性が高いため、
+      // 即ログイン画面に落とさず、起動処理自体を少し待ってからやり直す。
+      await new Promise(function(r){ setTimeout(r, 1500); });
+      return startup(retryCount + 1);
     } else {
       showAuthScreen();
     }
@@ -2800,6 +2823,12 @@ async function startup() {
     // currentUserが既に設定済み＝認証自体は成功している。
     // ここで例外が起きたのはデータ読み込みなど後続処理の一時的な問題であり、
     // 本当は未ログインではないので、誤ってログイン画面に戻さないようにする。
+    if (!currentUser && hasStoredSupabaseAuthToken() && retryCount < 3) {
+      // 認証確認そのものが例外で失敗したが、ローカルにセッションは残っている。
+      // 回線の一時的な不調とみなし、ログイン画面を出さずに起動処理をやり直す。
+      await new Promise(function(r){ setTimeout(r, 1500); });
+      return startup(retryCount + 1);
+    }
     hideStartupLoading();
     if (!currentUser) {
       showAuthScreen();
