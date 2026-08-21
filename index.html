@@ -537,7 +537,7 @@ window._supabaseCreateClient = createClient;
     </div>
   </div>
   <div class="card" id="premium-upsell-card">
-    <a href="https://note.com/ayumu_mental/n/n00f2724c6cf4#DDECFAC3-CA36-425F-81FA-5DAC6063AA99" target="_blank" rel="noopener"
+    <a href="https://note.com/ayumu_mental/membership/join" target="_blank" rel="noopener"
       class="save-btn" style="display:block;text-align:center;text-decoration:none;box-sizing:border-box;">有料機能を使いたい方へ</a>
   </div>
 </div>
@@ -1403,7 +1403,8 @@ function renderGraph() {
       if (i === 0 || i === n-1 || dayNum === 5 || dayNum === 10 || dayNum === 15 || dayNum === 20 || dayNum === 25) showLabel = true;
     } else {
       // 今週・期間指定: 14日以下は全表示、それ以上は間引き
-      if (n <= 14 || i % Math.ceil(n/10) === 0) showLabel = true;
+      // 今週・期間指定: 7日以下は全表示、8日以上は間引き(最低でも1日飛ばし)
+      if (n <= 7 || i % Math.max(2, Math.ceil(n/10)) === 0) showLabel = true;
     }
     if (showLabel) {
       ctx.fillStyle = isDark ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.4)';
@@ -1658,9 +1659,9 @@ function closePrintOverlay() {
 var PRINT_CARD_CSS =
     '*{box-sizing:border-box;margin:0;padding:0;}'
   + 'body{font-family:Hiragino Sans,sans-serif;color:#2D2A26;background:white;}'
-  + 'h2{font-size:13px;font-weight:700;margin-bottom:4px;}'
-  + '.card{border:1px solid #ccc;border-radius:6px;padding:4px 6px;margin-bottom:4px;}'
-  + '.card-title{font-size:8px;font-weight:600;color:#7A746C;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:3px;}'
+  + 'h2{font-size:14px;font-weight:700;margin-bottom:8px;}'
+  + '.card{border:1px solid #ccc;border-radius:6px;padding:8px 10px;margin-bottom:8px;}'
+  + '.card-title{font-size:8px;font-weight:600;color:#7A746C;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px;}'
   + '.stats-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:6px;}'
   + '.stat-box{background:#F0EDE8;border-radius:5px;padding:6px;text-align:center;}'
   + '.stat-val{font-size:15px;font-weight:700;color:#7B9E87;height:20px;display:flex;align-items:center;justify-content:center;overflow:visible;}'
@@ -1685,13 +1686,7 @@ var PRINT_CARD_CSS =
   + '.habit-stat-list.pc-mini .habit-stat-row{gap:5px;margin-bottom:1px;}'
   + '.habit-stat-list.pc-mini .habit-stat-label{font-size:7.5px;width:82px;}'
   + '.habit-stat-list.pc-mini .habit-stat-bar-wrap{height:5px;}'
-  + '.habit-stat-list.pc-mini .habit-stat-pct{font-size:7px;min-width:36px;}'
-  // 圧縮段階3(nano): miniでも収まらない行数(無料モード最大25行など)向けの最終圧縮
-  // line-heightを明示指定し、ブラウザ間のデフォルト行間差による誤差を抑える
-  + '.habit-stat-list.pc-nano .habit-stat-row{gap:2px;margin-bottom:0;}'
-  + '.habit-stat-list.pc-nano .habit-stat-label{font-size:6px;line-height:1;width:68px;}'
-  + '.habit-stat-list.pc-nano .habit-stat-bar-wrap{height:2.5px;}'
-  + '.habit-stat-list.pc-nano .habit-stat-pct{font-size:5.5px;line-height:1;min-width:28px;}';
+  + '.habit-stat-list.pc-mini .habit-stat-pct{font-size:7px;min-width:36px;}';
 
 // 生活習慣の項目数が増えて印刷内容がA4 1枚(12mm余白)に収まらない場合、
 // (1)まず気分グラフの画像を縦に縮め、(2)それでも収まらなければ生活習慣リストの行間・文字も
@@ -1731,10 +1726,8 @@ function measurePrintHeight(imgTag, statsHtml, habitHtml, habitClass) {
 // 実機テストで確認されたため、安全マージンを差し引いて判定する。
 // iOS Safariは印刷時にページ下部へURL/日時のフッターを自動挿入する仕様があり、
 // これがアプリ側のCSSでは制御できない「見えない天引き」になっていると見られる。
-// Chromeはこのフッターを標準では挿入しないため、同じマージンを両方に適用すると
-// Chrome側で不要に圧縮されすぎてしまう。UAで判定してブラウザごとに変える。
-var IS_IOS_SAFARI = /iP(hone|ad|od)/.test(navigator.userAgent) && !/CriOS|FxiOS|EdgiOS/.test(navigator.userAgent);
-var PRINT_SAFETY_MARGIN_PX = IS_IOS_SAFARI ? 140 : 60;
+// 30px→60pxと段階的に増やして残り1行まで詰められたため、もう一段階引き上げる。
+var PRINT_SAFETY_MARGIN_PX = 100;
 
 function fitPrintContent(imgData, natW, natH, statsHtml, habitHtml) {
   var mmToPx = 96 / 25.4;
@@ -1749,7 +1742,7 @@ function fitPrintContent(imgData, natW, natH, statsHtml, habitHtml) {
 
   // 1. グラフだけを縮めて収まるか(最小60pxまで)
   var overflow0 = m0.measuredHeight - printHeightPx;
-  var shrunkHeight = Math.max(40, Math.round(m0.imgHeight - overflow0 - 6));
+  var shrunkHeight = Math.max(60, Math.round(m0.imgHeight - overflow0 - 6));
   var shrunkImgTag = '<img width="' + natW + '" height="' + natH + '" src="' + imgData + '" style="height:' + shrunkHeight + 'px;object-fit:fill;">';
   var m1 = measurePrintHeight(shrunkImgTag, statsHtml, habitHtml, '');
   if (m1.measuredHeight <= printHeightPx) {
@@ -1758,7 +1751,7 @@ function fitPrintContent(imgData, natW, natH, statsHtml, habitHtml) {
   }
 
   // 2. グラフを最小(60px)まで縮めた上で、生活習慣リストも段階的に詰める
-  var floorImgTag = '<img width="' + natW + '" height="' + natH + '" src="' + imgData + '" style="height:40px;object-fit:fill;">';
+  var floorImgTag = '<img width="' + natW + '" height="' + natH + '" src="' + imgData + '" style="height:60px;object-fit:fill;">';
   var mCompact = measurePrintHeight(floorImgTag, statsHtml, habitHtml, 'pc-compact');
   if (mCompact.measuredHeight <= printHeightPx) {
     return { imgTag: floorImgTag, habitClass: 'pc-compact' };
@@ -1768,15 +1761,9 @@ function fitPrintContent(imgData, natW, natH, statsHtml, habitHtml) {
     return { imgTag: floorImgTag, habitClass: 'pc-mini' };
   }
 
-  // 3. miniでも収まらない場合(無料モード最大25行など)、さらに詰めるnano段階を試す
-  var mNano = measurePrintHeight(floorImgTag, statsHtml, habitHtml, 'pc-nano');
-  if (mNano.measuredHeight <= printHeightPx) {
-    return { imgTag: floorImgTag, habitClass: 'pc-nano' };
-  }
-
-  // 4. 読める最低限まで詰めても収まらない場合は2枚以上になることを許容する
+  // 3. 読める最低限まで詰めても収まらない場合は2枚以上になることを許容する
   //    (habit-stat-rowにbreak-inside:avoidを指定済みのため、項目の途中では切れない)
-  return { imgTag: floorImgTag, habitClass: 'pc-nano' };
+  return { imgTag: floorImgTag, habitClass: 'pc-mini' };
 }
 
 function executePrint() {
@@ -1821,20 +1808,15 @@ function executePrint() {
 }
 
 function buildPrintHTML(body) {
-  // 実機テストで「Chromeは99%・Safariは95%の印刷サイズ調整で1枚に収まる」ことが確認できたが、
-  // CSSのzoomはブラウザの印刷ダイアログの「サイズ調整」ほど強くページ分割に効かないため、
-  // 実測の残り溢れ分(枠線含む)を踏まえてさらに余裕を持たせた値にしている。
-  var printZoom = IS_IOS_SAFARI ? 0.88 : 0.96;
   return '<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8">'
     + '<style>'
     + '@page{size:A4 portrait;margin:12mm;}'
     + PRINT_CARD_CSS
-    + '.print-zoom-wrap{zoom:' + printZoom + ';}'
     + '.print-guide-wrap{margin-top:16px;padding:12px 14px;background:#F0EDE8;border-radius:8px;font-size:13px;line-height:1.7;color:#4E4A44;text-align:center;}'
     + '.print-guide-wrap b{font-size:15px;}'
     + '@media print{.print-guide-wrap{display:none;}}'
     + '</style></head><body>'
-    + '<div class="print-zoom-wrap">' + body + '</div>'
+    + body
     + '<div class="print-guide-wrap">印刷するには、画面下部の共有ボタン（<b>□↑</b>）をタップし、「プリント」を選んでください。<br>（PCのSafari/Chromeでは <b>⌘P</b> または画面右上のメニューから印刷できます）</div>'
     + '</body></html>';
 }
@@ -2725,23 +2707,7 @@ function updateClinicIconOnRecord() {
 }
 
 // ===== STARTUP =====
-// localStorageにSupabaseのセッション（アクセストークン等）が保存されているかを確認する。
-// これがtrueの場合、getSession()のネットワーク呼び出し（トークン更新）が一時的に失敗しても
-// 「本当にログアウトした」のではなく「確認できなかっただけ」の可能性が高いと判断する材料にする。
-function hasStoredSupabaseAuthToken() {
-  try {
-    for (var i = 0; i < localStorage.length; i++) {
-      var k = localStorage.key(i);
-      if (k && k.indexOf('sb-') === 0 && k.indexOf('-auth-token') !== -1) {
-        return !!localStorage.getItem(k);
-      }
-    }
-  } catch(e) {}
-  return false;
-}
-
-async function startup(retryCount) {
-  retryCount = retryCount || 0;
+async function startup() {
   init();
   // パスワード再設定メールのリンクから戻ってきたかどうかをURLで先に判定しておく
   // （Supabaseクライアントの初期化やイベント発火のタイミングに依存しないようにするため）
@@ -2773,12 +2739,11 @@ async function startup(retryCount) {
     });
 
     // getSession()はトークン更新のため内部でネットワーク通信を行うことがある。
-    // html更新直後のハードリフレッシュや、スリープ復帰直後の回線不安定時にこの通信が
-    // 一時的に失敗しても、即座に「未ログイン」と判定しないよう複数回リトライする。
+    // html更新直後のハードリフレッシュ等でこの通信が一時的に失敗しても、
+    // 即座に「未ログイン」と判定しないよう、短い間隔で数回リトライする。
     var sessionResult = null;
     var sessionErr = null;
-    var backoffs = [800, 1500, 2500, 4000];
-    for (var attempt = 0; attempt < backoffs.length + 1; attempt++) {
+    for (var attempt = 0; attempt < 3; attempt++) {
       try {
         sessionResult = await supabase.auth.getSession();
         sessionErr = sessionResult && sessionResult.error;
@@ -2786,7 +2751,7 @@ async function startup(retryCount) {
       } catch(e) {
         sessionErr = e;
       }
-      if (attempt < backoffs.length) { await new Promise(function(r){ setTimeout(r, backoffs[attempt]); }); }
+      if (attempt < 2) { await new Promise(function(r){ setTimeout(r, 800); }); }
     }
     if (sessionErr && !sessionResult) { throw sessionErr; }
     var session = sessionResult.data && sessionResult.data.session;
@@ -2809,12 +2774,6 @@ async function startup(retryCount) {
       hideStartupLoading();
       if (!getPin()) { checkClinicBanner(); updateClinicIconOnRecord(); }
       if (getPin()) { showLockScreen('unlock'); }
-    } else if (hasStoredSupabaseAuthToken() && retryCount < 3) {
-      // ローカルにはセッション情報が残っているのに未ログイン扱いになった。
-      // 回線が不安定でトークン確認だけがうまくいかなかった可能性が高いため、
-      // 即ログイン画面に落とさず、起動処理自体を少し待ってからやり直す。
-      await new Promise(function(r){ setTimeout(r, 1500); });
-      return startup(retryCount + 1);
     } else {
       showAuthScreen();
     }
@@ -2823,12 +2782,6 @@ async function startup(retryCount) {
     // currentUserが既に設定済み＝認証自体は成功している。
     // ここで例外が起きたのはデータ読み込みなど後続処理の一時的な問題であり、
     // 本当は未ログインではないので、誤ってログイン画面に戻さないようにする。
-    if (!currentUser && hasStoredSupabaseAuthToken() && retryCount < 3) {
-      // 認証確認そのものが例外で失敗したが、ローカルにセッションは残っている。
-      // 回線の一時的な不調とみなし、ログイン画面を出さずに起動処理をやり直す。
-      await new Promise(function(r){ setTimeout(r, 1500); });
-      return startup(retryCount + 1);
-    }
     hideStartupLoading();
     if (!currentUser) {
       showAuthScreen();
