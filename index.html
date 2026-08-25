@@ -1266,11 +1266,6 @@ function saveEntry() {
 }
 
 // ===== HISTORY =====
-function escapeHtml(str) {
-  return String(str).replace(/[&<>"']/g, function(c) {
-    return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
-  });
-}
 function renderHistory() {
   var list = document.getElementById('history-list');
   var entries = getEntries();
@@ -1283,8 +1278,8 @@ function renderHistory() {
   var iconSetHistory = document.body.classList.contains('theme-night') ? CAT_MOOD_ICONS_DARK : CAT_MOOD_ICONS;
   list.innerHTML = '';
   entries.forEach(function(e) {
-    var tagsHtml = (e.tags && e.tags.length) ? '<div class="history-tags">' + e.tags.map(function(t){ return '<span class="history-tag">' + escapeHtml(t) + '</span>'; }).join('') + '</div>' : '';
-    var memoHtml = e.memo ? '<div class="history-note">' + escapeHtml(e.memo) + '</div>' : '';
+    var tagsHtml = (e.tags && e.tags.length) ? '<div class="history-tags">' + e.tags.map(function(t){ return '<span class="history-tag">' + t + '</span>'; }).join('') + '</div>' : '';
+    var memoHtml = e.memo ? '<div class="history-note">' + e.memo + '</div>' : '';
     var scoreHtml = '―';
     if (e.score) {
       scoreHtml = (useCatHistory && iconSetHistory[e.score])
