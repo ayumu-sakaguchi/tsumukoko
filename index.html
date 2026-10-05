@@ -2006,7 +2006,6 @@ async function authSignup() {
   setAuthLoading(true);
   try {
     var result = await supabase.auth.signUp({ email: email, password: password });
-    console.log('signUp result:', JSON.stringify(result));
     if (result.error) { showAuthError('登録に失敗しました: ' + translateAuthError(result.error.message)); setAuthLoading(false); return; }
     if (result.data && result.data.user) {
       if (result.data.session) {
