@@ -136,6 +136,10 @@ window._supabaseCreateClient = createClient;
 
   /* SAVE */
   .save-btn{width:100%;padding:16px;background:var(--accent);color:white;border:none;border-radius:var(--radius);font-size:16px;font-weight:700;font-family:inherit;cursor:pointer;letter-spacing:0.3px;transition:background 0.2s,transform 0.1s;margin-top:4px;}
+  .photo-add-btn{width:100%;padding:12px;background:var(--surface2);color:var(--text-sub);border:1.5px dashed var(--border);border-radius:var(--radius-sm);font-size:14px;font-family:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;}
+  .photo-preview-wrap{position:relative;display:inline-block;width:100%;}
+  .photo-preview{width:100%;max-height:240px;object-fit:contain;border-radius:var(--radius-sm);display:block;}
+  .photo-delete-btn{position:absolute;top:6px;right:6px;background:rgba(0,0,0,0.55);color:white;border:none;border-radius:50%;width:28px;height:28px;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;}
   .save-btn:active{transform:scale(0.98);}
   .save-btn:hover{background:var(--accent-dark);}
 
@@ -349,6 +353,12 @@ window._supabaseCreateClient = createClient;
     <div class="collapsible-body" id="memo-body">
       <textarea id="memo-input" placeholder="今日の出来事や気持ちを自由に…"></textarea>
     </div>
+  </div>
+  <!-- 写真カード（有料ユーザーのみ表示） -->
+  <div class="card" id="photo-card" style="display:none;">
+    <div class="card-title">写真／【記録する】ボタンで保存</div>
+    <input type="file" id="photo-file-input" accept="image/*" style="display:none;" onchange="onPhotoSelected(this)">
+    <div id="photo-preview-area"></div>
   </div>
   <button class="save-btn" onclick="saveEntry()">記録する</button>
   <!-- 広告スペース（is_premiumがfalseの時だけ表示。trueの場合はDOMごと空にして余白も残さない） -->
@@ -743,6 +753,8 @@ var THEMES = [
 ];
 
 var state = { score: null, habits: {}, tags: [], memo: '' };
+// 写真状態管理
+var photoState = { uploadedUrl: null, pendingDelete: null };
 var currentPeriod = 'week';
 var editingDate = '';
 
@@ -862,6 +874,7 @@ function resetRecordForm() {
   document.querySelectorAll('.tag-btn').forEach(function(b) { b.classList.remove('selected'); });
   document.getElementById('memo-input').value = '';
   document.getElementById('already-saved-badge').style.display = 'none';
+  initPhotoCard(null);
 }
 
 function loadEntryForDate(dateStr) {
@@ -895,6 +908,7 @@ function loadEntryForDate(dateStr) {
     });
   }
   document.getElementById('memo-input').value = entry.memo || '';
+  initPhotoCard(entry.photo_url || null);
 }
 
 // ===== HABIT LIST =====
@@ -1219,7 +1233,8 @@ async function loadEntriesFromSupabase() {
         score: Number(row.mood),
         habits: row.habits || {},
         tags: row.tags ? row.tags.split(',').filter(Boolean) : [],
-        memo: row.memo || ''
+        memo: row.memo || '',
+        photo_url: row.photo_url || null
       };
     });
     saveEntries(entries);
@@ -1237,7 +1252,8 @@ async function saveEntryToSupabase(entry) {
       mood: entry.score,
       habits: entry.habits,
       tags: (entry.tags || []).join(','),
-      memo: entry.memo || ''
+      memo: entry.memo || '',
+      photo_url: entry.photo_url || null
     };
     // upsert（同じdateがあれば更新、なければ挿入）
     var result = await supabase
@@ -1249,13 +1265,31 @@ async function saveEntryToSupabase(entry) {
   }
 }
 
-function saveEntry() {
+async function saveEntry() {
+  var existingEntry = getEntries().find(function(e) { return e.date === editingDate; });
+
+  // 新しい写真がある場合、先にアップロードしてURLを取得
+  var photoUrl = photoState.pendingDelete ? null
+    : (existingEntry ? existingEntry.photo_url : null);
+  if (!photoState.pendingDelete && photoState._pendingBlob) {
+    showToast('写真をアップロード中…');
+    var uploaded = await uploadPhotoToStorage(photoState._pendingBlob, editingDate);
+    if (uploaded) {
+      photoUrl = uploaded;
+      photoState.uploadedUrl = uploaded;
+      photoState._pendingBlob = null;
+    } else {
+      showToast('写真のアップロードに失敗しました');
+    }
+  }
+
   var entry = {
     date: editingDate,
     score: state.score,
     habits: Object.assign({}, state.habits),
     tags: state.tags.filter(function(t, i) { return state.tags.indexOf(t) === i; }), // 重複除去
-    memo: document.getElementById('memo-input').value.trim()
+    memo: document.getElementById('memo-input').value.trim(),
+    photo_url: photoUrl
   };
   var entries = getEntries().filter(function(e) { return e.date !== editingDate; });
   entries.unshift(entry);
@@ -1265,8 +1299,133 @@ function saveEntry() {
   showToast('記録しました ✓');
   renderHistory();
   renderGraph();
+  // 古い写真の削除（Supabase Storage）
+  if (photoState.pendingDelete) {
+    deletePhotoFromStorage(photoState.pendingDelete);
+    photoState.pendingDelete = null;
+  }
   // Supabaseにも保存
   saveEntryToSupabase(entry);
+}
+
+// ===== 写真機能 =====
+
+// 写真カードの表示を初期化（日付切り替え時に呼ぶ）
+function initPhotoCard(existingPhotoUrl) {
+  photoState = { uploadedUrl: null, pendingDelete: null };
+  var card = document.getElementById('photo-card');
+  if (!card) return;
+  card.style.display = isPremium ? 'block' : 'none';
+  renderPhotoPreviewArea(existingPhotoUrl || null);
+}
+
+// プレビューエリアの描画（既存URL or null）
+function renderPhotoPreviewArea(photoUrl) {
+  var area = document.getElementById('photo-preview-area');
+  if (!area) return;
+  if (photoUrl) {
+    area.innerHTML =
+      '<div class="photo-preview-wrap">'
+      + '<img class="photo-preview" src="' + photoUrl + '" alt="記録の写真">'
+      + '<button class="photo-delete-btn" onclick="onPhotoDelete()" title="写真を削除">×</button>'
+      + '</div>';
+  } else {
+    area.innerHTML =
+      '<button class="photo-add-btn" onclick="document.getElementById(\'photo-file-input\').click()">'
+      + '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>'
+      + '写真を追加'
+      + '</button>';
+  }
+}
+
+// ファイル選択後の処理（圧縮→プレビュー表示、Supabaseへのアップロードは記録するボタン押下後）
+function onPhotoSelected(input) {
+  var file = input.files && input.files[0];
+  if (!file) return;
+  // リセット
+  input.value = '';
+  compressImage(file, function(blob, dataUrl) {
+    // プレビューはData URLで即表示
+    renderPhotoPreviewArea(dataUrl);
+    // 記録するボタン押下時にアップロードするためblobを保持
+    photoState._pendingBlob = blob;
+    photoState._pendingDataUrl = dataUrl;
+    // 既存の写真があれば削除候補に
+    var existingEntry = getEntries().find(function(e) { return e.date === editingDate; });
+    if (existingEntry && existingEntry.photo_url) {
+      photoState.pendingDelete = existingEntry.photo_url;
+    }
+  });
+}
+
+// 写真削除ボタン押下
+function onPhotoDelete() {
+  var existingEntry = getEntries().find(function(e) { return e.date === editingDate; });
+  var currentUrl = photoState.uploadedUrl || (existingEntry ? existingEntry.photo_url : null);
+  if (currentUrl) {
+    photoState.pendingDelete = currentUrl;
+  }
+  photoState.uploadedUrl = null;
+  photoState._pendingBlob = null;
+  photoState._pendingDataUrl = null;
+  renderPhotoPreviewArea(null);
+}
+
+// 画像圧縮（長辺1280px・JPEG80%）
+function compressImage(file, callback) {
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    var img = new Image();
+    img.onload = function() {
+      var maxSize = 1280;
+      var w = img.width, h = img.height;
+      if (w > maxSize || h > maxSize) {
+        if (w >= h) { h = Math.round(h * maxSize / w); w = maxSize; }
+        else        { w = Math.round(w * maxSize / h); h = maxSize; }
+      }
+      var canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      canvas.toBlob(function(blob) {
+        canvas.toBlob(function(b) {
+          callback(b, canvas.toDataURL('image/jpeg', 0.8));
+        }, 'image/jpeg', 0.8);
+      }, 'image/jpeg', 0.8);
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+// Supabase Storageへのアップロード
+async function uploadPhotoToStorage(blob, dateStr) {
+  if (!supabase || !currentUser) return null;
+  try {
+    var path = currentUser.id + '/' + dateStr + '.jpg';
+    var result = await supabase.storage.from('photos').upload(path, blob, {
+      contentType: 'image/jpeg', upsert: true
+    });
+    if (result.error) { console.error('photo upload error:', result.error); return null; }
+    var urlResult = supabase.storage.from('photos').getPublicUrl(path);
+    // 非公開バケットなので署名付きURLを使う
+    var signedResult = await supabase.storage.from('photos').createSignedUrl(path, 60 * 60 * 24 * 365);
+    if (signedResult.error) { console.error('signed url error:', signedResult.error); return null; }
+    return signedResult.data.signedUrl;
+  } catch(e) {
+    console.error('uploadPhotoToStorage error:', e);
+    return null;
+  }
+}
+
+// Supabase Storageから削除
+async function deletePhotoFromStorage(photoUrl) {
+  if (!supabase || !currentUser) return;
+  try {
+    var path = currentUser.id + '/' + editingDate + '.jpg';
+    await supabase.storage.from('photos').remove([path]);
+  } catch(e) {
+    console.error('deletePhotoFromStorage error:', e);
+  }
 }
 
 // ===== HISTORY =====
@@ -2401,6 +2560,8 @@ function updateHabitEditButtonVisibility() {
   if (btn) btn.style.display = isPremium ? 'block' : 'none';
   var upsellBtn = document.getElementById('habit-upsell-btn');
   if (upsellBtn) upsellBtn.style.display = isPremium ? 'none' : 'inline-block';
+  var photoCard = document.getElementById('photo-card');
+  if (photoCard) photoCard.style.display = isPremium ? 'block' : 'none';
   if (document.getElementById('theme-grid')) buildThemeGrid();
   updateAdVisibility();
   var moodCard = document.getElementById('mood-icon-card');
