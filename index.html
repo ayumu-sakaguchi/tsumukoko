@@ -2529,29 +2529,8 @@ function getPremium() {
   var v = localStorage.getItem('tsumukoko_premium');
   return v === null ? false : v === 'true';
 }
-function togglePremium() {
-  isPremium = document.getElementById('premium-toggle').checked;
-  localStorage.setItem('tsumukoko_premium', String(isPremium));
-  var label = document.getElementById('premium-status-label');
-  label.textContent = isPremium ? '有効' : '無効（フリープラン）';
-  var knob = document.getElementById('premium-knob');
-  var slider = document.getElementById('premium-slider');
-  knob.style.left = isPremium ? '23px' : '3px';
-  slider.style.background = isPremium ? 'var(--accent)' : 'var(--border)';
-  updateHabitEditButtonVisibility();
-  syncSettingsToSupabase();
-  showToast(isPremium ? 'プレミアム有効' : 'フリープランに変更');
-}
 function initPremium() {
   isPremium = getPremium();
-  var toggle = document.getElementById('premium-toggle');
-  var label = document.getElementById('premium-status-label');
-  var knob = document.getElementById('premium-knob');
-  var slider = document.getElementById('premium-slider');
-  if (toggle) toggle.checked = isPremium;
-  if (label) label.textContent = isPremium ? '有効' : '無効（フリープラン）';
-  if (knob) knob.style.left = isPremium ? '23px' : '3px';
-  if (slider) slider.style.background = isPremium ? 'var(--accent)' : 'var(--border)';
   updateHabitEditButtonVisibility();
 }
 function updateHabitEditButtonVisibility() {
