@@ -2492,7 +2492,6 @@ async function syncSettingsToSupabase() {
       pin: getPin() || null,
       clinic_date: getClinicDate() || null,
       custom_habits: getCustomHabits(),
-      is_premium: getPremium(),
       mood_icon: getMoodIconSet(),
       updated_at: new Date().toISOString()
     };
