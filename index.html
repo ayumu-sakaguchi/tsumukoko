@@ -2539,7 +2539,16 @@ function updateHabitEditButtonVisibility() {
   var upsellBtn = document.getElementById('habit-upsell-btn');
   if (upsellBtn) upsellBtn.style.display = isPremium ? 'none' : 'inline-block';
   var photoCard = document.getElementById('photo-card');
-  if (photoCard) photoCard.style.display = isPremium ? 'block' : 'none';
+  if (photoCard) {
+    var wasHidden = photoCard.style.display === 'none';
+    photoCard.style.display = isPremium ? 'block' : 'none';
+    // 起動時にisPremiumがfalseだったため中身が未初期化のまま表示されるケースを防ぐ
+    // カードが非表示→表示に切り替わったタイミングで中身を初期化し直す
+    if (isPremium && wasHidden) {
+      var existingEntry = getEntries().find(function(e) { return e.date === editingDate; });
+      initPhotoCard(existingEntry ? existingEntry.photo_url || null : null);
+    }
+  }
   if (document.getElementById('theme-grid')) buildThemeGrid();
   updateAdVisibility();
   var moodCard = document.getElementById('mood-icon-card');
